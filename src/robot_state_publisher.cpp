@@ -86,7 +86,7 @@ namespace robot_state_publisher{
     for (map<string, double>::const_iterator jnt=joint_positions.begin(); jnt != joint_positions.end(); jnt++){
       std::map<std::string, SegmentPair>::const_iterator seg = segments_.find(jnt->first);
       if (seg != segments_.end()){
-        tf::TransformKDLToTF(seg->second.segment.pose(jnt->second), tf_transform);    
+        tf::transformKDLToTF(seg->second.segment.pose(jnt->second), tf_transform);    
         tf_transform.frame_id_ = seg->second.root;
         tf_transform.child_frame_id_ = seg->second.tip;
         tf_transforms.push_back(tf_transform);
@@ -106,7 +106,7 @@ namespace robot_state_publisher{
 
     // loop over all fixed segments
     for (map<string, SegmentPair>::const_iterator seg=segments_fixed_.begin(); seg != segments_fixed_.end(); seg++){
-      tf::TransformKDLToTF(seg->second.segment.pose(0), tf_transform);    
+      tf::transformKDLToTF(seg->second.segment.pose(0), tf_transform);    
       tf_transform.frame_id_ = seg->second.root;
       tf_transform.child_frame_id_ = seg->second.tip;
       tf_transforms.push_back(tf_transform);
