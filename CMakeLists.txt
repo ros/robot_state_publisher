@@ -15,14 +15,15 @@ find_package(Orocos-KDL REQUIRED)
 include_directories(${Orocos-KDL_INCLUDE_DIRS})
 link_directories(${Orocos-KDL_LIBRARY_DIRS})
 
-find_package(ROS REQUIRED COMPONENTS roscpp rosconsole rostime tf tf_conversions kdl_parser)
-include_directories(${ROS_INCLUDE_DIRS})
+find_package(catkin REQUIRED COMPONENTS roscpp rosconsole rostime tf tf_conversions kdl_parser)
+include_directories(${catkin_INCLUDE_DIRS})
+link_directories(${catkin_LIBRARY_DIRS})
 
 find_package(Eigen REQUIRED)
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS})
 
 add_library(robot_state_publisher_solver src/robot_state_publisher.cpp src/treefksolverposfull_recursive.cpp)
-target_link_libraries(robot_state_publisher_solver ${Orocos-KDL_LIBRARIES} ${ROS_LIBRARIES})
+target_link_libraries(robot_state_publisher_solver ${Orocos-KDL_LIBRARIES} ${catkin_LIBRARIES})
 
 add_executable(robot_state_publisher src/joint_state_listener.cpp )
 target_link_libraries(robot_state_publisher robot_state_publisher_solver)
