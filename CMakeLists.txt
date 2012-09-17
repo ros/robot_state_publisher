@@ -63,7 +63,3 @@ install(TARGETS robot_state_publisher_solver robot_state_publisher
 
 install(DIRECTORY include/
   DESTINATION include)
-
-# for compatibility with old build system
-install(FILES manifest.xml
-        DESTINATION share/${PROJECT_NAME})

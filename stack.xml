@@ -1,6 +1,6 @@
 <stack>
   <name>robot_state_publisher</name>
-  <version>1.9.1</version>
+  <version>1.9.2</version>
   <description brief="This tool allows you to publish the state of a robot to the transform library topic">
     This package allows you to publish the state of a robot to 
     <a href="http://ros.org/wiki/tf">tf</a>. Once the state gets published, it is
