@@ -3,11 +3,12 @@ project(robot_state_publisher)
 
 find_package(catkin REQUIRED)
 
-catkin_stack()
+find_package(catkin REQUIRED COMPONENTS roscpp rosconsole rostime tf tf_conversions kdl_parser)
 
-catkin_project(${PROJECT_NAME} 
+catkin_package(
   LIBRARIES robot_state_publisher_solver
-  INCLUDE_DIRS include)
+  INCLUDE_DIRS include
+  DEPENDS roscpp rosconsole rostime tf tf_conversions kdl_parser)
 
 include_directories(include)
 
@@ -15,7 +16,6 @@ find_package(Orocos-KDL REQUIRED)
 include_directories(${Orocos-KDL_INCLUDE_DIRS})
 link_directories(${Orocos-KDL_LIBRARY_DIRS})
 
-find_package(catkin REQUIRED COMPONENTS roscpp rosconsole rostime tf tf_conversions kdl_parser)
 include_directories(${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
 
