@@ -58,8 +58,8 @@ target_link_libraries(robot_state_publisher robot_state_publisher_solver)
 #rosbuild_download_test_data(http://pr.willowgarage.com/data/robot_state_publisher/joint_states_indexed.bag test/joint_states_indexed.bag 793e0b566ebe4698265a936b92fa2bba)
 
 install(TARGETS robot_state_publisher_solver robot_state_publisher
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin)
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY include/
-  DESTINATION include)
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
