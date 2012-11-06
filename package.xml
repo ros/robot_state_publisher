@@ -37,12 +37,4 @@
   <run_depend>sensor_msgs</run_depend>
   <run_depend>tf</run_depend> 
   <run_depend>tf_conversions</run_depend> 
-
-  <!-- Old stack level dependencies -->
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>geometry</run_depend> 
-  <run_depend>robot_model</run_depend> 
-  <run_depend>ros</run_depend>
-  <run_depend>ros_comm</run_depend> 
-
 </package>
