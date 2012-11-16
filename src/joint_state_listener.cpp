@@ -121,6 +121,16 @@ int main(int argc, char** argv)
   // Initialize ros
   ros::init(argc, argv, "robot_state_publisher");
   NodeHandle node;
+  std::cout <<argv[0] << std::endl;
+  
+  ///////////////////////////////////////// begin deprecation warning
+  std::string exe_name = argv[0];
+  std::size_t slash = exe_name.find_last_of("/");
+  if (slash != std::string::npos)
+    exe_name = exe_name.substr(slash + 1);
+  if (exe_name == "state_publisher")
+    ROS_WARN("The 'state_publisher' executable is deprecated. Please use 'robot_state_publisher' instead");
+  ///////////////////////////////////////// end deprecation warning
 
   // gets the location of the robot description on the parameter server
   KDL::Tree tree;

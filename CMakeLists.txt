@@ -26,7 +26,11 @@ add_library(${PROJECT_NAME}_solver src/robot_state_publisher.cpp src/treefksolve
 target_link_libraries(${PROJECT_NAME}_solver ${Orocos-KDL_LIBRARIES} ${catkin_LIBRARIES})
 
 add_executable(${PROJECT_NAME} src/joint_state_listener.cpp )
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver)
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver log4cxx )
+
+# compile the same executable using the old name as well
+add_executable(state_publisher src/joint_state_listener.cpp )
+target_link_libraries(state_publisher ${PROJECT_NAME}_solver log4cxx)
 
 # CATKIN has no ROS test for now. Disabling
 
@@ -57,7 +61,7 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver)
 # Download needed data file
 #rosbuild_download_test_data(http://pr.willowgarage.com/data/robot_state_publisher/joint_states_indexed.bag test/joint_states_indexed.bag 793e0b566ebe4698265a936b92fa2bba)
 
-install(TARGETS ${PROJECT_NAME}_solver ${PROJECT_NAME}
+install(TARGETS ${PROJECT_NAME}_solver ${PROJECT_NAME} state_publisher
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
