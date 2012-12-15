@@ -1,6 +1,6 @@
 <package>
   <name>robot_state_publisher</name>
-  <version>1.9.7</version>
+  <version>1.9.8</version>
   <description>
     This package allows you to publish the state of a robot to 
     <a href="http://ros.org/wiki/tf">tf</a>. Once the state gets published, it is
@@ -18,7 +18,8 @@
 
   <url>http://ros.org/wiki/robot_state_publisher</url>
 
-  <build_depend>catkin</build_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+
   <build_depend>eigen</build_depend>
   <build_depend>kdl_parser</build_depend> 
   <build_depend>rosconsole</build_depend>
