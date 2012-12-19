@@ -1,35 +1,31 @@
 cmake_minimum_required(VERSION 2.8)
 project(robot_state_publisher)
 
-find_package(catkin REQUIRED)
+find_package(Eigen REQUIRED)
 
-find_package(catkin REQUIRED COMPONENTS roscpp rosconsole rostime tf tf_conversions kdl_parser)
+find_package(catkin REQUIRED
+  COMPONENTS roscpp rosconsole rostime tf tf_conversions kdl_parser
+)
 
 catkin_package(
   LIBRARIES ${PROJECT_NAME}_solver
   INCLUDE_DIRS include
-  DEPENDS roscpp rosconsole rostime tf tf_conversions kdl_parser)
+  DEPENDS roscpp rosconsole rostime tf tf_conversions kdl_parser
+)
 
-include_directories(include)
-
-find_package(Orocos-KDL REQUIRED)
-include_directories(${Orocos-KDL_INCLUDE_DIRS})
-link_directories(${Orocos-KDL_LIBRARY_DIRS})
-
-include_directories(${catkin_INCLUDE_DIRS})
-link_directories(${catkin_LIBRARY_DIRS})
-
-find_package(Eigen REQUIRED)
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_library(${PROJECT_NAME}_solver src/robot_state_publisher.cpp src/treefksolverposfull_recursive.cpp)
-target_link_libraries(${PROJECT_NAME}_solver ${Orocos-KDL_LIBRARIES} ${catkin_LIBRARIES})
+add_library(${PROJECT_NAME}_solver
+  src/robot_state_publisher.cpp src/treefksolverposfull_recursive.cpp
+)
+target_link_libraries(${PROJECT_NAME}_solver ${catkin_LIBRARIES})
 
-add_executable(${PROJECT_NAME} src/joint_state_listener.cpp )
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver log4cxx )
+add_executable(${PROJECT_NAME} src/joint_state_listener.cpp)
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver log4cxx)
 
 # compile the same executable using the old name as well
-add_executable(state_publisher src/joint_state_listener.cpp )
+add_executable(state_publisher src/joint_state_listener.cpp)
 target_link_libraries(state_publisher ${PROJECT_NAME}_solver log4cxx)
 
 # CATKIN has no ROS test for now. Disabling
