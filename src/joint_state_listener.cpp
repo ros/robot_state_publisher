@@ -56,8 +56,8 @@ JointStateListener::JointStateListener(const KDL::Tree& tree)
   // set publish frequency
   double publish_freq;
   n_tilde.param("publish_frequency", publish_freq, 50.0);
+  n_tilde.param("tf_prefix", tf_prefix_, std::string(""));
   publish_interval_ = ros::Duration(1.0/max(publish_freq,1.0));
-  
 
   // subscribe to joint state
   joint_state_sub_ = n.subscribe("joint_states", 1, &JointStateListener::callbackJointState, this);
@@ -74,7 +74,7 @@ JointStateListener::~JointStateListener()
 
 void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
 {
-  state_publisher_.publishFixedTransforms();
+  state_publisher_.publishFixedTransforms(tf_prefix_);
 }
 
 void JointStateListener::callbackJointState(const JointStateConstPtr& state)
@@ -101,7 +101,7 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
     map<string, double> joint_positions;
     for (unsigned int i=0; i<state->name.size(); i++)
       joint_positions.insert(make_pair(state->name[i], state->position[i]));
-    state_publisher_.publishTransforms(joint_positions, state->header.stamp);
+    state_publisher_.publishTransforms(joint_positions, state->header.stamp, tf_prefix_);
 
     // store publish time in joint map
     for (unsigned int i=0; i<state->name.size(); i++)
