@@ -99,7 +99,7 @@ namespace robot_state_publisher{
   // publish fixed transforms
   void RobotStatePublisher::publishFixedTransforms()
   {
-    ROS_DEBUG("Publishing transforms for moving joints");
+    ROS_DEBUG("Publishing transforms for fixed joints");
     std::vector<tf::StampedTransform> tf_transforms;
     tf::StampedTransform tf_transform;
     tf_transform.stamp_ = ros::Time::now()+ros::Duration(0.5);  // future publish by 0.5 seconds
