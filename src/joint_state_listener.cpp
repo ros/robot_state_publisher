@@ -56,7 +56,10 @@ JointStateListener::JointStateListener(const KDL::Tree& tree)
   // set publish frequency
   double publish_freq;
   n_tilde.param("publish_frequency", publish_freq, 50.0);
-  n_tilde.param("tf_prefix", tf_prefix_, std::string(""));
+  // get the tf_prefix parameter from the closest namespace
+  std::string tf_prefix_key;
+  n_tilde.searchParam("tf_prefix", tf_prefix_key);
+  n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
   publish_interval_ = ros::Duration(1.0/max(publish_freq,1.0));
 
   // subscribe to joint state
