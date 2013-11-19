@@ -55,12 +55,12 @@ namespace robot_state_publisher{
   // add children to correct maps
   void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segment)
   {
-    const std::string& root = segment->second.segment.getName();
+    const std::string& root = GetTreeElementSegment(segment->second).getName();
 
-    const std::vector<KDL::SegmentMap::const_iterator>& children = segment->second.children;
+    const std::vector<KDL::SegmentMap::const_iterator>& children = GetTreeElementChildren(segment->second);
     for (unsigned int i=0; i<children.size(); i++){
-      const KDL::Segment& child = children[i]->second.segment;
-      SegmentPair s(children[i]->second.segment, root, child.getName());
+      const KDL::Segment& child = GetTreeElementSegment(children[i]->second);
+      SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
       if (child.getJoint().getType() == KDL::Joint::None){
         segments_fixed_.insert(make_pair(child.getJoint().getName(), s));
         ROS_DEBUG("Adding fixed segment from %s to %s", root.c_str(), child.getName().c_str());
