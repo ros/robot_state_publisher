@@ -64,6 +64,7 @@ private:
   void callbackJointState(const JointStateConstPtr& state);
   void callbackFixedJoint(const ros::TimerEvent& e);
 
+  std::string tf_prefix_;
   Duration publish_interval_;
   robot_state_publisher::RobotStatePublisher state_publisher_;
   Subscriber joint_state_sub_;
