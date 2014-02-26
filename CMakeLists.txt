@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(robot_state_publisher)
 
-find_package(catkin REQUIRED)
-
-find_package(catkin REQUIRED COMPONENTS roscpp rosconsole rostime tf tf_conversions kdl_parser)
+find_package(catkin REQUIRED COMPONENTS 
+  roscpp rosconsole rostime tf tf_conversions kdl_parser rostest)
 
 catkin_package(
   LIBRARIES ${PROJECT_NAME}_solver
@@ -12,9 +11,9 @@ catkin_package(
 
 include_directories(include)
 
-find_package(Orocos-KDL REQUIRED)
-include_directories(${Orocos-KDL_INCLUDE_DIRS})
-link_directories(${Orocos-KDL_LIBRARY_DIRS})
+find_package(orocos_kdl REQUIRED)
+include_directories(${orocos_kdl_INCLUDE_DIRS})
+link_directories(${orocos_kdl_LIBRARY_DIRS})
 
 include_directories(${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
@@ -23,7 +22,7 @@ find_package(Eigen REQUIRED)
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME}_solver src/robot_state_publisher.cpp src/treefksolverposfull_recursive.cpp)
-target_link_libraries(${PROJECT_NAME}_solver ${Orocos-KDL_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES} ${catkin_LIBRARIES})
 
 add_executable(${PROJECT_NAME} src/joint_state_listener.cpp )
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver log4cxx )
@@ -32,34 +31,31 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver log4cxx )
 add_executable(state_publisher src/joint_state_listener.cpp )
 target_link_libraries(state_publisher ${PROJECT_NAME}_solver log4cxx)
 
-# CATKIN has no ROS test for now. Disabling
+# Tests
 
-#rosbuild_add_executable(test_publisher test/test_publisher.cpp )
-#target_link_libraries(test_publisher ${PROJECT_NAME}_solver)
-#rosbuild_add_gtest_build_flags(test_publisher)
-#rosbuild_declare_test(test_publisher)
-#rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_publisher.launch)
+catkin_add_gtest(test_publisher test/test_publisher.cpp)
+target_link_libraries(test_publisher ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
+add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_publisher.launch)
 
-#rosbuild_add_executable(test_one_link test/test_one_link.cpp )
-#target_link_libraries(test_one_link ${PROJECT_NAME}_solver)
-#rosbuild_add_gtest_build_flags(test_one_link)
-#rosbuild_declare_test(test_one_link)
-#rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_one_link.launch)
+catkin_add_gtest(test_one_link test/test_one_link.cpp )
+target_link_libraries(test_one_link ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
+add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_one_link.launch)
 
-#rosbuild_add_executable(test_two_links_fixed_joint test/test_two_links_fixed_joint.cpp )
-#target_link_libraries(test_two_links_fixed_joint ${PROJECT_NAME}_solver)
-#rosbuild_add_gtest_build_flags(test_two_links_fixed_joint)
-#rosbuild_declare_test(test_two_links_fixed_joint)
-#rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_two_links_fixed_joint.launch)
+catkin_add_gtest(test_two_links_fixed_joint test/test_two_links_fixed_joint.cpp )
+target_link_libraries(test_two_links_fixed_joint ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
+add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_two_links_fixed_joint.launch)
 
-#rosbuild_add_executable(test_two_links_moving_joint test/test_two_links_moving_joint.cpp )
-#target_link_libraries(test_two_links_moving_joint ${PROJECT_NAME}_solver)
-#rosbuild_add_gtest_build_flags(test_two_links_moving_joint)
-#rosbuild_declare_test(test_two_links_moving_joint)
-#rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_two_links_moving_joint.launch)
+catkin_add_gtest(test_two_links_moving_joint test/test_two_links_moving_joint.cpp )
+target_link_libraries(test_two_links_moving_joint ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
+add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_two_links_moving_joint.launch)
 
 # Download needed data file
-#rosbuild_download_test_data(http://pr.willowgarage.com/data/robot_state_publisher/joint_states_indexed.bag test/joint_states_indexed.bag 793e0b566ebe4698265a936b92fa2bba)
+catkin_download_test_data(
+  joint_states_indexed_bag
+  http://wiki.ros.org/robot_state_publisher/data?action=AttachFile&do=get&target=joint_states_indexed.bag
+  DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_SHARE_DESTINATION}/test
+  FILENAME joint_states_indexed.bag 
+  MD5 793e0b566ebe4698265a936b92fa2bba)
 
 install(TARGETS ${PROJECT_NAME}_solver ${PROJECT_NAME} state_publisher
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

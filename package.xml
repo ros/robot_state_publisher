@@ -38,4 +38,6 @@
   <run_depend>sensor_msgs</run_depend>
   <run_depend>tf</run_depend> 
   <run_depend>tf_conversions</run_depend> 
+
+  <build_depend>rostest</build_depend>
 </package>
