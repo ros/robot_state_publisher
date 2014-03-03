@@ -48,7 +48,7 @@ using namespace KDL;
 using namespace robot_state_publisher;
 
 JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m)
-  : state_publisher_(tree), mimic(m)
+  : state_publisher_(tree), mimic_(m)
 {
   ros::NodeHandle n_tilde("~");
   ros::NodeHandle n;
@@ -105,7 +105,7 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
     for (unsigned int i=0; i<state->name.size(); i++)
       joint_positions.insert(make_pair(state->name[i], state->position[i]));
 
-    for(MimicMap::iterator i = mimic.begin(); i != mimic.end(); i++){
+    for(MimicMap::iterator i = mimic_.begin(); i != mimic_.end(); i++){
       if(joint_positions.find(i->second->joint_name) != joint_positions.end()){
         double pos = joint_positions[i->second->joint_name] * i->second->multiplier + i->second->offset;
         joint_positions.insert(make_pair(i->first, pos));

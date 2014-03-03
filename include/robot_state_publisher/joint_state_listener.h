@@ -72,7 +72,7 @@ private:
   Subscriber joint_state_sub_;
   ros::Timer timer_;
   std::map<std::string, ros::Time> last_publish_time_;
-  MimicMap mimic;
+  MimicMap mimic_;
 
 };
 }
