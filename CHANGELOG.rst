@@ -2,6 +2,16 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add version depend on orocos_kdl >= 1.3.0
+  Conflicts:
+  package.xml
+* Update KDL SegmentMap interface to optionally use shared pointers
+  The KDL Tree API optionally uses shared pointers on platforms where
+  the STL containers don't support incomplete types.
+* Contributors: Brian Jensen, William Woodall
+
 1.10.0 (2014-03-03)
 -------------------
 * minor style fixes
