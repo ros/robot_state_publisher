@@ -87,8 +87,17 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
     return;
   }
 
+  // check if we moved backwards in time (e.g. when playing a bag file)
+  ros::Time now = ros::Time::now();
+  if(last_callback_time_ > now) {
+    // force re-publish of joint transforms
+    ROS_WARN("Moved backwards in time (probably because ROS clock was reset), re-publishing joint transforms!");
+    last_publish_time_.clear();
+  }
+  last_callback_time_ = now;
+
   // determine least recently published joint
-  ros::Time last_published = ros::Time::now();
+  ros::Time last_published = now;
   for (unsigned int i=0; i<state->name.size(); i++)
   {
     ros::Time t = last_publish_time_[state->name[i]];
