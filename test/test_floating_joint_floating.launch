@@ -1,0 +1,13 @@
+<launch>
+   
+  <!-- Floating joints are not published-->
+  <node pkg="robot_state_publisher" name="robot_state_publisher" type="robot_state_publisher" output="screen">
+    <param name="pub_float_as_fixed" value="false" />
+  </node>
+  <param name="robot_description" textfile="$(find robot_state_publisher)/test/two_links_floating_joint.urdf" />
+
+  <test test-name="ignore_floats" pkg="robot_state_publisher" type="test_floating_joint">
+    <param name="pub_float_as_fixed" value="false" />
+  </test>
+  
+</launch>
