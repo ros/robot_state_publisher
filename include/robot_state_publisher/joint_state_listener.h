@@ -56,8 +56,11 @@ class JointStateListener{
 public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
+   * \param m Map of mimic joints
+   * \param ignore_joints List of joints to ignore when publishing transforms
    */
-  JointStateListener(const KDL::Tree& tree, const MimicMap& m);
+  JointStateListener(const KDL::Tree& tree, const MimicMap& m,
+                     const std::vector<std::string> ignore_joints);
 
   /// Destructor
   ~JointStateListener();

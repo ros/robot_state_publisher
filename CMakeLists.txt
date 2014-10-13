@@ -55,6 +55,19 @@ target_link_libraries(state_publisher ${PROJECT_NAME}_solver log4cxx ${orocos_kd
 #rosbuild_declare_test(test_two_links_moving_joint)
 #rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_two_links_moving_joint.launch)
 
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest)
+  
+  # Create a common test node for the different scenarios
+  add_executable(test_floating_joint test/test_floating_joint.cpp)
+  target_link_libraries(test_floating_joint ${PROJECT_NAME}_solver ${GTEST_LIBRARIES})
+  
+  add_rostest(test/test_floating_joint_default.launch)
+  add_rostest(test/test_floating_joint_fixed.launch)
+  add_rostest(test/test_floating_joint_floating.launch)
+    
+endif()
+
 # Download needed data file
 #rosbuild_download_test_data(http://pr.willowgarage.com/data/robot_state_publisher/joint_states_indexed.bag test/joint_states_indexed.bag 793e0b566ebe4698265a936b92fa2bba)
 

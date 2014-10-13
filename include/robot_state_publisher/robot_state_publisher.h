@@ -63,8 +63,10 @@ class RobotStatePublisher
 public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree 
+   * \param ignore_joints List of joints to ignore when publishing transforms
    */
-  RobotStatePublisher(const KDL::Tree& tree);
+  RobotStatePublisher(const KDL::Tree& tree,
+                      const std::vector<std::string>ignore_joints);
 
   /// Destructor
   ~RobotStatePublisher(){};
@@ -77,7 +79,8 @@ public:
   void publishFixedTransforms(const std::string& tf_prefix);
 
 private:
-  void addChildren(const KDL::SegmentMap::const_iterator segment);
+  void addChildren(const KDL::SegmentMap::const_iterator segment,
+                   const std::vector<std::string>ignore_joints);
 
 
   std::map<std::string, SegmentPair> segments_, segments_fixed_;
