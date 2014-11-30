@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.10.4 (2014-11-30)
+-------------------
 * Merge pull request `#21 <https://github.com/ros/robot_state_publisher/issues/21>`_ from rcodddow/patch-1
 * Fix for joint transforms not being published anymore after a clock reset (e.g. when playing a bagfile and looping)
 * Contributors: Ioan A Sucan, Robert Codd-Downey, Timm Linder
