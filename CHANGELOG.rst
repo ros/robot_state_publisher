@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.12 (2014-11-30)
+-------------------
 * Backporting mimic support
 * Contributors: Ioan A Sucan, Konrad Banachowicz
 
