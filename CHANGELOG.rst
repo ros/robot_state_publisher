@@ -2,6 +2,12 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#21 <https://github.com/ros/robot_state_publisher/issues/21>`_ from rcodddow/patch-1
+* Fix for joint transforms not being published anymore after a clock reset (e.g. when playing a bagfile and looping)
+* Contributors: Ioan A Sucan, Robert Codd-Downey, Timm Linder
+
 1.10.3 (2014-07-24)
 -------------------
 * add version depend on orocos_kdl >= 1.3.0
