@@ -1,0 +1,12 @@
+<launch>
+  
+  <!-- By DEFAULT floating joints should be published as fixed -->
+  <node pkg="robot_state_publisher" name="robot_state_publisher" type="robot_state_publisher" output="screen">
+  </node>
+  <param name="robot_description" textfile="$(find robot_state_publisher)/test/two_links_floating_joint.urdf" />
+
+  <test test-name="default" pkg="robot_state_publisher" type="test_floating_joint">
+    <param name="pub_float_as_fixed" value="true" />
+  </test>
+  
+</launch>

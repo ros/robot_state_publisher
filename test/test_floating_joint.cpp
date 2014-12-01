@@ -34,61 +34,66 @@
 
 /* Author: Wim Meeussen */
 
-#ifndef ROBOT_STATE_PUBLISHER_H
-#define ROBOT_STATE_PUBLISHER_H
-
+#include <string>
+#include <gtest/gtest.h>
 #include <ros/ros.h>
-#include <boost/scoped_ptr.hpp>
-#include <tf/tf.h>
-#include <tf/transform_broadcaster.h>
-#include <kdl/frames.hpp>
-#include <kdl/segment.hpp>
-#include <kdl/tree.hpp>
+#include <tf/transform_listener.h>
+#include <boost/thread/thread.hpp>
+#include <urdf/model.h>
+#include <kdl_parser/kdl_parser.hpp>
+#include "robot_state_publisher/joint_state_listener.h"
 
-namespace robot_state_publisher{
 
-class SegmentPair
+using namespace ros;
+using namespace tf;
+
+
+int g_argc;
+char** g_argv;
+
+TEST(FloatingJoint, test)
 {
-public:
-  SegmentPair(const KDL::Segment& p_segment, const std::string& p_root, const std::string& p_tip):
-    segment(p_segment), root(p_root), tip(p_tip){}
+  ROS_INFO("Creating tf listener");
+  const double TF_START_DELAY = 1.0;
+  const double WAIT_DELAY = 0.1;
+  TransformListener tf;
+  ros::NodeHandle pn("~");
+  bool pub_float_as_fixed = false;
+  ASSERT_TRUE(pn.getParam("pub_float_as_fixed", pub_float_as_fixed));
 
-  KDL::Segment segment;
-  std::string root, tip;
-};
+  //sleep is required to seed tf (anything less than 1 second results in test failure
+  ros::Duration(TF_START_DELAY).sleep();
 
-
-class RobotStatePublisher
-{
-public:
-  /** Constructor
-   * \param tree The kinematic model of a robot, represented by a KDL Tree 
-   * \param ignore_joints List of joints to ignore when publishing transforms
-   */
-  RobotStatePublisher(const KDL::Tree& tree,
-                      const std::vector<std::string>ignore_joints);
-
-  /// Destructor
-  ~RobotStatePublisher(){};
-
-  /** Publish transforms to tf 
-   * \param joint_positions A map of joint names and joint positions. 
-   * \param time The time at which the joint positions were recorded
-   */
-  void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time, const std::string& tf_prefix);
-  void publishFixedTransforms(const std::string& tf_prefix);
-
-private:
-  void addChildren(const KDL::SegmentMap::const_iterator segment,
-                   const std::vector<std::string>ignore_joints);
-
-
-  std::map<std::string, SegmentPair> segments_, segments_fixed_;
-  tf::TransformBroadcaster tf_broadcaster_;
-};
-
-
-
+  if (pub_float_as_fixed)
+  {
+    ROS_INFO("Testing for publishing floats as fixed");
+    ASSERT_TRUE(tf.frameExists("world"));
+    ASSERT_TRUE(tf.frameExists("floating"));
+    ASSERT_TRUE(tf.waitForTransform("world", "floating", ros::Time::now(), ros::Duration(WAIT_DELAY)));
+  }
+  else
+  {
+    ROS_INFO("Testing for NOT publishing floats as fixed");
+    ASSERT_FALSE(tf.waitForTransform("world", "floating", ros::Time::now(), ros::Duration(WAIT_DELAY)));
+  }
+  SUCCEED();
 }
 
-#endif
+
+
+
+int main(int argc, char** argv)
+{
+  testing::InitGoogleTest(&argc, argv);
+  ros::init(argc, argv, "test_robot_state_publisher");
+  ros::NodeHandle node;
+  boost::thread ros_thread(boost::bind(&ros::spin));
+
+  g_argc = argc;
+  g_argv = argv;
+  int res = RUN_ALL_TESTS();
+  ros_thread.interrupt();
+  ros_thread.join();
+
+  return res;
+}

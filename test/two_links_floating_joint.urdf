@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<robot name = "floating_joint" xmlns:xacro="http://ros.org/wiki/xacro">
+	
+  <link name="world" />
+  <link name="floating" />
+  
+  <joint name="world-to-floating" type="floating">
+  	<parent link="world"/>
+  	<child link="floating"/>
+  	<origin xyz="1.0 1.0 1.0" rpy="0 0 0"/>
+  </joint>
+		
+</robot>

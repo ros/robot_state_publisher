@@ -47,8 +47,9 @@ using namespace ros;
 using namespace KDL;
 using namespace robot_state_publisher;
 
-JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m)
-  : state_publisher_(tree), mimic_(m)
+JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
+                                       const std::vector<std::string> ignore_joints)
+  : state_publisher_(tree, ignore_joints), mimic_(m)
 {
   ros::NodeHandle n_tilde("~");
   ros::NodeHandle n;
@@ -128,6 +129,7 @@ int main(int argc, char** argv)
   // Initialize ros
   ros::init(argc, argv, "robot_state_publisher");
   NodeHandle node;
+  NodeHandle pn("~");
   std::cout <<argv[0] << std::endl;
 
   ///////////////////////////////////////// begin deprecation warning
@@ -148,15 +150,32 @@ int main(int argc, char** argv)
     return -1;
   }
 
+  // By default, floating joints are published as fixed transforms by the robot state publisher
+  // This default behavior is in place for legacy reasons, but can be overridden by telling the
+  // robot state publisher to ignore the joints.
+  bool pub_float_as_fixed;
+  pn.param<bool>("pub_float_as_fixed", pub_float_as_fixed, true);
+  if ( !pub_float_as_fixed )
+  {
+    ROS_INFO("Floating joints will NOT be published by robot state publisher.");
+  }
+
   MimicMap mimic;
+  std::vector<std::string>ignore_joints;
 
   for(std::map< std::string, boost::shared_ptr< urdf::Joint > >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++){
     if(i->second->mimic){
       mimic.insert(make_pair(i->first, i->second->mimic));
     }
+    else if (urdf::Joint::FLOATING == i->second->type && !pub_float_as_fixed)
+    {
+      ROS_DEBUG_STREAM("Floating joint: " << i->second->name << ", will NOT be published by"
+                       << " the robot state publisher");
+      ignore_joints.push_back(i->second->name);
+    }
   }
 
-  JointStateListener state_publisher(tree, mimic);
+  JointStateListener state_publisher(tree, mimic, ignore_joints);
   ros::spin();
 
   return 0;

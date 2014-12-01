@@ -45,31 +45,48 @@ using namespace ros;
 
 namespace robot_state_publisher{
 
-  RobotStatePublisher::RobotStatePublisher(const KDL::Tree& tree)
+  RobotStatePublisher::RobotStatePublisher(const KDL::Tree& tree,
+                                           const std::vector<std::string>ignore_joints)
   {
     // walk the tree and add segments to segments_
-    addChildren(tree.getRootSegment());
+    addChildren(tree.getRootSegment(), ignore_joints);
   }
 
 
   // add children to correct maps
-  void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segment)
+  void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segment,
+                                        const std::vector<std::string>ignore_joints)
   {
     const std::string& root = GetTreeElementSegment(segment->second).getName();
 
     const std::vector<KDL::SegmentMap::const_iterator>& children = GetTreeElementChildren(segment->second);
     for (unsigned int i=0; i<children.size(); i++){
-      const KDL::Segment& child = GetTreeElementSegment(children[i]->second);
-      SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
-      if (child.getJoint().getType() == KDL::Joint::None){
+    const KDL::Segment& child = GetTreeElementSegment(children[i]->second);
+    SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
+
+    if (std::find(ignore_joints.begin(), ignore_joints.end(), child.getJoint().getName()) == ignore_joints.end())
+    {
+      if (child.getJoint().getType() == KDL::Joint::None)
+      {
+
         segments_fixed_.insert(make_pair(child.getJoint().getName(), s));
-        ROS_DEBUG("Adding fixed segment from %s to %s", root.c_str(), child.getName().c_str());
+        ROS_DEBUG("Adding fixed segment %s from %s to %s", child.getJoint().getName().c_str(),
+                  root.c_str(), child.getName().c_str());
       }
-      else{
+      else
+      {
         segments_.insert(make_pair(child.getJoint().getName(), s));
         ROS_DEBUG("Adding moving segment from %s to %s", root.c_str(), child.getName().c_str());
       }
-      addChildren(children[i]);
+    }
+
+    else
+    {
+      ROS_INFO(
+          "Ignoring joint segment %s, from %s to %s", child.getJoint().getName().c_str(),
+          root.c_str(), child.getName().c_str());
+    }
+    addChildren(children[i], ignore_joints);
     }
   }
 
