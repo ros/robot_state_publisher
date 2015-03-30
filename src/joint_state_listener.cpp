@@ -137,7 +137,6 @@ int main(int argc, char** argv)
   // Initialize ros
   ros::init(argc, argv, "robot_state_publisher");
   NodeHandle node;
-  std::cout <<argv[0] << std::endl;
 
   ///////////////////////////////////////// begin deprecation warning
   std::string exe_name = argv[0];
