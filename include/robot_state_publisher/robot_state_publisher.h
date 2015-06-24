@@ -40,8 +40,9 @@
 #include <ros/ros.h>
 #include <boost/scoped_ptr.hpp>
 #include <tf/tf.h>
-#include <tf/transform_broadcaster.h>
 #include <urdf/model.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_broadcaster.h>
 #include <kdl/frames.hpp>
 #include <kdl/segment.hpp>
 #include <kdl/tree.hpp>
@@ -75,15 +76,16 @@ public:
    * \param time The time at which the joint positions were recorded
    */
   void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time, const std::string& tf_prefix);
-  void publishFixedTransforms(const std::string& tf_prefix);
+  void publishFixedTransforms(const std::string& tf_prefix, bool use_tf_static);
 
 private:
   void addChildren(const KDL::SegmentMap::const_iterator segment);
 
 
   std::map<std::string, SegmentPair> segments_, segments_fixed_;
-  tf::TransformBroadcaster tf_broadcaster_;
   const urdf::Model& model_;
+  tf2_ros::TransformBroadcaster tf_broadcaster_;
+  tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
 };
 
 
