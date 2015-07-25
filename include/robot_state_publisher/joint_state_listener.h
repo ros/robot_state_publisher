@@ -42,6 +42,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
 #include "robot_state_publisher/robot_state_publisher.h"
+#include <std_srvs/Trigger.h>
 
 using namespace std;
 using namespace ros;
@@ -59,18 +60,29 @@ public:
    */
   JointStateListener(const KDL::Tree& tree, const MimicMap& m);
 
-  /// Destructor
+  ros::ServiceServer reload_server;
+
   ~JointStateListener();
 
 private:
+
+  /// Callback for reload-Service
+  bool reload_robot_model_cb(std_srvs::Trigger::Request& req, std_srvs::Trigger::Response& res);
+
+  bool reload_robot_model(std::string& error_msg);
+
+
   void callbackJointState(const JointStateConstPtr& state);
   void callbackFixedJoint(const ros::TimerEvent& e);
+
+  /// used as mutex
+  bool update_ongoing;
 
   std::string tf_prefix_;
   Duration publish_interval_;
   robot_state_publisher::RobotStatePublisher state_publisher_;
   Subscriber joint_state_sub_;
-  ros::Timer timer_;
+  ros::Timer pub_fixed_trafos_timer_;
   ros::Time last_callback_time_;
   std::map<std::string, ros::Time> last_publish_time_;
   MimicMap mimic_;

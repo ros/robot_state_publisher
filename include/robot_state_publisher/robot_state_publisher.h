@@ -39,6 +39,8 @@
 
 #include <ros/ros.h>
 #include <boost/scoped_ptr.hpp>
+
+
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <kdl/frames.hpp>
@@ -67,7 +69,7 @@ public:
   RobotStatePublisher(const KDL::Tree& tree);
 
   /// Destructor
-  ~RobotStatePublisher(){};
+  ~RobotStatePublisher(){}
 
   /** Publish transforms to tf 
    * \param joint_positions A map of joint names and joint positions. 
@@ -76,7 +78,17 @@ public:
   void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time, const std::string& tf_prefix);
   void publishFixedTransforms(const std::string& tf_prefix);
 
+  /** Sets the robot model
+  * \param tree The kinematic model of a robot, represented by a KDL Tree 
+  */
+  void updateTree(const KDL::Tree& tree);
+
+  void createTreeInfo(std::string& msg);
+
+
 private:
+
+
   void addChildren(const KDL::SegmentMap::const_iterator segment);
 
 
