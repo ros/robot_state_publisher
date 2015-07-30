@@ -44,11 +44,6 @@
 #include "robot_state_publisher/joint_state_listener.h"
 
 
-using namespace ros;
-using namespace tf;
-using namespace robot_state_publisher;
-
-
 int g_argc;
 char** g_argv;
 
@@ -82,7 +77,8 @@ TEST_F(TestPublisher, test)
   ros::NodeHandle n;
   ros::Publisher js_pub = n.advertise<sensor_msgs::JointState>("joint_states", 100);
   sensor_msgs::JointState js_msg;
-  for (unsigned int i=0; i<100; i++){
+  for (unsigned int i = 0; i < 100; i++)
+  {
     js_msg.header.stamp = ros::Time::now();
     js_pub.publish(js_msg);
     ros::Duration(0.1).sleep();

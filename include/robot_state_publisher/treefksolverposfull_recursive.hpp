@@ -27,7 +27,8 @@
 #include <tf/transform_datatypes.h>
 
 
-namespace KDL {
+namespace KDL
+{
 
 class TreeFkSolverPosFull_recursive
 
@@ -36,14 +37,14 @@ public:
   TreeFkSolverPosFull_recursive(const Tree& _tree);
   ~TreeFkSolverPosFull_recursive();
 
-  int JntToCart(const std::map<std::string, double>& q_in, std::map<std::string, tf::Stamped<Frame> >& p_out, bool flatten_tree=true);
+  int JntToCart(const std::map<std::string, double>& q_in, std::map<std::string, tf::Stamped<Frame> >& p_out, bool flatten_tree = true);
 
 private:
-  void addFrameToMap(const std::map<std::string, double>& q_in, 
-		     std::map<std::string, tf::Stamped<KDL::Frame> >& p_out,
-		     const tf::Stamped<KDL::Frame>& previous_frame,
-		     const SegmentMap::const_iterator this_segment,
-		     bool flatten_tree);
+  void addFrameToMap(const std::map<std::string, double>& q_in,
+                     std::map<std::string, tf::Stamped<KDL::Frame> >& p_out,
+                     const tf::Stamped<KDL::Frame>& previous_frame,
+                     const SegmentMap::const_iterator this_segment,
+                     bool flatten_tree);
 
   Tree tree;
 

@@ -44,9 +44,9 @@
 #include "robot_state_publisher/joint_state_listener.h"
 
 
-using namespace ros;
-using namespace tf;
-using namespace robot_state_publisher;
+// using namespace ros;
+// using namespace tf;
+// using namespace robot_state_publisher;
 
 
 int g_argc;
@@ -89,12 +89,12 @@ TEST_F(TestPublisher, test)
   ASSERT_FALSE(tf.canTransform("base_link", "wim_link", Time()));
 
   tf::StampedTransform t;
-  tf.lookupTransform("base_link", "r_gripper_palm_link",Time(), t );
+  tf.lookupTransform("base_link", "r_gripper_palm_link", Time(), t);
   EXPECT_NEAR(t.getOrigin().x(), 0.769198, EPS);
   EXPECT_NEAR(t.getOrigin().y(), -0.188800, EPS);
   EXPECT_NEAR(t.getOrigin().z(), 0.764914, EPS);
-  
-  tf.lookupTransform("l_gripper_palm_link", "r_gripper_palm_link",Time(), t );
+
+  tf.lookupTransform("l_gripper_palm_link", "r_gripper_palm_link", Time(), t);
   EXPECT_NEAR(t.getOrigin().x(), 0.000384222, EPS);
   EXPECT_NEAR(t.getOrigin().y(), -0.376021, EPS);
   EXPECT_NEAR(t.getOrigin().z(), -1.0858e-05, EPS);
