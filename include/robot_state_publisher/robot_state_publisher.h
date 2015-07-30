@@ -46,8 +46,11 @@
 #include <kdl/frames.hpp>
 #include <kdl/segment.hpp>
 #include <kdl/tree.hpp>
+#include <map>
+#include <string>
 
-namespace robot_state_publisher{
+namespace robot_state_publisher
+{
 
 class SegmentPair
 {
@@ -66,7 +69,7 @@ public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree 
    */
-  RobotStatePublisher(const KDL::Tree& tree);
+  explicit RobotStatePublisher(const KDL::Tree& tree);
 
   /// Destructor
   ~RobotStatePublisher(){}
@@ -75,7 +78,9 @@ public:
    * \param joint_positions A map of joint names and joint positions. 
    * \param time The time at which the joint positions were recorded
    */
-  void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time, const std::string& tf_prefix);
+  void publishTransforms(const std::map<std::string, double>& joint_positions,
+                         const ros::Time& time, const std::string& tf_prefix);
+
   void publishFixedTransforms(const std::string& tf_prefix);
 
   /** Sets the robot model
@@ -83,14 +88,11 @@ public:
   */
   void updateTree(const KDL::Tree& tree);
 
-  void createTreeInfo(std::string& msg);
+  void createTreeInfo(std::string* msg);
 
 
 private:
-
-
   void addChildren(const KDL::SegmentMap::const_iterator segment);
-
 
   std::map<std::string, SegmentPair> segments_, segments_fixed_;
   tf::TransformBroadcaster tf_broadcaster_;
@@ -98,6 +100,6 @@ private:
 
 
 
-}
+}  // namespace robot_state_publisher
 
-#endif
+#endif  // ROBOT_STATE_PUBLISHER_H

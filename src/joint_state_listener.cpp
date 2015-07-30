@@ -40,19 +40,17 @@
 #include "robot_state_publisher/robot_state_publisher.h"
 #include "robot_state_publisher/joint_state_listener.h"
 #include <kdl_parser/kdl_parser.hpp>
+#include <map>
+#include <string>
+#include <algorithm>
 
-
-using namespace std;
-using namespace ros;
-using namespace KDL;
-using namespace robot_state_publisher;
+using robot_state_publisher::JointStateListener;
 
 JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m):
     update_ongoing(false),
     state_publisher_(tree),
     mimic_(m)
 {
-
     ros::NodeHandle n_tilde("~");
     ros::NodeHandle n;
 
@@ -64,7 +62,7 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m)
     std::string tf_prefix_key;
     n_tilde.searchParam("tf_prefix", tf_prefix_key);
     n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
-    publish_interval_ = ros::Duration(1.0/max(publish_freq,1.0));
+    publish_interval_ = ros::Duration(1.0/max(publish_freq, 1.0));
 
     reload_server = n_tilde.advertiseService("reload_robot_model", &JointStateListener::reload_robot_model_cb, this);
 
@@ -78,48 +76,52 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m)
 
 
 
-bool loadTreeAndMimicMap(KDL::Tree & tree, MimicMap& mimic_map, std::string& err_msg){
-
+bool loadTreeAndMimicMap(KDL::Tree  tree, MimicMap *mimic_map, std::string *err_msg)
+{
     // gets the location of the robot description on the parameter server
     urdf::Model model;
     bool found = model.initParam("robot_description");
 
-    if (!found){
-        err_msg = "Could not read urdf_model from parameter server";
+    if (!found)
+    {
+        *err_msg = "Could not read urdf_model from parameter server";
         return false;
     }
 
-    if (!kdl_parser::treeFromUrdfModel(model, tree)){
-        err_msg = "Failed to extract kdl tree from xml robot description";
+    if (!kdl_parser::treeFromUrdfModel(model, tree))
+    {
+        *err_msg = "Failed to extract kdl tree from xml robot description";
         return false;
     }
 
 
-    mimic_map.clear();
+    mimic_map->clear();
     std::map< std::string, boost::shared_ptr< urdf::Joint > >::iterator it;
-    for(it = model.joints_.begin(); it != model.joints_.end(); it++){
-        if(it->second->mimic){
-            mimic_map.insert(make_pair(it->first, it->second->mimic));
+    for (it = model.joints_.begin(); it != model.joints_.end(); it++)
+    {
+        if (it->second->mimic)
+        {
+            mimic_map->insert(make_pair(it->first, it->second->mimic));
         }
     }
 
     return true;
-
 }
 
-bool JointStateListener::reload_robot_model(std::string& msg){
-
+bool JointStateListener::reload_robot_model(std::string* msg)
+{
     update_ongoing = true;
 
-    pub_fixed_trafos_timer_.stop(); /// make sure that state_publisher is not currently publishing
-    publish_interval_.sleep(); /// allow publishFixedTransforms to end
+    pub_fixed_trafos_timer_.stop();  /// make sure that state_publisher is not currently publishing
+    publish_interval_.sleep();       /// allow publishFixedTransforms to end
 
 
     KDL::Tree tree;
     mimic_.clear();
 
-    if (!loadTreeAndMimicMap(tree, mimic_, msg)){
-        ROS_ERROR("%s",msg.c_str());
+    if (!loadTreeAndMimicMap(tree, &mimic_, msg))
+    {
+        ROS_ERROR("%s", msg->c_str());
         return false;
     }
 
@@ -127,10 +129,8 @@ bool JointStateListener::reload_robot_model(std::string& msg){
     /// that the failure is obvious and no one is working with the old model
 
     state_publisher_.updateTree(tree);
-
-    state_publisher_.createTreeInfo(msg); /// create an info-string for the service caller
-
-    pub_fixed_trafos_timer_.start(); /// fixed transforms are published again
+    state_publisher_.createTreeInfo(msg);  /// create an info-string for the service caller
+    pub_fixed_trafos_timer_.start();        /// fixed transforms are published again
 
     update_ongoing = false;
 
@@ -139,9 +139,10 @@ bool JointStateListener::reload_robot_model(std::string& msg){
 
 
 
-bool JointStateListener::reload_robot_model_cb(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res){
+bool JointStateListener::reload_robot_model_cb(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res)
+{
     ROS_DEBUG("Reload of Robot model requested");
-    res.success = reload_robot_model(res.message);
+    res.success = reload_robot_model(&res.message);
     return true;
 }
 
@@ -155,10 +156,10 @@ void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
 
 void JointStateListener::callbackJointState(const JointStateConstPtr& state)
 {
-
     /// continue processing of state-msgs to not collect old msgs in queue
-    if (update_ongoing){
-        ROS_WARN_THROTTLE(1,"Skipping joing state while robot model is updated");
+    if (update_ongoing)
+    {
+        ROS_WARN_THROTTLE(1, "Skipping joing state while robot model is updated");
         return;
     }
 
@@ -170,16 +171,18 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
 
     // check if we moved backwards in time (e.g. when playing a bag file)
     ros::Time now = ros::Time::now();
-    if(last_callback_time_ > now) {
+    if (last_callback_time_ > now)
+    {
         // force re-publish of joint transforms
         ROS_WARN("Moved backwards in time (probably because ROS clock was reset), re-publishing joint transforms!");
         last_publish_time_.clear();
     }
+
     last_callback_time_ = now;
 
     // determine least recently published joint
     ros::Time last_published = now;
-    for (unsigned int i=0; i<state->name.size(); i++)
+    for (unsigned int i = 0; i < state->name.size(); i++)
     {
         ros::Time t = last_publish_time_[state->name[i]];
         last_published = (t < last_published) ? t : last_published;
@@ -189,14 +192,16 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
 
 
     // check if we need to publish
-    if (state->header.stamp >= last_published + publish_interval_){
+    if (state->header.stamp >= last_published + publish_interval_)
+    {
         // get joint positions from state message
         map<string, double> joint_positions;
-        for (unsigned int i=0; i<state->name.size(); i++)
+        for (unsigned int i = 0; i < state->name.size(); i++)
             joint_positions.insert(make_pair(state->name[i], state->position[i]));
 
-        for(MimicMap::iterator i = mimic_.begin(); i != mimic_.end(); i++){
-            if(joint_positions.find(i->second->joint_name) != joint_positions.end()){
+        for (MimicMap::iterator i = mimic_.begin(); i != mimic_.end(); i++){
+            if (joint_positions.find(i->second->joint_name) != joint_positions.end())
+            {
                 double pos = joint_positions[i->second->joint_name] * i->second->multiplier + i->second->offset;
                 joint_positions.insert(make_pair(i->first, pos));
             }
@@ -205,13 +210,12 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
         state_publisher_.publishTransforms(joint_positions, state->header.stamp, tf_prefix_);
 
         // store publish time in joint map
-        for (unsigned int i=0; i<state->name.size(); i++)
+        for (unsigned int i = 0; i < state->name.size(); i++)
+        {
             last_publish_time_[state->name[i]] = state->header.stamp;
+        }
     }
 }
-
-
-
 
 
 // ----------------------------------
@@ -219,7 +223,6 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
 // ----------------------------------
 int main(int argc, char** argv)
 {
-
     ros::init(argc, argv, "robot_state_publisher");
 
     ///////////////////////////////////////// begin deprecation warning
@@ -236,8 +239,9 @@ int main(int argc, char** argv)
     MimicMap mimic;
     std::string err_msg;
 
-    if (!loadTreeAndMimicMap(tree, mimic, err_msg)){
-        ROS_ERROR("%s",err_msg.c_str());
+    if (!loadTreeAndMimicMap(tree, &mimic, &err_msg))
+    {
+        ROS_ERROR("%s", err_msg.c_str());
         return -1;
     }
 

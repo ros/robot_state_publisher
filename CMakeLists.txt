@@ -3,8 +3,9 @@ project(robot_state_publisher)
 
 find_package(orocos_kdl REQUIRED) 
 find_package(catkin REQUIRED
-  COMPONENTS roscpp rosconsole rostime tf tf_conversions kdl_parser cmake_modules std_srvs
+  COMPONENTS roscpp rosconsole rostime tf tf_conversions kdl_parser cmake_modules std_srvs roslint
 )
+
 find_package(Eigen REQUIRED)
 
 catkin_package(
@@ -12,6 +13,8 @@ catkin_package(
   INCLUDE_DIRS include
   DEPENDS roscpp rosconsole rostime tf tf_conversions kdl_parser orocos_kdl
 )
+
+roslint_cpp()
 
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS})
 include_directories(include ${catkin_INCLUDE_DIRS} ${orocos_kdl_INCLUDE_DIRS})

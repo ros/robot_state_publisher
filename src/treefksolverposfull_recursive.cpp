@@ -24,13 +24,15 @@
 #include <ros/ros.h>
 #include <iostream>
 #include <cstdio>
-
+#include <map>
 using namespace std;
 
-namespace KDL {
+
+namespace KDL
+{
 
 TreeFkSolverPosFull_recursive::TreeFkSolverPosFull_recursive(const Tree& _tree):
-  tree(_tree)
+    tree(_tree)
 {
 }
 
@@ -39,49 +41,53 @@ TreeFkSolverPosFull_recursive::~TreeFkSolverPosFull_recursive()
 }
 
 
-int TreeFkSolverPosFull_recursive::JntToCart(const map<string, double>& q_in, map<string, tf::Stamped<Frame> >& p_out, bool flatten_tree)
+int TreeFkSolverPosFull_recursive::JntToCart(const map<string, double>& q_in, map<string,
+                                             tf::Stamped<Frame> >& p_out, bool flatten_tree)
 {      
-  // clear output
-  p_out.clear();
+    // clear output
+    p_out.clear();
 
-  addFrameToMap(q_in, p_out, tf::Stamped<KDL::Frame>(KDL::Frame::Identity(), ros::Time(), GetTreeElementSegment(tree.getRootSegment()->second).getName()),
-                tree.getRootSegment(), flatten_tree);
+    addFrameToMap(q_in, p_out, tf::Stamped<KDL::Frame>(KDL::Frame::Identity(),
+                                                       ros::Time(),
+                                                       GetTreeElementSegment(tree.getRootSegment()->second).getName()),
+                  tree.getRootSegment(), flatten_tree);
 
-  return 0;
+    return 0;
 }
 
 
-					     
+
 void TreeFkSolverPosFull_recursive::addFrameToMap(const map<string, double>& q_in, 
-						  map<string, tf::Stamped<Frame> >& p_out,
-						  const tf::Stamped<KDL::Frame>& previous_frame,
-						  const SegmentMap::const_iterator this_segment,
-						  bool flatten_tree)
+                                                  map<string, tf::Stamped<Frame> >& p_out,
+                                                  const tf::Stamped<KDL::Frame>& previous_frame,
+                                                  const SegmentMap::const_iterator this_segment,
+                                                  bool flatten_tree)
 {
-  // get pose of this segment
-  tf::Stamped<KDL::Frame> this_frame;
-  double jnt_p = 0;
-  if (GetTreeElementSegment(this_segment->second).getJoint().getType() != Joint::None){
-    map<string, double>::const_iterator jnt_pos = q_in.find(GetTreeElementSegment(this_segment->second).getJoint().getName());
-    if (jnt_pos == q_in.end()){
-      ROS_DEBUG("Warning: TreeFKSolverPosFull Could not find value for joint '%s'. Skipping this tree branch", this_segment->first.c_str());
-      return;
+    // get pose of this segment
+    tf::Stamped<KDL::Frame> this_frame;
+    double jnt_p = 0;
+    if (GetTreeElementSegment(this_segment->second).getJoint().getType() != Joint::None){
+        map<string, double>::const_iterator jnt_pos = q_in.find(GetTreeElementSegment(this_segment->second).getJoint().getName());
+        if (jnt_pos == q_in.end()){
+            ROS_DEBUG("Warning: TreeFKSolverPosFull Could not find value for joint '%s'. Skipping this tree branch", this_segment->first.c_str());
+            return;
+        }
+        jnt_p = jnt_pos->second;
     }
-    jnt_p = jnt_pos->second;
-  }
-  this_frame = tf::Stamped<KDL::Frame>(previous_frame * GetTreeElementSegment(this_segment->second).pose(jnt_p), ros::Time(), previous_frame.frame_id_);
+    this_frame = tf::Stamped<KDL::Frame>(previous_frame * GetTreeElementSegment(this_segment->second).pose(jnt_p), ros::Time(), previous_frame.frame_id_);
 
-  if (this_segment->first != tree.getRootSegment()->first)
-    p_out.insert(make_pair(this_segment->first, tf::Stamped<KDL::Frame>(this_frame, ros::Time(), previous_frame.frame_id_)));
+    if (this_segment->first != tree.getRootSegment()->first)
+        p_out.insert(make_pair(this_segment->first, tf::Stamped<KDL::Frame>(this_frame, ros::Time(), previous_frame.frame_id_)));
 
-  // get poses of child segments
-  for (vector<SegmentMap::const_iterator>::const_iterator child = GetTreeElementChildren(this_segment->second).begin();
-        child != GetTreeElementChildren(this_segment->second).end(); child++){
-    if (flatten_tree)
-      addFrameToMap(q_in, p_out, this_frame, *child, flatten_tree);
-    else
-      addFrameToMap(q_in, p_out, tf::Stamped<KDL::Frame>(KDL::Frame::Identity(), ros::Time(), this_segment->first), *child, flatten_tree);
-  }      
+    // get poses of child segments
+    for (vector<SegmentMap::const_iterator>::const_iterator child = GetTreeElementChildren(this_segment->second).begin();
+         child != GetTreeElementChildren(this_segment->second).end(); child++)
+    {
+        if (flatten_tree)
+            addFrameToMap(q_in, p_out, this_frame, *child, flatten_tree);
+        else
+            addFrameToMap(q_in, p_out, tf::Stamped<KDL::Frame>(KDL::Frame::Identity(), ros::Time(), this_segment->first), *child, flatten_tree);
+    }
 }
 
-}
+}  // namespace KDL
