@@ -34,8 +34,8 @@
 
 /* Author: Wim Meeussen */
 
-#ifndef ROBOT_STATE_PUBLISHER_H
-#define ROBOT_STATE_PUBLISHER_H
+#ifndef ROBOT_STATE_PUBLISHER_ROBOT_STATE_PUBLISHER_H
+#define ROBOT_STATE_PUBLISHER_ROBOT_STATE_PUBLISHER_H
 
 #include <ros/ros.h>
 #include <boost/scoped_ptr.hpp>
@@ -56,7 +56,7 @@ class SegmentPair
 {
 public:
   SegmentPair(const KDL::Segment& p_segment, const std::string& p_root, const std::string& p_tip):
-    segment(p_segment), root(p_root), tip(p_tip){}
+    segment(p_segment), root(p_root), tip(p_tip) {}
 
   KDL::Segment segment;
   std::string root, tip;
@@ -67,15 +67,15 @@ class RobotStatePublisher
 {
 public:
   /** Constructor
-   * \param tree The kinematic model of a robot, represented by a KDL Tree 
+   * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
   explicit RobotStatePublisher(const KDL::Tree& tree);
 
   /// Destructor
-  ~RobotStatePublisher(){}
+  ~RobotStatePublisher() {}
 
-  /** Publish transforms to tf 
-   * \param joint_positions A map of joint names and joint positions. 
+  /** Publish transforms to tf
+   * \param joint_positions A map of joint names and joint positions.
    * \param time The time at which the joint positions were recorded
    */
   void publishTransforms(const std::map<std::string, double>& joint_positions,
@@ -84,7 +84,7 @@ public:
   void publishFixedTransforms(const std::string& tf_prefix);
 
   /** Sets the robot model
-  * \param tree The kinematic model of a robot, represented by a KDL Tree 
+  * \param tree The kinematic model of a robot, represented by a KDL Tree
   */
   void updateTree(const KDL::Tree& tree);
 
@@ -102,4 +102,4 @@ private:
 
 }  // namespace robot_state_publisher
 
-#endif  // ROBOT_STATE_PUBLISHER_H
+#endif  // ROBOT_STATE_PUBLISHER_ROBOT_STATE_PUBLISHER_H

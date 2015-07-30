@@ -34,8 +34,8 @@
 
 /* Author: Wim Meeussen */
 
-#ifndef JOINT_STATE_LISTENER_H
-#define JOINT_STATE_LISTENER_H
+#ifndef ROBOT_STATE_PUBLISHER_JOINT_STATE_LISTENER_H
+#define ROBOT_STATE_PUBLISHER_JOINT_STATE_LISTENER_H
 
 #include <urdf/model.h>
 #include <kdl/tree.hpp>
@@ -96,4 +96,4 @@ private:
 }  // namespace robot_state_publisher
 
 
-#endif  // JOINT_STATE_LISTENER_H
+#endif  // ROBOT_STATE_PUBLISHER_JOINT_STATE_LISTENER_H

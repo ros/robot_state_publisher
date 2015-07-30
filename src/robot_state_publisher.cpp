@@ -51,92 +51,97 @@ namespace robot_state_publisher
 
 RobotStatePublisher::RobotStatePublisher(const KDL::Tree& tree)
 {
-    // walk the tree and add segments to segments_
-    updateTree(tree);
+  // walk the tree and add segments to segments_
+  updateTree(tree);
 }
 
 
 void RobotStatePublisher::updateTree(const KDL::Tree& tree)
 {
-    /// function is only called from JointStateListener::reload_robot_model
-    /// where the tree_update_mutex is acquired
+  /// function is only called from JointStateListener::reload_robot_model
+  /// where the tree_update_mutex is acquired
 
-    segments_.clear();
-    segments_fixed_.clear();
-    addChildren(tree.getRootSegment());
+  segments_.clear();
+  segments_fixed_.clear();
+  addChildren(tree.getRootSegment());
 }
 
 void RobotStatePublisher::createTreeInfo(string *msg)
 {
-    std::stringstream ss;
-    ss << "Created tree with " << segments_.size() << " moving and " << segments_fixed_.size() << " fixed segments";
-    *msg = ss.str();
+  std::stringstream ss;
+  ss << "Created tree with " << segments_.size() << " moving and " << segments_fixed_.size() << " fixed segments";
+  *msg = ss.str();
 }
 
 
 // add children to correct maps
 void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segment)
 {
-    const std::string& root = GetTreeElementSegment(segment->second).getName();
+  const std::string& root = GetTreeElementSegment(segment->second).getName();
 
-    const std::vector<KDL::SegmentMap::const_iterator>& children = GetTreeElementChildren(segment->second);
-    for (unsigned int i = 0; i < children.size(); i++){
-        const KDL::Segment& child = GetTreeElementSegment(children[i]->second);
-        SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
-        if (child.getJoint().getType() == KDL::Joint::None){
-            segments_fixed_.insert(make_pair(child.getJoint().getName(), s));
-            ROS_DEBUG("Adding fixed segment from %s to %s", root.c_str(), child.getName().c_str());
-        }
-        else
-        {
-            segments_.insert(make_pair(child.getJoint().getName(), s));
-            ROS_DEBUG("Adding moving segment from %s to %s", root.c_str(), child.getName().c_str());
-        }
-        addChildren(children[i]);
+  const std::vector<KDL::SegmentMap::const_iterator>& children = GetTreeElementChildren(segment->second);
+  for (unsigned int i = 0; i < children.size(); i++)
+  {
+    const KDL::Segment& child = GetTreeElementSegment(children[i]->second);
+    SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
+    if (child.getJoint().getType() == KDL::Joint::None)
+    {
+      segments_fixed_.insert(make_pair(child.getJoint().getName(), s));
+      ROS_DEBUG("Adding fixed segment from %s to %s", root.c_str(), child.getName().c_str());
     }
+    else
+    {
+      segments_.insert(make_pair(child.getJoint().getName(), s));
+      ROS_DEBUG("Adding moving segment from %s to %s", root.c_str(), child.getName().c_str());
+    }
+    addChildren(children[i]);
+  }
 }
 
 
 // publish moving transforms
 void RobotStatePublisher::publishTransforms(const map<string, double>& joint_positions,
-                                            const Time& time, const std::string& tf_prefix)
+    const Time& time, const std::string& tf_prefix)
 {
-    ROS_DEBUG("Publishing transforms for moving joints");
-    std::vector<tf::StampedTransform> tf_transforms;
-    tf::StampedTransform tf_transform;
-    tf_transform.stamp_ = time;
+  ROS_DEBUG("Publishing transforms for moving joints");
+  std::vector<tf::StampedTransform> tf_transforms;
+  tf::StampedTransform tf_transform;
+  tf_transform.stamp_ = time;
 
-    // loop over all joints
-    for (map<string, double>::const_iterator jnt = joint_positions.begin(); jnt != joint_positions.end(); jnt++){
-        std::map<std::string, SegmentPair>::const_iterator seg = segments_.find(jnt->first);
-        if (seg != segments_.end()){
-            tf::transformKDLToTF(seg->second.segment.pose(jnt->second), tf_transform);
-            tf_transform.frame_id_ = tf::resolve(tf_prefix, seg->second.root);
-            tf_transform.child_frame_id_ = tf::resolve(tf_prefix, seg->second.tip);
-            tf_transforms.push_back(tf_transform);
-        }
+  // loop over all joints
+  for (map<string, double>::const_iterator jnt = joint_positions.begin(); jnt != joint_positions.end(); jnt++)
+  {
+    std::map<std::string, SegmentPair>::const_iterator seg = segments_.find(jnt->first);
+    if (seg != segments_.end())
+    {
+      tf::transformKDLToTF(seg->second.segment.pose(jnt->second), tf_transform);
+      tf_transform.frame_id_ = tf::resolve(tf_prefix, seg->second.root);
+      tf_transform.child_frame_id_ = tf::resolve(tf_prefix, seg->second.tip);
+      tf_transforms.push_back(tf_transform);
     }
-    tf_broadcaster_.sendTransform(tf_transforms);
+  }
+  tf_broadcaster_.sendTransform(tf_transforms);
 }
 
 
 /// publish fixed transforms, called via JointStateListener::pub_fixed_trafos_timer_
 void RobotStatePublisher::publishFixedTransforms(const std::string& tf_prefix)
 {
-    // cout << "publishung fixed" << endl;
-    ROS_DEBUG("Publishing transforms for fixed joints");
-    std::vector<tf::StampedTransform> tf_transforms;
-    tf::StampedTransform tf_transform;
-    tf_transform.stamp_ = ros::Time::now()+ros::Duration(0.5);  // future publish by 0.5 seconds
+  // cout << "publishung fixed" << endl;
+  ROS_DEBUG("Publishing transforms for fixed joints");
+  std::vector<tf::StampedTransform> tf_transforms;
+  tf::StampedTransform tf_transform;
+  tf_transform.stamp_ = ros::Time::now() + ros::Duration(0.5);  // future publish by 0.5 seconds
 
-    // loop over all fixed segments
-    for (map<string, SegmentPair>::const_iterator seg = segments_fixed_.begin(); seg != segments_fixed_.end(); seg++){
-        tf::transformKDLToTF(seg->second.segment.pose(0), tf_transform);
-        tf_transform.frame_id_ = tf::resolve(tf_prefix, seg->second.root);
-        tf_transform.child_frame_id_ = tf::resolve(tf_prefix, seg->second.tip);
-        tf_transforms.push_back(tf_transform);
-    }
-    tf_broadcaster_.sendTransform(tf_transforms);
+  // loop over all fixed segments
+  for (map<string, SegmentPair>::const_iterator seg = segments_fixed_.begin(); seg != segments_fixed_.end(); seg++)
+  {
+    tf::transformKDLToTF(seg->second.segment.pose(0), tf_transform);
+    tf_transform.frame_id_ = tf::resolve(tf_prefix, seg->second.root);
+    tf_transform.child_frame_id_ = tf::resolve(tf_prefix, seg->second.tip);
+    tf_transforms.push_back(tf_transform);
+  }
+  tf_broadcaster_.sendTransform(tf_transforms);
 }
 
 

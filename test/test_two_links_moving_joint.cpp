@@ -44,9 +44,9 @@
 #include "robot_state_publisher/joint_state_listener.h"
 
 
-using namespace ros;
-using namespace tf;
-using namespace robot_state_publisher;
+// using namespace ros;
+// using namespace tf;
+// using namespace robot_state_publisher;
 
 
 int g_argc;
@@ -84,7 +84,8 @@ TEST_F(TestPublisher, test)
   sensor_msgs::JointState js_msg;
   js_msg.name.push_back("joint1");
   js_msg.position.push_back(M_PI);
-  for (unsigned int i=0; i<100; i++){
+  for (unsigned int i = 0; i < 100; i++)
+  {
     js_msg.header.stamp = ros::Time::now();
     js_pub.publish(js_msg);
     ros::Duration(0.1).sleep();
@@ -94,7 +95,7 @@ TEST_F(TestPublisher, test)
   ASSERT_FALSE(tf.canTransform("base_link", "wim_link", Time()));
 
   tf::StampedTransform t;
-  tf.lookupTransform("link1", "link2",Time(), t );
+  tf.lookupTransform("link1", "link2", Time(), t);
   EXPECT_NEAR(t.getOrigin().x(), 5.0, EPS);
   EXPECT_NEAR(t.getOrigin().y(), 0.0, EPS);
   EXPECT_NEAR(t.getOrigin().z(), 0.0, EPS);
