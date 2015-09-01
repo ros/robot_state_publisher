@@ -47,8 +47,8 @@ using namespace ros;
 using namespace KDL;
 using namespace robot_state_publisher;
 
-JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m)
-  : state_publisher_(tree), mimic_(m)
+JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model)
+  : state_publisher_(tree, model), mimic_(m)
 {
   ros::NodeHandle n_tilde("~");
   ros::NodeHandle n;
@@ -164,7 +164,7 @@ int main(int argc, char** argv)
     }
   }
 
-  JointStateListener state_publisher(tree, mimic);
+  JointStateListener state_publisher(tree, mimic, model);
   ros::spin();
 
   return 0;

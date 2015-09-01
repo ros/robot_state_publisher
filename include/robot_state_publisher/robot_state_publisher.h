@@ -41,6 +41,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
+#include <urdf/model.h>
 #include <kdl/frames.hpp>
 #include <kdl/segment.hpp>
 #include <kdl/tree.hpp>
@@ -64,7 +65,7 @@ public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree 
    */
-  RobotStatePublisher(const KDL::Tree& tree);
+  RobotStatePublisher(const KDL::Tree& tree, const urdf::Model& model = urdf::Model());
 
   /// Destructor
   ~RobotStatePublisher(){};
@@ -82,6 +83,7 @@ private:
 
   std::map<std::string, SegmentPair> segments_, segments_fixed_;
   tf::TransformBroadcaster tf_broadcaster_;
+  const urdf::Model& model_;
 };
 
 
