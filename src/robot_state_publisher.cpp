@@ -45,7 +45,8 @@ using namespace ros;
 
 namespace robot_state_publisher{
 
-  RobotStatePublisher::RobotStatePublisher(const KDL::Tree& tree)
+  RobotStatePublisher::RobotStatePublisher(const KDL::Tree& tree, const urdf::Model& model)
+    : model_(model)
   {
     // walk the tree and add segments to segments_
     addChildren(tree.getRootSegment());
@@ -62,8 +63,13 @@ namespace robot_state_publisher{
       const KDL::Segment& child = GetTreeElementSegment(children[i]->second);
       SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
       if (child.getJoint().getType() == KDL::Joint::None){
-        segments_fixed_.insert(make_pair(child.getJoint().getName(), s));
-        ROS_DEBUG("Adding fixed segment from %s to %s", root.c_str(), child.getName().c_str());
+        if (model_.getJoint(child.getJoint().getName()) && model_.getJoint(child.getJoint().getName())->type == urdf::Joint::FLOATING){
+          ROS_INFO("Floating joint. Not adding segment from %s to %s. This TF can not be published based on joint_states info", root.c_str(), child.getName().c_str());
+        }
+        else{
+          segments_fixed_.insert(make_pair(child.getJoint().getName(), s));
+          ROS_DEBUG("Adding fixed segment from %s to %s", root.c_str(), child.getName().c_str());
+        }
       }
       else{
         segments_.insert(make_pair(child.getJoint().getName(), s));
