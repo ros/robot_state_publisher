@@ -56,10 +56,23 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
   // set publish frequency
   double publish_freq;
   n_tilde.param("publish_frequency", publish_freq, 50.0);
-  // get the tf_prefix parameter from the closest namespace
-  std::string tf_prefix_key;
-  n_tilde.searchParam("tf_prefix", tf_prefix_key);
-  n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
+
+  bool getns;
+  n_tilde.param<bool>("ns_tf_prefix", getns, false);
+
+  /*get current namespace as prefix for tf*/
+  if(getns)
+  {
+	  tf_prefix_=n.getNamespace();
+  }/*tf_prefix behavior*/
+  else
+  {
+	  // get the tf_prefix parameter from the closest namespace
+	  std::string tf_prefix_key;
+	  n_tilde.searchParam("tf_prefix", tf_prefix_key);
+	  n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
+  }
+
   publish_interval_ = ros::Duration(1.0/max(publish_freq,1.0));
 
   // subscribe to joint state
