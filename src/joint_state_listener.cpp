@@ -56,6 +56,8 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
   // set publish frequency
   double publish_freq;
   n_tilde.param("publish_frequency", publish_freq, 50.0);
+  // set whether to use the /tf_static latched static transform broadcaster
+  n_tilde.param("use_tf_static", use_tf_static_, false);
   // get the tf_prefix parameter from the closest namespace
   std::string tf_prefix_key;
   n_tilde.searchParam("tf_prefix", tf_prefix_key);
@@ -66,7 +68,8 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
   joint_state_sub_ = n.subscribe("joint_states", 1, &JointStateListener::callbackJointState, this);
 
   // trigger to publish fixed joints
-  timer_ = n_tilde.createTimer(publish_interval_, &JointStateListener::callbackFixedJoint, this);
+  // if using static transform broadcaster, this will be a oneshot trigger and only run once
+  timer_ = n_tilde.createTimer(publish_interval_, &JointStateListener::callbackFixedJoint, this, use_tf_static_);
 
 };
 
@@ -77,7 +80,7 @@ JointStateListener::~JointStateListener()
 
 void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
 {
-  state_publisher_.publishFixedTransforms(tf_prefix_);
+  state_publisher_.publishFixedTransforms(tf_prefix_, use_tf_static_);
 }
 
 void JointStateListener::callbackJointState(const JointStateConstPtr& state)
