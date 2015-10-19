@@ -83,13 +83,9 @@ private:
 
 
   std::map<std::string, SegmentPair> segments_, segments_fixed_;
-<<<<<<< HEAD
-  tf::TransformBroadcaster tf_broadcaster_;
   const urdf::Model& model_;
-=======
   tf2_ros::TransformBroadcaster tf_broadcaster_;
   tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
->>>>>>> Port to tf2 and enable using static broadcaster
 };
 
 
