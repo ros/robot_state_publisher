@@ -37,20 +37,15 @@
 #include <string>
 #include <gtest/gtest.h>
 #include <ros/ros.h>
-#include <tf/transform_listener.h>
+#include <tf2_ros/transform_listener.h>
 #include <boost/thread/thread.hpp>
 #include <urdf/model.h>
 #include <kdl_parser/kdl_parser.hpp>
 #include "robot_state_publisher/joint_state_listener.h"
 
-
 using namespace ros;
-using namespace tf;
+using namespace tf2_ros;
 using namespace robot_state_publisher;
-
-
-int g_argc;
-char** g_argv;
 
 #define EPS 0.01
 
@@ -70,23 +65,31 @@ protected:
 };
 
 
-
-
-
 TEST_F(TestPublisher, test)
 {
-  ROS_INFO("Creating tf listener");
-  TransformListener tf;
+  {
+    ros::NodeHandle n_tilde;
+    std::string robot_description;
+    ASSERT_TRUE(n_tilde.getParam("robot_description", robot_description));
+  }
 
-  ROS_INFO("Publishing joint state to robot state publisher");
-  ros::NodeHandle n;
-  ros::Publisher js_pub = n.advertise<sensor_msgs::JointState>("joint_states", 100);
+
+  ROS_INFO("Creating tf listener");
+  Buffer buffer;
+  TransformListener tf(buffer);
+
+  // ROS_INFO("Publishing joint state to robot state publisher");
+  /*ros::NodeHandle n;
+  ros::Publisher js_pub = n.advertise<sensor_msgs::JointState>("test_one_link/joint_states", 100);
   sensor_msgs::JointState js_msg;
   for (unsigned int i=0; i<100; i++){
     js_msg.header.stamp = ros::Time::now();
     js_pub.publish(js_msg);
+    ros::spinOnce();
     ros::Duration(0.1).sleep();
-  }
+  }*/
+
+  ASSERT_TRUE(buffer.canTransform("link1", "link1", Time()));
 
   SUCCEED();
 }
@@ -96,16 +99,10 @@ TEST_F(TestPublisher, test)
 
 int main(int argc, char** argv)
 {
+  ros::init(argc, argv, "test_one_link");
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "test_robot_state_publisher");
-  ros::NodeHandle node;
-  boost::thread ros_thread(boost::bind(&ros::spin));
 
-  g_argc = argc;
-  g_argv = argv;
   int res = RUN_ALL_TESTS();
-  ros_thread.interrupt();
-  ros_thread.join();
 
   return res;
 }
