@@ -31,29 +31,31 @@ target_link_libraries(state_publisher ${PROJECT_NAME}_solver ${orocos_kdl_LIBRAR
 
 # Tests
 
-catkin_add_gtest(test_publisher test/test_publisher.cpp)
-target_link_libraries(test_publisher ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
-add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_publisher.launch)
+if (CATKIN_ENABLE_TESTING)
 
-catkin_add_gtest(test_one_link test/test_one_link.cpp )
-target_link_libraries(test_one_link ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
-add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_one_link.launch)
+  add_rostest_gtest(test_one_link ${CMAKE_CURRENT_SOURCE_DIR}/test/test_one_link.launch test/test_one_link.cpp)
+  target_link_libraries(test_one_link ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
 
-catkin_add_gtest(test_two_links_fixed_joint test/test_two_links_fixed_joint.cpp )
-target_link_libraries(test_two_links_fixed_joint ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
-add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_two_links_fixed_joint.launch)
+  add_rostest_gtest(test_two_links_fixed_joint ${CMAKE_CURRENT_SOURCE_DIR}/test/test_two_links_fixed_joint.launch test/test_two_links_fixed_joint.cpp)
+  target_link_libraries(test_two_links_fixed_joint ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
 
-catkin_add_gtest(test_two_links_moving_joint test/test_two_links_moving_joint.cpp )
-target_link_libraries(test_two_links_moving_joint ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
-add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_two_links_moving_joint.launch)
+  add_rostest_gtest(test_two_links_moving_joint ${CMAKE_CURRENT_SOURCE_DIR}/test/test_two_links_moving_joint.launch test/test_two_links_moving_joint.cpp)
+  target_link_libraries(test_two_links_moving_joint ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
 
-# Download needed data file
-catkin_download_test_data(
-  joint_states_indexed_bag
-  http://wiki.ros.org/robot_state_publisher/data?action=AttachFile&do=get&target=joint_states_indexed.bag
-  DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_SHARE_DESTINATION}/test
-  FILENAME joint_states_indexed.bag 
-  MD5 793e0b566ebe4698265a936b92fa2bba)
+   # Download needed data file
+  catkin_download_test_data(
+    joint_states_indexed_bag
+    http://wiki.ros.org/robot_state_publisher/data?action=AttachFile&do=get&target=joint_states_indexed.bag
+    DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_SHARE_DESTINATION}/test
+    FILENAME joint_states_indexed.bag
+    MD5 793e0b566ebe4698265a936b92fa2bba)
+
+  add_rostest_gtest(test_joint_states_bag ${CMAKE_CURRENT_SOURCE_DIR}/test/test_joint_states_bag.launch test/test_joint_states_bag.cpp)
+  target_link_libraries(test_joint_states_bag ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
+
+  install(FILES test/one_link.urdf test/pr2.urdf test/two_links_fixed_joint.urdf test/two_links_moving_joint.urdf DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/test)
+
+endif()
 
 install(TARGETS ${PROJECT_NAME}_solver ${PROJECT_NAME} state_publisher
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

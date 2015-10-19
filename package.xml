@@ -26,6 +26,7 @@
   <build_depend version_gte="1.3.0">orocos_kdl</build_depend>
   <build_depend>rosconsole</build_depend>
   <build_depend>roscpp</build_depend>
+  <build_depend>rostest</build_depend>
   <build_depend>rostime</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>tf</build_depend>
@@ -47,4 +48,5 @@
   <run_depend>tf_conversions</run_depend>
 
   <build_depend>rostest</build_depend>
+
 </package>

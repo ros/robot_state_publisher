@@ -37,7 +37,8 @@
 #include <string>
 #include <gtest/gtest.h>
 #include <ros/ros.h>
-#include <tf/transform_listener.h>
+#include <tf2_ros/transform_listener.h>
+#include <geometry_msgs/TransformStamped.h>
 #include <boost/thread/thread.hpp>
 #include <urdf/model.h>
 #include <kdl_parser/kdl_parser.hpp>
@@ -45,12 +46,8 @@
 
 
 using namespace ros;
-using namespace tf;
+using namespace tf2_ros;
 using namespace robot_state_publisher;
-
-
-int g_argc;
-char** g_argv;
 
 #define EPS 0.01
 
@@ -75,40 +72,41 @@ protected:
 
 TEST_F(TestPublisher, test)
 {
+  {
+    ros::NodeHandle n_tilde;
+    std::string robot_description;
+    ASSERT_TRUE(n_tilde.getParam("robot_description", robot_description));
+  }
+
   ROS_INFO("Creating tf listener");
-  TransformListener tf;
+  Buffer buffer;
+  TransformListener listener(buffer);
 
-  // don't need to publish joint state for tree with only fixed joints
-  // wait for tf data to come in
-  ros::Duration(10.0).sleep();
 
-  ASSERT_TRUE(tf.canTransform("link1", "link2", Time()));
-  ASSERT_FALSE(tf.canTransform("base_link", "wim_link", Time()));
+  for (unsigned int i=0; i<100 && !buffer.canTransform("link1", "link2", Time()); i++){
+    ros::Duration(0.1).sleep();
+    ros::spinOnce();
+  }
 
-  tf::StampedTransform t;
-  tf.lookupTransform("link1", "link2",Time(), t );
-  EXPECT_NEAR(t.getOrigin().x(), 5.0, EPS);
-  EXPECT_NEAR(t.getOrigin().y(), 0.0, EPS);
-  EXPECT_NEAR(t.getOrigin().z(), 0.0, EPS);
+
+  ASSERT_TRUE(buffer.canTransform("link1", "link2", Time()));
+  ASSERT_FALSE(buffer.canTransform("base_link", "wim_link", Time()));
+
+  geometry_msgs::TransformStamped t = buffer.lookupTransform("link1", "link2", Time());
+  EXPECT_NEAR(t.transform.translation.x, 5.0, EPS);
+  EXPECT_NEAR(t.transform.translation.y, 0.0, EPS);
+  EXPECT_NEAR(t.transform.translation.z, 0.0, EPS);
 
   SUCCEED();
 }
 
 
-
-
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "test_robot_state_publisher");
-  ros::NodeHandle node;
-  boost::thread ros_thread(boost::bind(&ros::spin));
+  ros::init(argc, argv, "test_two_links_fixed_joint");
 
-  g_argc = argc;
-  g_argv = argv;
   int res = RUN_ALL_TESTS();
-  ros_thread.interrupt();
-  ros_thread.join();
 
   return res;
 }
