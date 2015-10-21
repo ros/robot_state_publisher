@@ -2,6 +2,17 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.12.0 (2015-10-21)
+-------------------
+* Merge pull request `#37 <https://github.com/ros/robot_state_publisher/issues/37>`_ from clearpathrobotics/static-default
+  Publish fixed joints over tf_static by default
+* Merge pull request `#34 <https://github.com/ros/robot_state_publisher/issues/34>`_ from ros/tf2-static-jade
+  Port to tf2 and enable using static broadcaster
+* Merge pull request `#32 <https://github.com/ros/robot_state_publisher/issues/32>`_ from `shadow-robot/fix_issue#19 <https://github.com/shadow-robot/fix_issue/issues/19>`_
+  Check URDF to distinguish fixed joints from floating joints. Floating joint are ignored by the publisher.
+* Merge pull request `#26 <https://github.com/ros/robot_state_publisher/issues/26>`_ from xqms/remove-debug
+  get rid of argv[0] debug output on startup
+
 1.11.1 (2016-02-22)
 -------------------
 * Merge pull request `#41 <https://github.com/ros/robot_state_publisher/issues/41>`_ from ros/fix_tests_indigo
@@ -20,13 +31,7 @@ Changelog for package robot_state_publisher
 1.11.0 (2015-10-21)
 -------------------
 * Merge pull request `#28 <https://github.com/ros/robot_state_publisher/issues/28>`_ from clearpathrobotics/tf2-static
-  Publish fixed joints over tf_static by default
-* Merge pull request `#34 <https://github.com/ros/robot_state_publisher/issues/34>`_ from ros/tf2-static-jade
-  Port to tf2 and enable using static broadcaster
-* Merge pull request `#32 <https://github.com/ros/robot_state_publisher/issues/32>`_ from `shadow-robot/fix_issue#19 <https://github.com/shadow-robot/fix_issue/issues/19>`_
-  Check URDF to distinguish fixed joints from floating joints. Floating joint are ignored by the publisher.
-* Merge pull request `#26 <https://github.com/ros/robot_state_publisher/issues/26>`_ from xqms/remove-debug
-  get rid of argv[0] debug output on startup
+
 
 1.10.4 (2014-11-30)
 -------------------
