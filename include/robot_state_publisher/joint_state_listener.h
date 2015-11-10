@@ -45,6 +45,7 @@
 #include <std_srvs/Trigger.h>
 #include <map>
 #include <string>
+#include <boost/thread/mutex.hpp>
 
 using std::map;
 using std::string;
@@ -81,14 +82,14 @@ private:
   void callbackJointState(const JointStateConstPtr& state);
   void callbackFixedJoint(const ros::TimerEvent& e);
 
-  /// used as mutex
-  bool update_ongoing;
+
+  boost::mutex update_ongoing;
 
   std::string tf_prefix_;
   Duration publish_interval_;
   robot_state_publisher::RobotStatePublisher state_publisher_;
   Subscriber joint_state_sub_;
-  ros::Timer pub_fixed_trafos_timer_;
+  ros::Timer pub_fixed_tf_timer_;
   ros::Time last_callback_time_;
   std::map<std::string, ros::Time> last_publish_time_;
   MimicMap mimic_;

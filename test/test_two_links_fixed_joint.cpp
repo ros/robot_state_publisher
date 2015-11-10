@@ -44,9 +44,9 @@
 #include "robot_state_publisher/joint_state_listener.h"
 
 
-// using namespace ros;
-// using namespace tf;
-// using namespace robot_state_publisher;
+using namespace ros;
+using namespace tf;
+using namespace robot_state_publisher;
 
 
 int g_argc;
