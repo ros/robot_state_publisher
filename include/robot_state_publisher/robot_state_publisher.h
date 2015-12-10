@@ -76,7 +76,7 @@ public:
    * \param time The time at which the joint positions were recorded
    */
   void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time, const std::string& tf_prefix);
-  void publishFixedTransforms(const std::string& tf_prefix, bool use_tf_static);
+  void publishFixedTransforms(const std::string& tf_prefix, bool use_tf_static = false);
 
 private:
   void addChildren(const KDL::SegmentMap::const_iterator segment);
