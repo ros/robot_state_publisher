@@ -75,11 +75,11 @@ public:
    * \param joint_positions A map of joint names and joint positions.
    * \param time The time at which the joint positions were recorded
    */
-  void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time, const std::string& tf_prefix);
-  void publishFixedTransforms(const std::string& tf_prefix, bool use_tf_static = false);
+  virtual void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time, const std::string& tf_prefix);
+  virtual void publishFixedTransforms(const std::string& tf_prefix, bool use_tf_static = false);
 
-private:
-  void addChildren(const KDL::SegmentMap::const_iterator segment);
+protected:
+  virtual void addChildren(const KDL::SegmentMap::const_iterator segment);
 
   std::map<std::string, SegmentPair> segments_, segments_fixed_;
   const urdf::Model& model_;
