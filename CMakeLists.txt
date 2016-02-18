@@ -53,6 +53,9 @@ if (CATKIN_ENABLE_TESTING)
   add_rostest_gtest(test_joint_states_bag ${CMAKE_CURRENT_SOURCE_DIR}/test/test_joint_states_bag.launch test/test_joint_states_bag.cpp)
   target_link_libraries(test_joint_states_bag ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
 
+  add_rostest_gtest(test_subclass ${CMAKE_CURRENT_SOURCE_DIR}/test/test_subclass.launch test/test_subclass.cpp)
+  target_link_libraries(test_subclass ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
+
   install(FILES test/one_link.urdf test/pr2.urdf test/two_links_fixed_joint.urdf test/two_links_moving_joint.urdf DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/test)
 
 endif()
