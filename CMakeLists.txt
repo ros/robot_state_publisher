@@ -32,6 +32,9 @@ target_link_libraries(state_publisher ${PROJECT_NAME}_solver ${orocos_kdl_LIBRAR
 # Tests
 
 if (CATKIN_ENABLE_TESTING)
+  if(NOT WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
+  endif()
 
   add_rostest_gtest(test_one_link ${CMAKE_CURRENT_SOURCE_DIR}/test/test_one_link.launch test/test_one_link.cpp)
   target_link_libraries(test_one_link ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
@@ -52,6 +55,9 @@ if (CATKIN_ENABLE_TESTING)
 
   add_rostest_gtest(test_joint_states_bag ${CMAKE_CURRENT_SOURCE_DIR}/test/test_joint_states_bag.launch test/test_joint_states_bag.cpp)
   target_link_libraries(test_joint_states_bag ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
+
+  add_rostest_gtest(test_init ${CMAKE_CURRENT_SOURCE_DIR}/test/test_init.launch test/test_init.cpp)
+  target_link_libraries(test_init ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
 
   install(FILES test/one_link.urdf test/pr2.urdf test/two_links_fixed_joint.urdf test/two_links_moving_joint.urdf DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/test)
 

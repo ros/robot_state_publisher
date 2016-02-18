@@ -68,8 +68,18 @@ public:
    */
   RobotStatePublisher(const KDL::Tree& tree, const urdf::Model& model = urdf::Model());
 
+  /** Default constructor
+   */
+  RobotStatePublisher();
+
   /// Destructor
   ~RobotStatePublisher(){};
+
+  /* Initialization method
+   * For delayed initialization of the robot model (e.g. if default constructor is used)
+   * \param tree The kinematic model of a robot, represented by a KDL Tree
+   */
+  void init(const KDL::Tree& tree, const urdf::Model& model = urdf::Model());
 
   /** Publish transforms to tf
    * \param joint_positions A map of joint names and joint positions.
@@ -82,7 +92,7 @@ private:
   void addChildren(const KDL::SegmentMap::const_iterator segment);
 
   std::map<std::string, SegmentPair> segments_, segments_fixed_;
-  const urdf::Model& model_;
+  urdf::Model model_;
   tf2_ros::TransformBroadcaster tf_broadcaster_;
   tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
 };

@@ -50,6 +50,20 @@ namespace robot_state_publisher{
   RobotStatePublisher::RobotStatePublisher(const KDL::Tree& tree, const urdf::Model& model)
     : model_(model)
   {
+    init(tree);
+  }
+
+  RobotStatePublisher::RobotStatePublisher()
+    : model_(urdf::Model())
+  {
+    init(KDL::Tree());
+  }
+
+
+
+  void RobotStatePublisher::init(const KDL::Tree& tree, const urdf::Model& model) {
+    // copy constructor
+    model_ = model;
     // walk the tree and add segments to segments_
     addChildren(tree.getRootSegment());
   }
