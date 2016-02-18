@@ -88,10 +88,13 @@ TEST(TestRobotStatePubSubclass, robot_state_pub_subclass)
     }
   }
 
-
   robot_state_publisher_test::AccessibleRobotStatePublisher state_pub(tree, model);
 
+  EXPECT_EQ(model.name_, state_pub.getModel().name_);
+  EXPECT_EQ(model.root_link_, state_pub.getModel().root_link_);
+
   robot_state_publisher_test::AccessibleJointStateListener state_listener(tree, mimic, model);
+  EXPECT_TRUE(state_listener.usingTfStatic());
 }
 
 int main(int argc, char** argv)
