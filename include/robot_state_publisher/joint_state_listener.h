@@ -52,7 +52,7 @@ typedef std::map<std::string, boost::shared_ptr<urdf::JointMimic> > MimicMap;
 
 namespace robot_state_publisher{
 
-class JointStateListener{
+class JointStateListener {
 public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
@@ -62,9 +62,9 @@ public:
   /// Destructor
   ~JointStateListener();
 
-private:
-  void callbackJointState(const JointStateConstPtr& state);
-  void callbackFixedJoint(const ros::TimerEvent& e);
+protected:
+  virtual void callbackJointState(const JointStateConstPtr& state);
+  virtual void callbackFixedJoint(const ros::TimerEvent& e);
 
   std::string tf_prefix_;
   Duration publish_interval_;
