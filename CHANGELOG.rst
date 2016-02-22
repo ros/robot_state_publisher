@@ -2,6 +2,21 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#41 <https://github.com/ros/robot_state_publisher/issues/41>`_ from ros/fix_tests_indigo
+  Re-enable and clean up rostests
+* Correct failing tests
+* Re-enabling rostests
+* Fix API break in publishFixedTransforms
+  A bool argument was added to
+  RobotStatePublisher::publishFixedTransforms
+  which broke API.
+  I've added a default value of false, to match
+  the default specified in the JointStateListener
+  constructor.
+* Contributors: Jackie Kay, Jonathan Bohren, Steven Peters
+
 1.11.0 (2015-10-21)
 -------------------
 * Merge pull request `#28 <https://github.com/ros/robot_state_publisher/issues/28>`_ from clearpathrobotics/tf2-static
