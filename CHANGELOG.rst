@@ -28,6 +28,7 @@ Changelog for package robot_state_publisher
   Check URDF to distinguish fixed joints from floating joints. Floating joint are ignored by the publisher.
 * Merge pull request `#26 <https://github.com/ros/robot_state_publisher/issues/26>`_ from xqms/remove-debug
   get rid of argv[0] debug output on startup
+* Contributors: David Lu!!, Ioan A Sucan, Jackie Kay, Max Schwarz, Paul Bovbel, Toni Oliver
 
 1.11.1 (2016-02-22)
 -------------------
