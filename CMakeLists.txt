@@ -3,7 +3,7 @@ project(robot_state_publisher)
 
 find_package(orocos_kdl REQUIRED)
 find_package(catkin REQUIRED
-  COMPONENTS roscpp rosconsole rostime tf tf2_ros tf2_kdl kdl_parser cmake_modules
+  COMPONENTS roscpp rosconsole rostime tf tf2_ros tf2_kdl kdl_parser cmake_modules rostest
 )
 find_package(Eigen REQUIRED)
 
