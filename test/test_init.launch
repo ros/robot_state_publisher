@@ -1,8 +1,5 @@
 <launch>
   <param name="robot_description" textfile="$(find robot_state_publisher)/test/one_link.urdf" />
 
-  <!-- node pkg="robot_state_publisher" name="one_link_state_pub" type="robot_state_publisher">
-  </node -->
-
   <test test-name="test_init" pkg="robot_state_publisher" type="test_init" />
 </launch>
