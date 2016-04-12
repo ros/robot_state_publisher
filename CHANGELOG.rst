@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.13.0 (2016-04-12)
+-------------------
 * fix bad rebase
 * Contributors: Jackie Kay, Paul Bovbel
 
