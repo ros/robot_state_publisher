@@ -103,7 +103,7 @@ namespace robot_state_publisher{
   }
 
   // publish fixed transforms
-  void RobotStatePublisher::publishFixedTransforms(const std::string& tf_prefix, bool use_tf_static)
+  void RobotStatePublisher::publishFixedTransforms(const std::string& tf_prefix)
   {
     ROS_DEBUG("Publishing transforms for fixed joints");
     std::vector<geometry_msgs::TransformStamped> tf_transforms;
@@ -117,11 +117,7 @@ namespace robot_state_publisher{
       tf_transform.child_frame_id = tf::resolve(tf_prefix, seg->second.tip);
       tf_transforms.push_back(tf_transform);
     }
-    if(use_tf_static){
-      static_tf_broadcaster_.sendTransform(tf_transforms);
-    }else{
-      tf_broadcaster_.sendTransform(tf_transforms);
-    }
+    static_tf_broadcaster_.sendTransform(tf_transforms);
   }
 
 }
