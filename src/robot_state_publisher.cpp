@@ -65,6 +65,8 @@ namespace robot_state_publisher{
     // copy constructor
     model_ = model;
     // walk the tree and add segments to segments_
+    segments_.clear();
+    segments_fixed_.clear();
     addChildren(tree.getRootSegment());
   }
 

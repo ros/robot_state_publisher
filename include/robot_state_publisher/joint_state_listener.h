@@ -54,10 +54,19 @@ namespace robot_state_publisher{
 
 class JointStateListener{
 public:
+  static void constructMimicMap(MimicMap & mimic_map, urdf::Model & model);
+
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
   JointStateListener(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model = urdf::Model());
+
+  /**
+   * Default constructor
+   */
+  JointStateListener();
+
+  void init(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model = urdf::Model());
 
   /// Destructor
   ~JointStateListener();

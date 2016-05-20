@@ -1,5 +1,7 @@
 <launch>
-  <param name="robot_description" textfile="$(find robot_state_publisher)/test/one_link.urdf" />
+  <param name="robot_description"
+         textfile="$(find robot_state_publisher)/test/two_links_moving_joint.urdf" />
+  <param name="use_tf_static" value="false" />
 
-  <test test-name="test_init" pkg="robot_state_publisher" type="test_init" />
+  <test test-name="test_init" pkg="robot_state_publisher" type="test_init"/>
 </launch>
