@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.13.1 (2016-05-20)
+-------------------
 * Add back future dating for robot_state_publisher (`#49 <https://github.com/ros/robot_state_publisher/issues/49>`_) (`#51 <https://github.com/ros/robot_state_publisher/issues/51>`_)
 * Fix subclassing test (`#48 <https://github.com/ros/robot_state_publisher/issues/48>`_)
 * Support for subclassing (`#45 <https://github.com/ros/robot_state_publisher/issues/45>`_)
