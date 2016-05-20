@@ -2,6 +2,14 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add back future dating for robot_state_publisher (`#49 <https://github.com/ros/robot_state_publisher/issues/49>`_) (`#51 <https://github.com/ros/robot_state_publisher/issues/51>`_)
+* Fix subclassing test (`#48 <https://github.com/ros/robot_state_publisher/issues/48>`_)
+* Support for subclassing (`#45 <https://github.com/ros/robot_state_publisher/issues/45>`_)
+  * Add joint_state_listener as a library
+* Contributors: Jackie Kay
+
 1.13.0 (2016-04-12)
 -------------------
 * fix bad rebase
