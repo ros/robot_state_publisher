@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add back future dating for robot_state_publisher (`#50 <https://github.com/ros/robot_state_publisher/issues/50>`_)
+* Contributors: Jackie Kay
+
 1.11.1 (2016-02-22)
 -------------------
 * Merge pull request `#41 <https://github.com/ros/robot_state_publisher/issues/41>`_ from ros/fix_tests_indigo
