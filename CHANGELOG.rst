@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.2 (2016-05-20)
+-------------------
 * Add back future dating for robot_state_publisher (`#50 <https://github.com/ros/robot_state_publisher/issues/50>`_)
 * Contributors: Jackie Kay
 
