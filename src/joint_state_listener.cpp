@@ -73,10 +73,34 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
 
 };
 
+JointStateListener::JointStateListener()
+{
+  JointStateListener(KDL::Tree(), MimicMap(), urdf::Model());
+}
+
+void JointStateListener::init(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model)
+{
+  // re-construct robot state publisher
+  // TODO Mutex in callbacks
+  state_publisher_.init(tree, model);
+  mimic_ = m;
+  last_callback_time_ = ros::Time();
+  last_publish_time_.clear();
+}
+
 
 JointStateListener::~JointStateListener()
 {};
 
+void JointStateListener::constructMimicMap(MimicMap & mimic_map, urdf::Model & model)
+{
+  for(
+    std::map< std::string, boost::shared_ptr< urdf::Joint > >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++){
+    if(i->second->mimic){
+      mimic_map.insert(make_pair(i->first, i->second->mimic));
+    }
+  }
+}
 
 void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
 {
@@ -160,12 +184,7 @@ int main(int argc, char** argv)
   }
 
   MimicMap mimic;
-
-  for(std::map< std::string, boost::shared_ptr< urdf::Joint > >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++){
-    if(i->second->mimic){
-      mimic.insert(make_pair(i->first, i->second->mimic));
-    }
-  }
+  JointStateListener::constructMimicMap(mimic, model);
 
   JointStateListener state_publisher(tree, mimic, model);
   ros::spin();
