@@ -62,6 +62,12 @@ public:
   /// Destructor
   ~JointStateListener();
 
+  // Default value for number of attempts to read robot_description from parameter server
+  static const int default_description_read_repetitions_;
+
+  // Default value for delay between the attempts to read robot_description
+  static const double default_description_read_delay_;
+
 protected:
   virtual void callbackJointState(const JointStateConstPtr& state);
   virtual void callbackFixedJoint(const ros::TimerEvent& e);

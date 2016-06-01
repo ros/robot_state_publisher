@@ -46,6 +46,8 @@ using namespace std;
 using namespace ros;
 using namespace KDL;
 using namespace robot_state_publisher;
+const int JointStateListener::default_description_read_repetitions_ = 0;
+const double JointStateListener::default_description_read_delay_ = 0.5;
 
 JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model)
   : state_publisher_(tree, model), mimic_(m)
@@ -160,6 +162,36 @@ int main(int argc, char** argv)
   if (exe_name == "state_publisher")
     ROS_WARN("The 'state_publisher' executable is deprecated. Please use 'robot_state_publisher' instead");
   ///////////////////////////////////////// end deprecation warning
+
+  // Checks if the robot_description is present on the parameter server
+  // If not, it will repeat the check for description_read_repetitions times with
+  // description_read_delay seconds delay between the checks (both are read from parameter server).
+  int description_read_repetitions;
+  node.param("description_read_repetitions", description_read_repetitions,
+             JointStateListener::default_description_read_repetitions_);
+  if (description_read_repetitions < 0) {
+    ROS_WARN_STREAM("Parameter description_read_repetitions is smaller than 0. Default value of " <<
+                     JointStateListener::default_description_read_repetitions_ << " will be used.");
+    description_read_repetitions = JointStateListener::default_description_read_repetitions_;
+  }
+  double description_read_delay;
+  node.param("description_read_delay", description_read_delay, JointStateListener::default_description_read_delay_);
+  if (description_read_delay <= 0) {
+    ROS_WARN_STREAM("Parameter description_read_delay is smaller than or equal 0. Default value of " <<
+                    JointStateListener::default_description_read_delay_ << " seconds will be used.");
+    description_read_delay = JointStateListener::default_description_read_delay_;
+  }
+  for (size_t i = 0; i < description_read_repetitions; ++i) {
+    if (!node.hasParam("robot_description")) {
+      ROS_WARN_STREAM("No robot_description parameter in namespace " << node.getNamespace() <<
+                      ". Will try " << description_read_repetitions - i << " more times with " <<
+                      description_read_delay << " second(s) delay between repetitions.");
+      ros::Duration(description_read_delay).sleep();
+    }
+    else {
+      break;
+    }
+  }
 
   // gets the location of the robot description on the parameter server
   urdf::Model model;
