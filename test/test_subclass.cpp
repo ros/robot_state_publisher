@@ -34,6 +34,8 @@
 
 #include <gtest/gtest.h>
 
+#include <urdf_model/types.h>
+
 #include <kdl_parser/kdl_parser.hpp>
 
 #include "robot_state_publisher/joint_state_listener.h"
@@ -82,7 +84,7 @@ TEST(TestRobotStatePubSubclass, robot_state_pub_subclass)
 
   MimicMap mimic;
 
-  for(std::map< std::string, boost::shared_ptr< urdf::Joint > >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++){
+  for(std::map< std::string, urdf::JointSharedPtr >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++){
     if(i->second->mimic){
       mimic.insert(make_pair(i->first, i->second->mimic));
     }
