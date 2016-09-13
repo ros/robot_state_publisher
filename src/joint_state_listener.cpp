@@ -152,7 +152,9 @@ int main(int argc, char** argv)
 
   // gets the location of the robot description on the parameter server
   urdf::Model model;
-  model.initParam("robot_description");
+  if (!model.initParam("robot_description"))
+    return -1;
+
   KDL::Tree tree;
   if (!kdl_parser::treeFromUrdfModel(model, tree)){
     ROS_ERROR("Failed to extract kdl tree from xml robot description");
