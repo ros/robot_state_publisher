@@ -3,9 +3,9 @@ project(robot_state_publisher)
 
 find_package(orocos_kdl REQUIRED)
 find_package(catkin REQUIRED
-  COMPONENTS roscpp rosconsole rostime tf tf2_ros tf2_kdl kdl_parser cmake_modules rostest
+  COMPONENTS roscpp rosconsole rostime tf tf2_ros tf2_kdl kdl_parser rostest
 )
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 catkin_package(
   LIBRARIES ${PROJECT_NAME}_solver
@@ -13,7 +13,7 @@ catkin_package(
   DEPENDS roscpp rosconsole rostime tf2_ros tf2_kdl kdl_parser orocos_kdl
 )
 
-include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS})
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
 include_directories(include ${catkin_INCLUDE_DIRS} ${orocos_kdl_INCLUDE_DIRS})
 link_directories(${orocos_kdl_LIBRARY_DIRS})
 
