@@ -58,6 +58,8 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
   n_tilde.param("publish_frequency", publish_freq, 50.0);
   // set whether to use the /tf_static latched static transform broadcaster
   n_tilde.param("use_tf_static", use_tf_static_, true);
+  // ignore_timestamp_ == true, joins_states messages are accepted, no matter their timestamp
+  n_tilde.param("ignore_timestamp", ignore_timestamp_, false);
   // get the tf_prefix parameter from the closest namespace
   std::string tf_prefix_key;
   n_tilde.searchParam("tf_prefix", tf_prefix_key);
@@ -111,7 +113,7 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
 
 
   // check if we need to publish
-  if (state->header.stamp >= last_published + publish_interval_){
+  if (ignore_timestamp_ || state->header.stamp >= last_published + publish_interval_){
     // get joint positions from state message
     map<string, double> joint_positions;
     for (unsigned int i=0; i<state->name.size(); i++)
