@@ -75,6 +75,7 @@ protected:
   std::map<std::string, ros::Time> last_publish_time_;
   MimicMap mimic_;
   bool use_tf_static_;
+  bool ignore_timestamp_;
 
 };
 }
