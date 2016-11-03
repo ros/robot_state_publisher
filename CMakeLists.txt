@@ -33,7 +33,7 @@ target_link_libraries(state_publisher ${PROJECT_NAME}_solver ${orocos_kdl_LIBRAR
 
 if (CATKIN_ENABLE_TESTING)
 
-  find_package(rostest)
+  find_package(rostest REQUIRED)
 
   add_rostest_gtest(test_one_link ${CMAKE_CURRENT_SOURCE_DIR}/test/test_one_link.launch test/test_one_link.cpp)
   target_link_libraries(test_one_link ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
