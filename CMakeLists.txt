@@ -3,16 +3,24 @@ project(robot_state_publisher)
 
 find_package(orocos_kdl REQUIRED)
 find_package(catkin REQUIRED
-  COMPONENTS roscpp rosconsole rostime tf tf2_ros tf2_kdl kdl_parser rostest
+  COMPONENTS roscpp rosconsole rostime tf tf2_ros tf2_kdl kdl_parser rostest geometry_msgs sensor_msgs message_generation
 )
 find_package(Eigen3 REQUIRED)
 
 find_package(urdfdom_headers REQUIRED)
 
+add_service_files(
+  FILES GetRobotTransforms.srv
+)
+
+generate_messages(
+  DEPENDENCIES geometry_msgs sensor_msgs
+)
+
 catkin_package(
   LIBRARIES ${PROJECT_NAME}_solver
   INCLUDE_DIRS include
-  DEPENDS roscpp rosconsole rostime tf2_ros tf2_kdl kdl_parser orocos_kdl urdfdom_headers
+  DEPENDS roscpp rosconsole rostime tf2_ros tf2_kdl kdl_parser orocos_kdl urdfdom_headers message_runtime
 )
 
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
@@ -26,6 +34,7 @@ target_link_libraries(${PROJECT_NAME}_solver ${catkin_LIBRARIES} ${orocos_kdl_LI
 
 add_library(joint_state_listener src/joint_state_listener.cpp)
 target_link_libraries(joint_state_listener ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
+add_dependencies(joint_state_listener ${PROJECT_NAME}_gencpp)
 
 add_executable(${PROJECT_NAME} src/joint_state_listener.cpp)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
