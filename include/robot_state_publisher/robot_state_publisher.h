@@ -71,6 +71,14 @@ public:
   /// Destructor
   ~RobotStatePublisher(){};
 
+  /** Compute transforms from joint states
+   * \param joint_positions A map of joint names and joint positions.
+   * \param time The time at which the joint positions were recorded
+   * \param tf_prefix prefix string for frames
+   * \param transforms An array for computed transform of joints
+   */
+  virtual void computeTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time, const std::string& tf_prefix, std::vector<geometry_msgs::TransformStamped>& transforms);
+
   /** Publish transforms to tf
    * \param joint_positions A map of joint names and joint positions.
    * \param time The time at which the joint positions were recorded

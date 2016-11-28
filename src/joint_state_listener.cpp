@@ -69,6 +69,9 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
   // subscribe to joint state
   joint_state_sub_ = n.subscribe("joint_states", 1, &JointStateListener::callbackJointState, this);
 
+  // advertise service
+  get_transforms_srv_ = n.advertiseService("get_transforms", &JointStateListener::callbackGetTransforms, this);
+
   // trigger to publish fixed joints
   // if using static transform broadcaster, this will be a oneshot trigger and only run once
   timer_ = n_tilde.createTimer(publish_interval_, &JointStateListener::callbackFixedJoint, this, use_tf_static_);
@@ -141,6 +144,25 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
     for (unsigned int i=0; i<state->name.size(); i++)
       last_publish_time_[state->name[i]] = state->header.stamp;
   }
+}
+
+bool JointStateListener::callbackGetTransforms(GetRobotTransforms::Request&  req,
+                                               GetRobotTransforms::Response& res)
+{
+  map<string, double> joint_positions;
+  unsigned int joint_size = req.joint_states.name.size();
+  for (unsigned int i=0; i<joint_size; i++)
+    joint_positions.insert(make_pair(req.joint_states.name[i], req.joint_states.position[i]));
+
+  for(MimicMap::iterator i = mimic_.begin(); i != mimic_.end(); i++){
+    if(joint_positions.find(i->second->joint_name) != joint_positions.end()){
+      double pos = joint_positions[i->second->joint_name] * i->second->multiplier + i->second->offset;
+      joint_positions.insert(make_pair(i->first, pos));
+    }
+  }
+
+  state_publisher_.computeTransforms(joint_positions, req.joint_states.header.stamp, tf_prefix_, res.transforms);
+  return true;
 }
 
 // ----------------------------------

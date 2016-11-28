@@ -41,6 +41,7 @@
 #include <kdl/tree.hpp>
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+#include <robot_state_publisher/GetRobotTransforms.h>
 #include "robot_state_publisher/robot_state_publisher.h"
 
 using namespace std;
@@ -65,11 +66,14 @@ public:
 protected:
   virtual void callbackJointState(const JointStateConstPtr& state);
   virtual void callbackFixedJoint(const ros::TimerEvent& e);
+  virtual bool callbackGetTransforms(GetRobotTransforms::Request&  req,
+                                     GetRobotTransforms::Response& res);
 
   std::string tf_prefix_;
   Duration publish_interval_;
   robot_state_publisher::RobotStatePublisher state_publisher_;
   Subscriber joint_state_sub_;
+  ServiceServer get_transforms_srv_;
   ros::Timer timer_;
   ros::Time last_callback_time_;
   std::map<std::string, ros::Time> last_publish_time_;

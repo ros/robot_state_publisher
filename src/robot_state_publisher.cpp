@@ -81,13 +81,9 @@ namespace robot_state_publisher{
     }
   }
 
-
-  // publish moving transforms
-  void RobotStatePublisher::publishTransforms(const map<string, double>& joint_positions, const Time& time, const std::string& tf_prefix)
+  // compute transform from joint states
+  void RobotStatePublisher::computeTransforms(const map<string, double>& joint_positions, const ros::Time& time, const string& tf_prefix, vector<geometry_msgs::TransformStamped>& transforms)
   {
-    ROS_DEBUG("Publishing transforms for moving joints");
-    std::vector<geometry_msgs::TransformStamped> tf_transforms;
-
     // loop over all joints
     for (map<string, double>::const_iterator jnt=joint_positions.begin(); jnt != joint_positions.end(); jnt++){
       std::map<std::string, SegmentPair>::const_iterator seg = segments_.find(jnt->first);
@@ -96,9 +92,18 @@ namespace robot_state_publisher{
         tf_transform.header.stamp = time;
         tf_transform.header.frame_id = tf::resolve(tf_prefix, seg->second.root);
         tf_transform.child_frame_id = tf::resolve(tf_prefix, seg->second.tip);
-        tf_transforms.push_back(tf_transform);
+        transforms.push_back(tf_transform);
       }
     }
+  }
+
+
+  // publish moving transforms
+  void RobotStatePublisher::publishTransforms(const map<string, double>& joint_positions, const Time& time, const std::string& tf_prefix)
+  {
+    ROS_DEBUG("Publishing transforms for moving joints");
+    std::vector<geometry_msgs::TransformStamped> tf_transforms;
+    computeTransforms(joint_positions, time, tf_prefix, tf_transforms);
     tf_broadcaster_.sendTransform(tf_transforms);
   }
 
