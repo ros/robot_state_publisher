@@ -34,7 +34,7 @@
 
 #include <gtest/gtest.h>
 
-#include <urdf_model/types.h>
+#include <urdf/model.h>
 
 #include <kdl_parser/kdl_parser.hpp>
 

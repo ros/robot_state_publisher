@@ -38,7 +38,6 @@
 #define JOINT_STATE_LISTENER_H
 
 #include <urdf/model.h>
-#include <urdf_model/types.h>
 #include <kdl/tree.hpp>
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>

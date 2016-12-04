@@ -7,7 +7,7 @@ find_package(catkin REQUIRED
 )
 find_package(Eigen3 REQUIRED)
 
-find_package(urdfdom_headers 0.4 REQUIRED)
+find_package(urdfdom_headers REQUIRED)
 
 catkin_package(
   LIBRARIES ${PROJECT_NAME}_solver

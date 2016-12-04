@@ -35,7 +35,6 @@
 /* Author: Wim Meeussen */
 
 #include <urdf/model.h>
-#include <urdf_model/types.h>
 #include <kdl/tree.hpp>
 #include <ros/ros.h>
 #include "robot_state_publisher/robot_state_publisher.h"
