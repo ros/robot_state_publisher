@@ -11,9 +11,13 @@
     and as a ROS node.  This package has been well tested and the code
     is stable. No major changes are planned in the near future
   </description>
+
+  <author email="isucan@gmail.com">Ioan Sucan</author>
+  <author email="jacquelinekay1@gmail.com">Jackie Kay</author>
   <author email="wim@willowgarage.com">Wim Meeussen</author>
-  <maintainer email="isucan@google.com">Ioan Sucan</maintainer>
-  <maintainer email="jackie@osrfoundation.org">Jackie Kay</maintainer>
+
+  <maintainer email="clalancette@osrfoundation.org">Chris Lalancette</maintainer>
+  <maintainer email="sloretz@osrfoundation.org">Shane Loretz</maintainer>
 
   <license>BSD</license>
 
