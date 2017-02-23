@@ -41,6 +41,7 @@
 #include <kdl/tree.hpp>
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+
 #include "robot_state_publisher/robot_state_publisher.h"
 
 using namespace std;
@@ -50,7 +51,7 @@ using namespace KDL;
 typedef boost::shared_ptr<sensor_msgs::JointState const> JointStateConstPtr;
 typedef std::map<std::string, urdf::JointMimicSharedPtr > MimicMap;
 
-namespace robot_state_publisher{
+namespace robot_state_publisher {
 
 class JointStateListener {
 public:
@@ -79,6 +80,5 @@ protected:
 
 };
 }
-
 
 #endif

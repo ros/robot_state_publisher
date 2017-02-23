@@ -47,7 +47,7 @@
 #include <kdl/segment.hpp>
 #include <kdl/tree.hpp>
 
-namespace robot_state_publisher{
+namespace robot_state_publisher {
 
 class SegmentPair
 {
@@ -86,8 +86,6 @@ protected:
   tf2_ros::TransformBroadcaster tf_broadcaster_;
   tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
 };
-
-
 
 }
 

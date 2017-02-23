@@ -35,6 +35,7 @@
 /* Author: Wim Meeussen */
 
 #include <string>
+
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 #include <tf2_ros/transform_listener.h>
@@ -42,8 +43,8 @@
 #include <boost/thread/thread.hpp>
 #include <urdf/model.h>
 #include <kdl_parser/kdl_parser.hpp>
-#include "robot_state_publisher/joint_state_listener.h"
 
+#include "robot_state_publisher/joint_state_listener.h"
 
 using namespace ros;
 using namespace tf2_ros;
@@ -66,10 +67,6 @@ protected:
   {}
 };
 
-
-
-
-
 TEST_F(TestPublisher, test)
 {
   {
@@ -89,13 +86,13 @@ TEST_F(TestPublisher, test)
   js_msg.name.push_back("joint1");
   js_msg.position.push_back(M_PI);
   ros::Duration(1).sleep();
-  for (unsigned int i=0; i<100; i++){
+  for (unsigned int i = 0; i < 100; i++) {
     js_msg.header.stamp = ros::Time::now();
     js_pub.publish(js_msg);
     ros::Duration(0.1).sleep();
   }
 
-  for (unsigned int i=0; i<100 && !buffer.canTransform("link1", "link2", Time()); i++){
+  for (unsigned int i = 0; i < 100 && !buffer.canTransform("link1", "link2", Time()); i++) {
     ros::Duration(0.1).sleep();
     ros::spinOnce();
   }
@@ -109,9 +106,6 @@ TEST_F(TestPublisher, test)
 
   SUCCEED();
 }
-
-
-
 
 int main(int argc, char** argv)
 {
