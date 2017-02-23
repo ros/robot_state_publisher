@@ -47,7 +47,7 @@
 #include <kdl/segment.hpp>
 #include <kdl/tree.hpp>
 
-namespace robot_state_publisher{
+namespace robot_state_publisher {
 
 class SegmentPair
 {
@@ -81,14 +81,11 @@ public:
 private:
   void addChildren(const KDL::SegmentMap::const_iterator segment);
 
-
   std::map<std::string, SegmentPair> segments_, segments_fixed_;
   const urdf::Model& model_;
   tf2_ros::TransformBroadcaster tf_broadcaster_;
   tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
 };
-
-
 
 }
 

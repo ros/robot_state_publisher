@@ -35,12 +35,14 @@
 /* Author: Wim Meeussen */
 
 #include <string>
+
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 #include <tf2_ros/transform_listener.h>
 #include <boost/thread/thread.hpp>
 #include <urdf/model.h>
 #include <kdl_parser/kdl_parser.hpp>
+
 #include "robot_state_publisher/joint_state_listener.h"
 
 using namespace ros;
@@ -93,9 +95,6 @@ TEST_F(TestPublisher, test)
 
   SUCCEED();
 }
-
-
-
 
 int main(int argc, char** argv)
 {
