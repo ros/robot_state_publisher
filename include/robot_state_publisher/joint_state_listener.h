@@ -41,6 +41,7 @@
 #include <kdl/tree.hpp>
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+
 #include "robot_state_publisher/robot_state_publisher.h"
 
 using namespace std;
@@ -50,9 +51,9 @@ using namespace KDL;
 typedef boost::shared_ptr<sensor_msgs::JointState const> JointStateConstPtr;
 typedef std::map<std::string, boost::shared_ptr<urdf::JointMimic> > MimicMap;
 
-namespace robot_state_publisher{
+namespace robot_state_publisher {
 
-class JointStateListener{
+class JointStateListener {
 public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
@@ -78,6 +79,5 @@ private:
 
 };
 }
-
 
 #endif

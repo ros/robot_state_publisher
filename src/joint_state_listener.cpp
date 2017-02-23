@@ -34,13 +34,13 @@
 
 /* Author: Wim Meeussen */
 
+#include <ros/ros.h>
 #include <urdf/model.h>
 #include <kdl/tree.hpp>
-#include <ros/ros.h>
-#include "robot_state_publisher/robot_state_publisher.h"
-#include "robot_state_publisher/joint_state_listener.h"
 #include <kdl_parser/kdl_parser.hpp>
 
+#include "robot_state_publisher/robot_state_publisher.h"
+#include "robot_state_publisher/joint_state_listener.h"
 
 using namespace std;
 using namespace ros;
@@ -62,7 +62,7 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
   std::string tf_prefix_key;
   n_tilde.searchParam("tf_prefix", tf_prefix_key);
   n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
-  publish_interval_ = ros::Duration(1.0/max(publish_freq,1.0));
+  publish_interval_ = ros::Duration(1.0/max(publish_freq, 1.0));
 
   // subscribe to joint state
   joint_state_sub_ = n.subscribe("joint_states", 1, &JointStateListener::callbackJointState, this);
@@ -70,12 +70,11 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
   // trigger to publish fixed joints
   // if using static transform broadcaster, this will be a oneshot trigger and only run once
   timer_ = n_tilde.createTimer(publish_interval_, &JointStateListener::callbackFixedJoint, this, use_tf_static_);
-
-};
+}
 
 
 JointStateListener::~JointStateListener()
-{};
+{}
 
 
 void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
@@ -92,7 +91,7 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
 
   // check if we moved backwards in time (e.g. when playing a bag file)
   ros::Time now = ros::Time::now();
-  if(last_callback_time_ > now) {
+  if (last_callback_time_ > now) {
     // force re-publish of joint transforms
     ROS_WARN("Moved backwards in time (probably because ROS clock was reset), re-publishing joint transforms!");
     last_publish_time_.clear();
@@ -101,24 +100,23 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
 
   // determine least recently published joint
   ros::Time last_published = now;
-  for (unsigned int i=0; i<state->name.size(); i++)
-  {
+  for (unsigned int i=0; i<state->name.size(); i++) {
     ros::Time t = last_publish_time_[state->name[i]];
     last_published = (t < last_published) ? t : last_published;
   }
   // note: if a joint was seen for the first time,
   //       then last_published is zero.
 
-
   // check if we need to publish
-  if (state->header.stamp >= last_published + publish_interval_){
+  if (state->header.stamp >= last_published + publish_interval_) {
     // get joint positions from state message
     map<string, double> joint_positions;
-    for (unsigned int i=0; i<state->name.size(); i++)
+    for (unsigned int i=0; i<state->name.size(); i++) {
       joint_positions.insert(make_pair(state->name[i], state->position[i]));
+    }
 
-    for(MimicMap::iterator i = mimic_.begin(); i != mimic_.end(); i++){
-      if(joint_positions.find(i->second->joint_name) != joint_positions.end()){
+    for (MimicMap::iterator i = mimic_.begin(); i != mimic_.end(); i++) {
+      if(joint_positions.find(i->second->joint_name) != joint_positions.end()) {
         double pos = joint_positions[i->second->joint_name] * i->second->multiplier + i->second->offset;
         joint_positions.insert(make_pair(i->first, pos));
       }
@@ -127,8 +125,9 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
     state_publisher_.publishTransforms(joint_positions, state->header.stamp, tf_prefix_);
 
     // store publish time in joint map
-    for (unsigned int i=0; i<state->name.size(); i++)
+    for (unsigned int i = 0; i<state->name.size(); i++) {
       last_publish_time_[state->name[i]] = state->header.stamp;
+    }
   }
 }
 
@@ -144,25 +143,27 @@ int main(int argc, char** argv)
   ///////////////////////////////////////// begin deprecation warning
   std::string exe_name = argv[0];
   std::size_t slash = exe_name.find_last_of("/");
-  if (slash != std::string::npos)
+  if (slash != std::string::npos) {
     exe_name = exe_name.substr(slash + 1);
-  if (exe_name == "state_publisher")
+  }
+  if (exe_name == "state_publisher") {
     ROS_WARN("The 'state_publisher' executable is deprecated. Please use 'robot_state_publisher' instead");
+  }
   ///////////////////////////////////////// end deprecation warning
 
   // gets the location of the robot description on the parameter server
   urdf::Model model;
   model.initParam("robot_description");
   KDL::Tree tree;
-  if (!kdl_parser::treeFromUrdfModel(model, tree)){
+  if (!kdl_parser::treeFromUrdfModel(model, tree)) {
     ROS_ERROR("Failed to extract kdl tree from xml robot description");
     return -1;
   }
 
   MimicMap mimic;
 
-  for(std::map< std::string, boost::shared_ptr< urdf::Joint > >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++){
-    if(i->second->mimic){
+  for (std::map< std::string, boost::shared_ptr< urdf::Joint > >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++) {
+    if (i->second->mimic) {
       mimic.insert(make_pair(i->first, i->second->mimic));
     }
   }
