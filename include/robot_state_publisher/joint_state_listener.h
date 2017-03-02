@@ -37,43 +37,43 @@
 #ifndef JOINT_STATE_LISTENER_H
 #define JOINT_STATE_LISTENER_H
 
+#include <chrono>
+
 #include <urdf/model.h>
 #include <kdl/tree.hpp>
-#include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
+#include <sensor_msgs/msg/joint_state.hpp>
+
+#include "rclcpp/rclcpp.hpp"
 
 #include "robot_state_publisher/robot_state_publisher.h"
 
-using namespace std;
-using namespace ros;
-using namespace KDL;
-
-typedef boost::shared_ptr<sensor_msgs::JointState const> JointStateConstPtr;
+typedef std::shared_ptr<sensor_msgs::msg::JointState const> JointStateConstPtr;
 typedef std::map<std::string, urdf::JointMimicSharedPtr > MimicMap;
 
 namespace robot_state_publisher {
 
-class JointStateListener {
+class JointStateListener{
 public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
-  JointStateListener(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model = urdf::Model());
+  JointStateListener(rclcpp::node::Node::SharedPtr node, const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model = urdf::Model());
 
   /// Destructor
   ~JointStateListener();
 
 protected:
-  virtual void callbackJointState(const JointStateConstPtr& state);
-  virtual void callbackFixedJoint(const ros::TimerEvent& e);
+  virtual void callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state);
+  virtual void callbackFixedJoint();
 
+  rclcpp::node::Node::SharedPtr node_;
   std::string tf_prefix_;
-  Duration publish_interval_;
+  std::chrono::seconds publish_interval_;
   robot_state_publisher::RobotStatePublisher state_publisher_;
-  Subscriber joint_state_sub_;
-  ros::Timer timer_;
-  ros::Time last_callback_time_;
-  std::map<std::string, ros::Time> last_publish_time_;
+  rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
+  rclcpp::TimerBase::SharedPtr timer_;
+  std::chrono::time_point<std::chrono::system_clock> last_callback_time_;
+  std::map<std::string, std::chrono::time_point<std::chrono::system_clock>> last_publish_time_;
   MimicMap mimic_;
   bool use_tf_static_;
   bool ignore_timestamp_;

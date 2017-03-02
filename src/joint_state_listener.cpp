@@ -34,113 +34,122 @@
 
 /* Author: Wim Meeussen */
 
-#include <ros/ros.h>
+#include <chrono>
+
 #include <urdf/model.h>
 #include <kdl/tree.hpp>
 #include <kdl_parser/kdl_parser.hpp>
 
+#include "rclcpp/rclcpp.hpp"
+
 #include "robot_state_publisher/robot_state_publisher.h"
 #include "robot_state_publisher/joint_state_listener.h"
 
-using namespace std;
-using namespace ros;
-using namespace KDL;
-using namespace robot_state_publisher;
+using namespace std::chrono_literals;
 
-JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model)
-  : state_publisher_(tree, model), mimic_(m)
+namespace robot_state_publisher
 {
-  ros::NodeHandle n_tilde("~");
-  ros::NodeHandle n;
 
-  // set publish frequency
-  double publish_freq;
-  n_tilde.param("publish_frequency", publish_freq, 50.0);
-  // set whether to use the /tf_static latched static transform broadcaster
-  n_tilde.param("use_tf_static", use_tf_static_, true);
-  // ignore_timestamp_ == true, joins_states messages are accepted, no matter their timestamp
-  n_tilde.param("ignore_timestamp", ignore_timestamp_, false);
-  // get the tf_prefix parameter from the closest namespace
-  std::string tf_prefix_key;
-  n_tilde.searchParam("tf_prefix", tf_prefix_key);
-  n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
-  publish_interval_ = ros::Duration(1.0/max(publish_freq, 1.0));
+JointStateListener::JointStateListener(rclcpp::node::Node::SharedPtr node, const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model):
+  node_(node),
+  state_publisher_(node, tree, model),
+  mimic_(m)
+{
+  //ros::NodeHandle n_tilde("~");
+  //ros::NodeHandle n;
+
+  //// set publish frequency
+  //double publish_freq;
+  //n_tilde.param("publish_frequency", publish_freq, 50.0);
+  //// set whether to use the /tf_static latched static transform broadcaster
+  //n_tilde.param("use_tf_static", use_tf_static_, true);
+  //// ignore_timestamp_ == true, joins_states messages are accepted, no matter their timestamp
+  //n_tilde.param("ignore_timestamp", ignore_timestamp_, false);
+  //// get the tf_prefix parameter from the closest namespace
+  //std::string tf_prefix_key;
+  //n_tilde.searchParam("tf_prefix", tf_prefix_key);
+  //n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
+  //publish_interval_ = ros::Duration(1.0/max(publish_freq, 1.0));
+
+  use_tf_static_ = true;
+  ignore_timestamp_ = false;
+  tf_prefix_ = "";
+  //auto publish_freq = 50.0;
+  //publish_interval_ = std::chrono::seconds(1.0/std::max(publish_freq, 1.0));
+  publish_interval_ = 1s;
 
   // subscribe to joint state
-  joint_state_sub_ = n.subscribe("joint_states", 1, &JointStateListener::callbackJointState, this);
+  joint_state_sub_ = node_->create_subscription<sensor_msgs::msg::JointState>("joint_states", std::bind(&JointStateListener::callbackJointState, this, std::placeholders::_1));
 
   // trigger to publish fixed joints
   // if using static transform broadcaster, this will be a oneshot trigger and only run once
-  timer_ = n_tilde.createTimer(publish_interval_, &JointStateListener::callbackFixedJoint, this, use_tf_static_);
+  timer_ = node_->create_wall_timer(1s, std::bind(&JointStateListener::callbackFixedJoint, this));
 }
-
 
 JointStateListener::~JointStateListener()
 {}
 
-
-void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
+void JointStateListener::callbackFixedJoint()
 {
   state_publisher_.publishFixedTransforms(tf_prefix_, use_tf_static_);
 }
 
-void JointStateListener::callbackJointState(const JointStateConstPtr& state)
+void JointStateListener::callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state)
 {
   if (state->name.size() != state->position.size()){
     if (state->position.empty()){
-      const int throttleSeconds = 300;
-      ROS_WARN_THROTTLE(throttleSeconds,
-          "Robot state publisher ignored a JointState message about joint(s) "
-          "\"%s\"(,...) whose position member was empty. This message will "
-          "not reappear for %d seconds.", state->name[0].c_str(),
-          throttleSeconds);
+      fprintf(stderr, "Robot state publisher ignored a JointState message about joint(s) \"%s\"(,...) whose position member was empty", state->name[0].c_str());
     } else {
-      ROS_ERROR("Robot state publisher ignored an invalid JointState message");
+      fprintf(stderr, "Robot state publisher ignored an invalid JointState message");
     }
     return;
   }
 
   // check if we moved backwards in time (e.g. when playing a bag file)
-  ros::Time now = ros::Time::now();
+  auto now = std::chrono::system_clock::now();
   if (last_callback_time_ > now) {
-    // force re-publish of joint transforms
-    ROS_WARN("Moved backwards in time (probably because ROS clock was reset), re-publishing joint transforms!");
+    // force re-publish of joint ransforms
+    fprintf(stderr, "Moved backwards in time (probably because ROS clock was reset), re-publishing joint transforms!\n");
     last_publish_time_.clear();
   }
   last_callback_time_ = now;
 
   // determine least recently published joint
-  ros::Time last_published = now;
+  auto last_published = now;
   for (unsigned int i=0; i<state->name.size(); i++) {
-    ros::Time t = last_publish_time_[state->name[i]];
+    auto t = last_publish_time_[state->name[i]];
     last_published = (t < last_published) ? t : last_published;
   }
   // note: if a joint was seen for the first time,
   //       then last_published is zero.
 
   // check if we need to publish
-  if (ignore_timestamp_ || state->header.stamp >= last_published + publish_interval_) {
+  auto msg_nanoseconds = std::chrono::nanoseconds(state->header.stamp.sec * 1000000000 + state->header.stamp.nanosec);
+  //std::chrono::duration<double> msg_stamp(msg_nanoseconds);
+  //std::chrono::duration<double>last = last_published + publish_interval_;
+  if (ignore_timestamp_ || true) {
     // get joint positions from state message
-    map<string, double> joint_positions;
+    std::map<std::string, double> joint_positions;
     for (unsigned int i=0; i<state->name.size(); i++) {
-      joint_positions.insert(make_pair(state->name[i], state->position[i]));
+      joint_positions.insert(std::make_pair(state->name[i], state->position[i]));
     }
 
     for (MimicMap::iterator i = mimic_.begin(); i != mimic_.end(); i++) {
       if(joint_positions.find(i->second->joint_name) != joint_positions.end()) {
         double pos = joint_positions[i->second->joint_name] * i->second->multiplier + i->second->offset;
-        joint_positions.insert(make_pair(i->first, pos));
+        joint_positions.insert(std::make_pair(i->first, pos));
       }
     }
 
-    state_publisher_.publishTransforms(joint_positions, state->header.stamp, tf_prefix_);
+    state_publisher_.publishTransforms(joint_positions, msg_nanoseconds, tf_prefix_);
 
     // store publish time in joint map
     for (unsigned int i = 0; i<state->name.size(); i++) {
-      last_publish_time_[state->name[i]] = state->header.stamp;
+      //last_publish_time_[state->name[i]] = std::chrono::time_point<std::chrono::system_clock>(msg_nanoseconds);
     }
   }
 }
+}  // mamespace robot_state_publisher
 
 // ----------------------------------
 // ----- MAIN -----------------------
@@ -148,41 +157,42 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
 int main(int argc, char** argv)
 {
   // Initialize ros
-  ros::init(argc, argv, "robot_state_publisher");
-  NodeHandle node;
-
-  ///////////////////////////////////////// begin deprecation warning
-  std::string exe_name = argv[0];
-  std::size_t slash = exe_name.find_last_of("/");
-  if (slash != std::string::npos) {
-    exe_name = exe_name.substr(slash + 1);
-  }
-  if (exe_name == "state_publisher") {
-    ROS_WARN("The 'state_publisher' executable is deprecated. Please use 'robot_state_publisher' instead");
-  }
-  ///////////////////////////////////////// end deprecation warning
+  rclcpp::init(argc, argv);
 
   // gets the location of the robot description on the parameter server
-  urdf::Model model;
-  if (!model.initParam("robot_description"))
+  if (argc < 2) {
+    fprintf(stderr, "Robot State Publisher 2 requires a urdf file name\n");
     return -1;
+  }
+  fprintf(stderr, "Initialize urdf model from file: %s\n", argv[1]);
+  urdf::Model model;
+  if (!model.initFile(argv[1])) {
+    fprintf(stderr, "Unable to initialize urdf::model from %s\n", argv[1]);
+    return -1;
+  }
 
   KDL::Tree tree;
   if (!kdl_parser::treeFromUrdfModel(model, tree)) {
-    ROS_ERROR("Failed to extract kdl tree from xml robot description");
+    fprintf(stderr, "Failed to extract kdl tree from xml robot description\n");
     return -1;
   }
 
-  MimicMap mimic;
-
-  for(std::map< std::string, urdf::JointSharedPtr >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++) {
+  std::map<std::string, urdf::JointMimicSharedPtr> mimic;
+  for(auto i = model.joints_.begin(); i != model.joints_.end(); i++) {
     if(i->second->mimic) {
       mimic.insert(make_pair(i->first, i->second->mimic));
     }
   }
 
-  JointStateListener state_publisher(tree, mimic, model);
-  ros::spin();
+  auto segments_map = tree.getSegments();
+  for (auto segment : segments_map)
+  {
+    fprintf(stderr, "got segment %s\n", segment.first.c_str());
+  }
 
+  auto node = std::make_shared<rclcpp::node::Node>("robot_state_publisher");
+  robot_state_publisher::JointStateListener state_publisher(node, tree, mimic, model);
+
+  rclcpp::spin(node);
   return 0;
 }

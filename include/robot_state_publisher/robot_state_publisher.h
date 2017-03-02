@@ -37,9 +37,6 @@
 #ifndef ROBOT_STATE_PUBLISHER_H
 #define ROBOT_STATE_PUBLISHER_H
 
-#include <ros/ros.h>
-#include <boost/scoped_ptr.hpp>
-#include <tf/tf.h>
 #include <urdf/model.h>
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <tf2_ros/transform_broadcaster.h>
@@ -59,23 +56,23 @@ public:
   std::string root, tip;
 };
 
-
 class RobotStatePublisher
 {
 public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
-  RobotStatePublisher(const KDL::Tree& tree, const urdf::Model& model = urdf::Model());
+  RobotStatePublisher(rclcpp::node::Node::SharedPtr node_handle, const KDL::Tree& tree, const urdf::Model& model);
 
   /// Destructor
-  ~RobotStatePublisher(){};
+  virtual ~RobotStatePublisher(){};
 
   /** Publish transforms to tf
    * \param joint_positions A map of joint names and joint positions.
    * \param time The time at which the joint positions were recorded
    */
-  virtual void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time, const std::string& tf_prefix);
+  virtual void publishTransforms(const std::map<std::string, double>& joint_positions, const std::chrono::nanoseconds& time, const std::string& tf_prefix);
+
   virtual void publishFixedTransforms(const std::string& tf_prefix, bool use_tf_static = false);
 
 protected:

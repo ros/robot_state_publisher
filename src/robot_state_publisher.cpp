@@ -35,18 +35,38 @@
 /* Author: Wim Meeussen */
 
 #include <kdl/frames_io.hpp>
-#include <geometry_msgs/TransformStamped.h>
-#include <tf2_kdl/tf2_kdl.h>
+#include <geometry_msgs/msg/transform_stamped.hpp>
 
 #include "robot_state_publisher/robot_state_publisher.h"
 
-using namespace std;
-using namespace ros;
-
 namespace robot_state_publisher {
 
-RobotStatePublisher::RobotStatePublisher(const KDL::Tree& tree, const urdf::Model& model)
-  : model_(model)
+inline
+KDL::Frame transformToKDL(const geometry_msgs::msg::TransformStamped& t)
+{
+  return KDL::Frame(KDL::Rotation::Quaternion(t.transform.rotation.x, t.transform.rotation.y, 
+        t.transform.rotation.z, t.transform.rotation.w),
+      KDL::Vector(t.transform.translation.x, t.transform.translation.y, t.transform.translation.z));
+}
+
+inline
+geometry_msgs::msg::TransformStamped kdlToTransform(const KDL::Frame& k)
+{
+  geometry_msgs::msg::TransformStamped t;
+  t.transform.translation.x = k.p.x();
+  t.transform.translation.y = k.p.y();
+  t.transform.translation.z = k.p.z();
+  k.M.GetQuaternion(t.transform.rotation.x, t.transform.rotation.y, t.transform.rotation.z, t.transform.rotation.w);
+  return t;
+}
+
+RobotStatePublisher::RobotStatePublisher(
+  rclcpp::node::Node::SharedPtr node_handle,
+  const KDL::Tree& tree,
+  const urdf::Model& model)
+  : model_(model),
+  tf_broadcaster_(node_handle),
+  static_tf_broadcaster_(node_handle)
 {
   // walk the tree and add segments to segments_
   addChildren(tree.getRootSegment());
@@ -55,24 +75,24 @@ RobotStatePublisher::RobotStatePublisher(const KDL::Tree& tree, const urdf::Mode
 // add children to correct maps
 void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segment)
 {
-  const std::string& root = GetTreeElementSegment(segment->second).getName();
+  auto root = GetTreeElementSegment(segment->second).getName();
 
-  const std::vector<KDL::SegmentMap::const_iterator>& children = GetTreeElementChildren(segment->second);
+  auto children = GetTreeElementChildren(segment->second);
   for (unsigned int i=0; i<children.size(); i++) {
     const KDL::Segment& child = GetTreeElementSegment(children[i]->second);
     SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
     if (child.getJoint().getType() == KDL::Joint::None) {
       if (model_.getJoint(child.getJoint().getName()) && model_.getJoint(child.getJoint().getName())->type == urdf::Joint::FLOATING) {
-        ROS_INFO("Floating joint. Not adding segment from %s to %s. This TF can not be published based on joint_states info", root.c_str(), child.getName().c_str());
+        fprintf(stderr, "Floating joint. Not adding segment from %s to %s. This TF can not be published based on joint_states info\n", root.c_str(), child.getName().c_str());
       }
       else {
         segments_fixed_.insert(make_pair(child.getJoint().getName(), s));
-        ROS_DEBUG("Adding fixed segment from %s to %s", root.c_str(), child.getName().c_str());
+        fprintf(stderr, "Adding fixed segment from %s to %s\n", root.c_str(), child.getName().c_str());
       }
     }
     else {
       segments_.insert(make_pair(child.getJoint().getName(), s));
-      ROS_DEBUG("Adding moving segment from %s to %s", root.c_str(), child.getName().c_str());
+      fprintf(stderr, "Adding moving segment from %s to %s\n", root.c_str(), child.getName().c_str());
     }
     addChildren(children[i]);
   }
@@ -80,19 +100,21 @@ void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segm
 
 
 // publish moving transforms
-void RobotStatePublisher::publishTransforms(const map<string, double>& joint_positions, const Time& time, const std::string& tf_prefix)
+void RobotStatePublisher::publishTransforms(const std::map<std::string, double>& joint_positions, const std::chrono::nanoseconds& /*time*/, const std::string& tf_prefix)
 {
-  ROS_DEBUG("Publishing transforms for moving joints");
-  std::vector<geometry_msgs::TransformStamped> tf_transforms;
+  fprintf(stderr, "Publishing transforms for moving joints\n");
+  std::vector<geometry_msgs::msg::TransformStamped> tf_transforms;
 
   // loop over all joints
-  for (map<string, double>::const_iterator jnt=joint_positions.begin(); jnt != joint_positions.end(); jnt++) {
-    std::map<std::string, SegmentPair>::const_iterator seg = segments_.find(jnt->first);
+  for (auto jnt = joint_positions.begin(); jnt != joint_positions.end(); ++jnt) {
+    auto seg = segments_.find(jnt->first);
     if (seg != segments_.end()) {
-      geometry_msgs::TransformStamped tf_transform = tf2::kdlToTransform(seg->second.segment.pose(jnt->second));
-      tf_transform.header.stamp = time;
-      tf_transform.header.frame_id = tf::resolve(tf_prefix, seg->second.root);
-      tf_transform.child_frame_id = tf::resolve(tf_prefix, seg->second.tip);
+      geometry_msgs::msg::TransformStamped tf_transform = kdlToTransform(seg->second.segment.pose(jnt->second));
+      auto now = std::chrono::high_resolution_clock::now().time_since_epoch();
+      tf_transform.header.stamp.sec = static_cast<builtin_interfaces::msg::Time::_sec_type>(now.count() / 1000000000);
+      tf_transform.header.stamp.nanosec = now.count() % 1000000000;
+      tf_transform.header.frame_id = tf_prefix + "/" + seg->second.root;
+      tf_transform.child_frame_id = tf_prefix + "/" + seg->second.tip;
       tf_transforms.push_back(tf_transform);
     }
   }
@@ -102,19 +124,22 @@ void RobotStatePublisher::publishTransforms(const map<string, double>& joint_pos
 // publish fixed transforms
 void RobotStatePublisher::publishFixedTransforms(const std::string& tf_prefix, bool use_tf_static)
 {
-  ROS_DEBUG("Publishing transforms for fixed joints");
-  std::vector<geometry_msgs::TransformStamped> tf_transforms;
-  geometry_msgs::TransformStamped tf_transform;
+  fprintf(stderr, "Publishing transforms for fixed joints\n");
+  std::vector<geometry_msgs::msg::TransformStamped> tf_transforms;
+  geometry_msgs::msg::TransformStamped tf_transform;
 
   // loop over all fixed segments
-  for (map<string, SegmentPair>::const_iterator seg=segments_fixed_.begin(); seg != segments_fixed_.end(); seg++) {
-    geometry_msgs::TransformStamped tf_transform = tf2::kdlToTransform(seg->second.segment.pose(0));
-    tf_transform.header.stamp = ros::Time::now();
-    if (!use_tf_static) {
-      tf_transform.header.stamp += ros::Duration(0.5);
-    }
-    tf_transform.header.frame_id = tf::resolve(tf_prefix, seg->second.root);
-    tf_transform.child_frame_id = tf::resolve(tf_prefix, seg->second.tip);
+  for (auto seg=segments_fixed_.begin(); seg != segments_fixed_.end(); seg++) {
+    geometry_msgs::msg::TransformStamped tf_transform = kdlToTransform(seg->second.segment.pose(0));
+    std::chrono::nanoseconds now = std::chrono::high_resolution_clock::now().time_since_epoch();
+    tf_transform.header.stamp.sec = static_cast<builtin_interfaces::msg::Time::_sec_type>(now.count() / 1000000000);
+    tf_transform.header.stamp.nanosec = now.count() % 1000000000;
+
+    //if (!use_tf_static) {
+    //  tf_transform.header.stamp += ros::Duration(0.5);
+    //}
+    tf_transform.header.frame_id = tf_prefix + "/" + seg->second.root;
+    tf_transform.child_frame_id = tf_prefix + "/" + seg->second.tip;
     tf_transforms.push_back(tf_transform);
   }
   if (use_tf_static) {
