@@ -34,30 +34,35 @@
 
 /* Author: Wim Meeussen */
 
-#ifndef JOINT_STATE_LISTENER_H
-#define JOINT_STATE_LISTENER_H
+#ifndef ROBOT_STATE_PUBLISHER__JOINT_STATE_LISTENER_H_
+#define ROBOT_STATE_PUBLISHER__JOINT_STATE_LISTENER_H_
 
 #include <chrono>
+#include <map>
+#include <memory>
+#include <string>
 
-#include <urdf/model.h>
-#include <kdl/tree.hpp>
-#include <sensor_msgs/msg/joint_state.hpp>
-
+#include "kdl/tree.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
+#include "urdf/model.h"
 
 #include "robot_state_publisher/robot_state_publisher.h"
 
 typedef std::shared_ptr<sensor_msgs::msg::JointState const> JointStateConstPtr;
-typedef std::map<std::string, urdf::JointMimicSharedPtr > MimicMap;
+typedef std::map<std::string, urdf::JointMimicSharedPtr> MimicMap;
 
-namespace robot_state_publisher {
+namespace robot_state_publisher
+{
 
-class JointStateListener{
+class JointStateListener
+{
 public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
-  JointStateListener(rclcpp::node::Node::SharedPtr node, const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model = urdf::Model());
+  JointStateListener(rclcpp::node::Node::SharedPtr node, const KDL::Tree & tree, const MimicMap & m,
+    const urdf::Model & model = urdf::Model());
 
   /// Destructor
   ~JointStateListener();
@@ -77,8 +82,8 @@ protected:
   MimicMap mimic_;
   bool use_tf_static_;
   bool ignore_timestamp_;
-
 };
-}
 
-#endif
+}  // namespace robot_state_publisher
+
+#endif  // ROBOT_STATE_PUBLISHER__JOINT_STATE_LISTENER_H_

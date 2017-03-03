@@ -34,23 +34,30 @@
 
 /* Author: Wim Meeussen */
 
-#ifndef ROBOT_STATE_PUBLISHER_H
-#define ROBOT_STATE_PUBLISHER_H
+#ifndef ROBOT_STATE_PUBLISHER__ROBOT_STATE_PUBLISHER_H_
+#define ROBOT_STATE_PUBLISHER__ROBOT_STATE_PUBLISHER_H_
 
-#include <urdf/model.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-#include <tf2_ros/transform_broadcaster.h>
-#include <kdl/frames.hpp>
-#include <kdl/segment.hpp>
-#include <kdl/tree.hpp>
+#include <map>
+#include <string>
 
-namespace robot_state_publisher {
+#include "kdl/frames.hpp"
+#include "kdl/segment.hpp"
+#include "kdl/tree.hpp"
+
+#include "tf2_ros/static_transform_broadcaster.h"
+#include "tf2_ros/transform_broadcaster.h"
+#include "urdf/model.h"
+
+#include "rclcpp/rclcpp.hpp"
+
+namespace robot_state_publisher
+{
 
 class SegmentPair
 {
 public:
-  SegmentPair(const KDL::Segment& p_segment, const std::string& p_root, const std::string& p_tip):
-    segment(p_segment), root(p_root), tip(p_tip){}
+  SegmentPair(const KDL::Segment & p_segment, const std::string & p_root, const std::string & p_tip)
+  : segment(p_segment), root(p_root), tip(p_tip) {}
 
   KDL::Segment segment;
   std::string root, tip;
@@ -62,28 +69,30 @@ public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
-  RobotStatePublisher(rclcpp::node::Node::SharedPtr node_handle, const KDL::Tree& tree, const urdf::Model& model);
+  RobotStatePublisher(rclcpp::node::Node::SharedPtr node_handle, const KDL::Tree & tree,
+    const urdf::Model & model);
 
   /// Destructor
-  virtual ~RobotStatePublisher(){};
+  virtual ~RobotStatePublisher() {}
 
   /** Publish transforms to tf
    * \param joint_positions A map of joint names and joint positions.
    * \param time The time at which the joint positions were recorded
    */
-  virtual void publishTransforms(const std::map<std::string, double>& joint_positions, const std::chrono::nanoseconds& time, const std::string& tf_prefix);
+  virtual void publishTransforms(const std::map<std::string, double> & joint_positions,
+    const std::chrono::nanoseconds & time,
+    const std::string & tf_prefix);
 
-  virtual void publishFixedTransforms(const std::string& tf_prefix, bool use_tf_static = false);
+  virtual void publishFixedTransforms(const std::string & tf_prefix, bool use_tf_static = false);
 
 protected:
   virtual void addChildren(const KDL::SegmentMap::const_iterator segment);
 
   std::map<std::string, SegmentPair> segments_, segments_fixed_;
-  const urdf::Model& model_;
+  const urdf::Model & model_;
   tf2_ros::TransformBroadcaster tf_broadcaster_;
   tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
 };
 
-}
-
-#endif
+}  // namespace robot_state_publisher
+#endif  // ROBOT_STATE_PUBLISHER__ROBOT_STATE_PUBLISHER_H_

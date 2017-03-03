@@ -9,6 +9,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <build_depend>cmake_modules</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>kdl_parser</build_depend>
   <build_depend>orocos_kdl</build_depend>
@@ -26,6 +27,9 @@
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>urdf</exec_depend>
   <exec_depend>urdfdom_headers</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
