@@ -116,7 +116,7 @@ void RobotStatePublisher::publishTransforms(const std::map<std::string, double> 
   const std::chrono::nanoseconds & /*time*/,
   const std::string & tf_prefix)
 {
-  fprintf(stderr, "Publishing transforms for moving joints\n");
+  //fprintf(stderr, "Publishing transforms for moving joints\n");
   std::vector<geometry_msgs::msg::TransformStamped> tf_transforms;
 
   // loop over all joints
@@ -140,7 +140,7 @@ void RobotStatePublisher::publishTransforms(const std::map<std::string, double> 
 // publish fixed transforms
 void RobotStatePublisher::publishFixedTransforms(const std::string & tf_prefix, bool use_tf_static)
 {
-  fprintf(stderr, "Publishing transforms for fixed joints\n");
+  //fprintf(stderr, "Publishing transforms for fixed joints\n");
   std::vector<geometry_msgs::msg::TransformStamped> tf_transforms;
   geometry_msgs::msg::TransformStamped tf_transform;
 
