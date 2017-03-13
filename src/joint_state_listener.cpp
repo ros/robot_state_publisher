@@ -134,8 +134,6 @@ void JointStateListener::callbackJointState(const sensor_msgs::msg::JointState::
   //       then last_published is zero.
 
   // check if we need to publish
-  auto msg_nanoseconds = std::chrono::nanoseconds(
-    state->header.stamp.sec * 1000000000 + state->header.stamp.nanosec);
   if (ignore_timestamp_ || true) {
     // get joint positions from state message
     std::map<std::string, double> joint_positions;
@@ -152,7 +150,7 @@ void JointStateListener::callbackJointState(const sensor_msgs::msg::JointState::
     }
 
     state_publisher_.publishTransforms(
-      joint_positions, msg_nanoseconds, tf_prefix_);
+      joint_positions, state->header.stamp, tf_prefix_);
 
     // store publish time in joint map
     for (unsigned int i = 0; i < state->name.size(); i++) {

@@ -113,7 +113,7 @@ void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segm
 
 // publish moving transforms
 void RobotStatePublisher::publishTransforms(const std::map<std::string, double> & joint_positions,
-  const std::chrono::nanoseconds & /*time*/,
+  const builtin_interfaces::msg::Time & time,
   const std::string & tf_prefix)
 {
   // fprintf(stderr, "Publishing transforms for moving joints\n");
@@ -125,10 +125,7 @@ void RobotStatePublisher::publishTransforms(const std::map<std::string, double> 
     if (seg != segments_.end()) {
       geometry_msgs::msg::TransformStamped tf_transform =
         kdlToTransform(seg->second.segment.pose(jnt->second));
-      auto now = std::chrono::high_resolution_clock::now().time_since_epoch();
-      tf_transform.header.stamp.sec =
-        static_cast<builtin_interfaces::msg::Time::_sec_type>(now.count() / 1000000000);
-      tf_transform.header.stamp.nanosec = now.count() % 1000000000;
+      tf_transform.header.stamp = time;
       tf_transform.header.frame_id = tf_prefix + "/" + seg->second.root;
       tf_transform.child_frame_id = tf_prefix + "/" + seg->second.tip;
       tf_transforms.push_back(tf_transform);
@@ -148,15 +145,13 @@ void RobotStatePublisher::publishFixedTransforms(const std::string & tf_prefix, 
   for (auto seg = segments_fixed_.begin(); seg != segments_fixed_.end(); seg++) {
     geometry_msgs::msg::TransformStamped tf_transform = kdlToTransform(seg->second.segment.pose(0));
     std::chrono::nanoseconds now = std::chrono::high_resolution_clock::now().time_since_epoch();
+    if (!use_tf_static) {
+      now += std::chrono::milliseconds(500);  // 0.5sec in NS
+    }
     tf_transform.header.stamp.sec =
       static_cast<builtin_interfaces::msg::Time::_sec_type>(now.count() / 1000000000);
     tf_transform.header.stamp.nanosec = now.count() % 1000000000;
 
-    /*
-    if (!use_tf_static) {
-      tf_transform.header.stamp += ros::Duration(0.5);
-    }
-    */
     tf_transform.header.frame_id = tf_prefix + "/" + seg->second.root;
     tf_transform.child_frame_id = tf_prefix + "/" + seg->second.tip;
     tf_transforms.push_back(tf_transform);

@@ -80,7 +80,7 @@ public:
    * \param time The time at which the joint positions were recorded
    */
   virtual void publishTransforms(const std::map<std::string, double> & joint_positions,
-    const std::chrono::nanoseconds & time,
+    const builtin_interfaces::msg::Time & time,
     const std::string & tf_prefix);
 
   virtual void publishFixedTransforms(const std::string & tf_prefix, bool use_tf_static = false);
