@@ -16,7 +16,7 @@ find_package(urdfdom_headers REQUIRED)
 find_package(kdl_parser REQUIRED)
 find_package(tf2_ros REQUIRED)
 
-include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
+include_directories(SYSTEM ${Eigen_INCLUDE_DIRS})
 include_directories(
   include
   ${geometry_msgs_INCLUDE_DIRS}
@@ -30,7 +30,6 @@ include_directories(
 
 add_library(
   ${PROJECT_NAME}_solver
-  SHARED
   src/robot_state_publisher.cpp)
 link_directories(${orocos_kdl_LIBRARY_DIRS})
 target_link_libraries(
@@ -46,7 +45,6 @@ target_link_libraries(
 
 add_library(
   joint_state_listener
-  SHARED
   src/joint_state_listener.cpp)
 target_link_libraries(
   joint_state_listener
