@@ -1,9 +1,0 @@
-<launch>
-  <param name="robot_description"
-         textfile="$(find robot_state_publisher)/test/two_links_moving_joint.urdf" />
-
-  <node pkg="robot_state_publisher" name="two_links_moving_joints_pub" type="state_publisher">
-  </node>
-
-  <test test-name="test_two_links_moving_joint" pkg="robot_state_publisher" type="test_two_links_moving_joint" />
-</launch>
