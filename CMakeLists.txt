@@ -3,7 +3,7 @@ project(robot_state_publisher)
 
 find_package(orocos_kdl REQUIRED)
 find_package(catkin REQUIRED
-  COMPONENTS roscpp rosconsole rostime tf tf2_ros tf2_kdl kdl_parser rostest
+  COMPONENTS roscpp rosconsole rostime tf tf2_ros tf2_kdl kdl_parser
 )
 find_package(Eigen3 REQUIRED)
 
@@ -37,6 +37,8 @@ target_link_libraries(state_publisher ${PROJECT_NAME}_solver ${orocos_kdl_LIBRAR
 # Tests
 
 if (CATKIN_ENABLE_TESTING)
+
+  find_package(rostest REQUIRED)
 
   add_rostest_gtest(test_one_link ${CMAKE_CURRENT_SOURCE_DIR}/test/test_one_link.launch test/test_one_link.cpp)
   target_link_libraries(test_one_link ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
