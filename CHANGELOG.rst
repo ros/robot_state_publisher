@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.13.5 (2017-04-11)
+-------------------
 * Style cleanup throughout the tree.
 * add Chris and Shane as maintainers (`#70 <https://github.com/ros/robot_state_publisher/issues/70>`_)
 * Contributors: Chris Lalancette, William Woodall
