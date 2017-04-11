@@ -2,6 +2,12 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Style cleanup throughout the tree.
+* add Chris and Shane as maintainers (`#70 <https://github.com/ros/robot_state_publisher/issues/70>`_)
+* Contributors: Chris Lalancette, William Woodall
+
 1.13.4 (2017-01-05)
 -------------------
 * Use ``urdf::*ShredPtr`` instead of ``boost::shared_ptr`` (`#60 <https://github.com/ros/robot_state_publisher/issues/60>`_)
