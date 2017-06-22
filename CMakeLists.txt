@@ -85,7 +85,10 @@ if(BUILD_TESTING)
   find_package(ament_cmake_cpplint REQUIRED)
   find_package(ament_cmake_lint_cmake REQUIRED)
   find_package(ament_cmake_uncrustify REQUIRED)
-  ament_cppcheck()
+  # This forces cppcheck to consider all files in this project to be C++,
+  # including the headers which end with .h, which cppcheck would normally
+  # consider to be C instead.
+  ament_cppcheck(LANGUAGE "c++")
   ament_cpplint()
   ament_lint_cmake()
   ament_uncrustify()
