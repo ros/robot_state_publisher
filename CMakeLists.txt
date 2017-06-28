@@ -74,10 +74,14 @@ install(
   TARGETS
   ${PROJECT_NAME}_solver
   joint_state_listener
-  ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+)
+
+install(
+  TARGETS ${PROJECT_NAME}
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
