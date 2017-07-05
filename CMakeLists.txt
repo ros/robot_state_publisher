@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 project(robot_state_publisher)
 
 find_package(orocos_kdl REQUIRED)
@@ -26,13 +26,16 @@ target_link_libraries(${PROJECT_NAME}_solver ${catkin_LIBRARIES} ${orocos_kdl_LI
 
 add_library(joint_state_listener src/joint_state_listener.cpp)
 target_link_libraries(joint_state_listener ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
+target_compile_options(joint_state_listener PUBLIC -std=c++11)
 
 add_executable(${PROJECT_NAME} src/joint_state_listener.cpp)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
+target_compile_options(${PROJECT_NAME} PUBLIC -std=c++11)
 
 # compile the same executable using the old name as well
 add_executable(state_publisher src/joint_state_listener.cpp)
 target_link_libraries(state_publisher ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
+target_compile_options(${PROJECT_NAME} PUBLIC -std=c++11)
 
 # Tests
 
