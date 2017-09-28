@@ -54,7 +54,8 @@ using namespace std::chrono_literals;
 namespace robot_state_publisher
 {
 
-JointStateListener::JointStateListener(rclcpp::node::Node::SharedPtr node, const KDL::Tree & tree,
+JointStateListener::JointStateListener(
+  rclcpp::node::Node::SharedPtr node, const KDL::Tree & tree,
   const MimicMap & m, const urdf::Model & model)
 : node_(node),
   state_publisher_(node, tree, model),

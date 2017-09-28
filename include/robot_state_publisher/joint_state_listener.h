@@ -61,7 +61,8 @@ public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
-  JointStateListener(rclcpp::node::Node::SharedPtr node, const KDL::Tree & tree, const MimicMap & m,
+  JointStateListener(
+    rclcpp::node::Node::SharedPtr node, const KDL::Tree & tree, const MimicMap & m,
     const urdf::Model & model = urdf::Model());
 
   /// Destructor
