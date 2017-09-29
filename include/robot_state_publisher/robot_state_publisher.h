@@ -69,7 +69,8 @@ public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
-  RobotStatePublisher(rclcpp::node::Node::SharedPtr node_handle, const KDL::Tree & tree,
+  RobotStatePublisher(
+    rclcpp::node::Node::SharedPtr node_handle, const KDL::Tree & tree,
     const urdf::Model & model);
 
   /// Destructor
@@ -79,7 +80,8 @@ public:
    * \param joint_positions A map of joint names and joint positions.
    * \param time The time at which the joint positions were recorded
    */
-  virtual void publishTransforms(const std::map<std::string, double> & joint_positions,
+  virtual void publishTransforms(
+    const std::map<std::string, double> & joint_positions,
     const builtin_interfaces::msg::Time & time,
     const std::string & tf_prefix);
 
