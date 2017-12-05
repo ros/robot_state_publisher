@@ -55,7 +55,7 @@ namespace robot_state_publisher
 {
 
 JointStateListener::JointStateListener(
-  rclcpp::node::Node::SharedPtr node, const KDL::Tree & tree,
+  rclcpp::Node::SharedPtr node, const KDL::Tree & tree,
   const MimicMap & m, const urdf::Model & model)
 : node_(node),
   state_publisher_(node, tree, model),
@@ -200,7 +200,7 @@ int main(int argc, char ** argv)
     fprintf(stderr, "got segment %s\n", segment.first.c_str());
   }
 
-  auto node = std::make_shared<rclcpp::node::Node>("robot_state_publisher");
+  auto node = std::make_shared<rclcpp::Node>("robot_state_publisher");
   robot_state_publisher::JointStateListener state_publisher(node, tree, mimic, model);
 
   rclcpp::spin(node);

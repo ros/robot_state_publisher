@@ -69,7 +69,7 @@ geometry_msgs::msg::TransformStamped kdlToTransform(const KDL::Frame & k)
 }
 
 RobotStatePublisher::RobotStatePublisher(
-  rclcpp::node::Node::SharedPtr node_handle,
+  rclcpp::Node::SharedPtr node_handle,
   const KDL::Tree & tree,
   const urdf::Model & model)
 : model_(model),

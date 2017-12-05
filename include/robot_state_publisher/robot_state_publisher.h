@@ -70,7 +70,7 @@ public:
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
   RobotStatePublisher(
-    rclcpp::node::Node::SharedPtr node_handle, const KDL::Tree & tree,
+    rclcpp::Node::SharedPtr node_handle, const KDL::Tree & tree,
     const urdf::Model & model);
 
   /// Destructor

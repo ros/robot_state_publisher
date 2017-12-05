@@ -62,7 +62,7 @@ public:
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
   JointStateListener(
-    rclcpp::node::Node::SharedPtr node, const KDL::Tree & tree, const MimicMap & m,
+    rclcpp::Node::SharedPtr node, const KDL::Tree & tree, const MimicMap & m,
     const urdf::Model & model = urdf::Model());
 
   /// Destructor
@@ -72,7 +72,7 @@ protected:
   virtual void callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state);
   virtual void callbackFixedJoint();
 
-  rclcpp::node::Node::SharedPtr node_;
+  rclcpp::Node::SharedPtr node_;
   std::string tf_prefix_;
   std::chrono::seconds publish_interval_;
   robot_state_publisher::RobotStatePublisher state_publisher_;
