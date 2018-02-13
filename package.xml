@@ -3,7 +3,7 @@
   <version>1.13.5</version>
   <description>
     This package allows you to publish the state of a robot to
-    <a href="http://ros.org/wiki/tf">tf</a>. Once the state gets published, it is
+    <a href="http://ros.org/wiki/tf2">tf</a>. Once the state gets published, it is
     available to all components in the system that also use <tt>tf</tt>.
     The package takes the joint angles of the robot as input
     and publishes the 3D poses of the robot links, using a kinematic
@@ -32,7 +32,6 @@
   <build_depend>roscpp</build_depend>
   <build_depend>rostime</build_depend>
   <build_depend>sensor_msgs</build_depend>
-  <build_depend>tf</build_depend>
   <build_depend>tf2_ros</build_depend>
   <build_depend>tf2_kdl</build_depend>
   <build_depend>liburdfdom-headers-dev</build_depend>
@@ -44,7 +43,6 @@
   <run_depend>roscpp</run_depend>
   <run_depend>rostime</run_depend>
   <run_depend>sensor_msgs</run_depend>
-  <run_depend>tf</run_depend>
   <run_depend>tf2_ros</run_depend>
   <run_depend>tf2_kdl</run_depend>
 
