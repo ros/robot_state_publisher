@@ -5,7 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
 
 find_package(orocos_kdl REQUIRED)
 find_package(catkin REQUIRED
-  COMPONENTS roscpp rosconsole rostime tf tf2_ros tf2_kdl kdl_parser
+  COMPONENTS roscpp rosconsole rostime tf2_ros tf2_kdl kdl_parser
 )
 find_package(Eigen3 REQUIRED)
 

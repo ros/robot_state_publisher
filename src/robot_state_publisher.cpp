@@ -78,9 +78,17 @@ void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segm
   }
 }
 
+std::string stripSlash(const std::string & in)
+{
+  if (in.size() && in[0] == '/')
+  {
+    return in.substr(1);
+  }
+  return in;
+}
 
 // publish moving transforms
-void RobotStatePublisher::publishTransforms(const map<string, double>& joint_positions, const Time& time, const std::string& tf_prefix)
+void RobotStatePublisher::publishTransforms(const map<string, double>& joint_positions, const Time& time)
 {
   ROS_DEBUG("Publishing transforms for moving joints");
   std::vector<geometry_msgs::TransformStamped> tf_transforms;
@@ -91,8 +99,8 @@ void RobotStatePublisher::publishTransforms(const map<string, double>& joint_pos
     if (seg != segments_.end()) {
       geometry_msgs::TransformStamped tf_transform = tf2::kdlToTransform(seg->second.segment.pose(jnt->second));
       tf_transform.header.stamp = time;
-      tf_transform.header.frame_id = tf::resolve(tf_prefix, seg->second.root);
-      tf_transform.child_frame_id = tf::resolve(tf_prefix, seg->second.tip);
+      tf_transform.header.frame_id = stripSlash(seg->second.root);
+      tf_transform.child_frame_id = stripSlash(seg->second.tip);
       tf_transforms.push_back(tf_transform);
     }
   }
@@ -100,7 +108,7 @@ void RobotStatePublisher::publishTransforms(const map<string, double>& joint_pos
 }
 
 // publish fixed transforms
-void RobotStatePublisher::publishFixedTransforms(const std::string& tf_prefix, bool use_tf_static)
+void RobotStatePublisher::publishFixedTransforms(bool use_tf_static)
 {
   ROS_DEBUG("Publishing transforms for fixed joints");
   std::vector<geometry_msgs::TransformStamped> tf_transforms;
@@ -113,8 +121,8 @@ void RobotStatePublisher::publishFixedTransforms(const std::string& tf_prefix, b
     if (!use_tf_static) {
       tf_transform.header.stamp += ros::Duration(0.5);
     }
-    tf_transform.header.frame_id = tf::resolve(tf_prefix, seg->second.root);
-    tf_transform.child_frame_id = tf::resolve(tf_prefix, seg->second.tip);
+    tf_transform.header.frame_id = stripSlash(seg->second.root);
+    tf_transform.child_frame_id = stripSlash(seg->second.tip);
     tf_transforms.push_back(tf_transform);
   }
   if (use_tf_static) {
