@@ -66,9 +66,9 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
   n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
   publish_interval_ = ros::Duration(1.0/max(publish_freq, 1.0));
 
-  // Setting no delay to true prevents that some joint_states messages are bundled
-  // and sent in pairs, reducing the period to which we receive new data to half
-  // and causing some tf joints to go at 25Hz instead of 50Hz
+  // Setting tcpNoNelay tells the subscriber to ask publishers that connect
+  // to set TCP_NODELAY on their side. This prevents some joint_state messages
+  // from being bundled together, increasing the latency of one of the messages.
   ros::TransportHints transport_hints;
   transport_hints.tcpNoDelay(true);
   // subscribe to joint state
