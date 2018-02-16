@@ -66,8 +66,13 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
   n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
   publish_interval_ = ros::Duration(1.0/max(publish_freq, 1.0));
 
+  // Setting tcpNoNelay tells the subscriber to ask publishers that connect
+  // to set TCP_NODELAY on their side. This prevents some joint_state messages
+  // from being bundled together, increasing the latency of one of the messages.
+  ros::TransportHints transport_hints;
+  transport_hints.tcpNoDelay(true);
   // subscribe to joint state
-  joint_state_sub_ = n.subscribe("joint_states", 1, &JointStateListener::callbackJointState, this);
+  joint_state_sub_ = n.subscribe("joint_states", 1, &JointStateListener::callbackJointState, this, transport_hints);
 
   // trigger to publish fixed joints
   // if using static transform broadcaster, this will be a oneshot trigger and only run once
