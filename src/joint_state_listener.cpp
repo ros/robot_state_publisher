@@ -110,6 +110,10 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
     ROS_WARN("Moved backwards in time (probably because ROS clock was reset), re-publishing joint transforms!");
     last_publish_time_.clear();
   }
+  ros::Duration warning_threshold(30.0);
+  if ((state->header.stamp + warning_threshold) < now) {
+    ROS_WARN_THROTTLE(10, "Received JointState is %f seconds old.", (now - state->header.stamp).toSec());
+  }
   last_callback_time_ = now;
 
   // determine least recently published joint
