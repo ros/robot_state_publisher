@@ -95,6 +95,9 @@ void RobotStatePublisher::publishTransforms(const map<string, double>& joint_pos
       tf_transform.child_frame_id = tf::resolve(tf_prefix, seg->second.tip);
       tf_transforms.push_back(tf_transform);
     }
+    else {
+      ROS_WARN_THROTTLE(10, "Joint state with name: \"%s\" was received but not found in URDF", jnt->first.c_str());
+    }
   }
   tf_broadcaster_.sendTransform(tf_transforms);
 }
