@@ -64,6 +64,10 @@ public:
 class RobotStatePublisher
 {
 public:
+  /** Default constructor.
+   */
+  RobotStatePublisher();
+
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */

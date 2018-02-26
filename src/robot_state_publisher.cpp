@@ -46,6 +46,10 @@
 
 namespace robot_state_publisher {
 
+RobotStatePublisher::RobotStatePublisher() : RobotStatePublisher(KDL::Tree())
+{
+}
+
 RobotStatePublisher::RobotStatePublisher(const KDL::Tree& tree, const urdf::Model& model)
   : model_(model)
 {
