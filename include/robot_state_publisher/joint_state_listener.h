@@ -39,6 +39,7 @@
 
 #include <memory>
 
+#include <boost/scoped_ptr.hpp>
 #include <urdf/model.h>
 #include <kdl/tree.hpp>
 #include <ros/ros.h>

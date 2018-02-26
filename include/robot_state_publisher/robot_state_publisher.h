@@ -38,7 +38,6 @@
 #define ROBOT_STATE_PUBLISHER_H
 
 #include <ros/ros.h>
-#include <boost/scoped_ptr.hpp>
 #include <urdf/model.h>
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <tf2_ros/transform_broadcaster.h>
