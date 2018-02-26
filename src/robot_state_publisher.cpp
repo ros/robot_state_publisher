@@ -34,15 +34,15 @@
 
 /* Author: Wim Meeussen */
 
+#include <map>
+#include <string>
+
 #include <kdl/frames_io.hpp>
 #include <geometry_msgs/TransformStamped.h>
 #include <tf2_kdl/tf2_kdl.h>
 #include <tf/tf.h>
 
 #include "robot_state_publisher/robot_state_publisher.h"
-
-using namespace std;
-using namespace ros;
 
 namespace robot_state_publisher {
 
@@ -59,7 +59,7 @@ void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segm
   const std::string& root = GetTreeElementSegment(segment->second).getName();
 
   const std::vector<KDL::SegmentMap::const_iterator>& children = GetTreeElementChildren(segment->second);
-  for (unsigned int i=0; i<children.size(); i++) {
+  for (unsigned int i = 0; i < children.size(); ++i) {
     const KDL::Segment& child = GetTreeElementSegment(children[i]->second);
     SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
     if (child.getJoint().getType() == KDL::Joint::None) {
@@ -89,13 +89,13 @@ std::string stripSlash(const std::string & in)
 }
 
 // publish moving transforms
-void RobotStatePublisher::publishTransforms(const map<string, double>& joint_positions, const Time& time)
+void RobotStatePublisher::publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time)
 {
   ROS_DEBUG("Publishing transforms for moving joints");
   std::vector<geometry_msgs::TransformStamped> tf_transforms;
 
   // loop over all joints
-  for (map<string, double>::const_iterator jnt=joint_positions.begin(); jnt != joint_positions.end(); jnt++) {
+  for (std::map<std::string, double>::const_iterator jnt = joint_positions.begin(); jnt != joint_positions.end(); jnt++) {
     std::map<std::string, SegmentPair>::const_iterator seg = segments_.find(jnt->first);
     if (seg != segments_.end()) {
       geometry_msgs::TransformStamped tf_transform = tf2::kdlToTransform(seg->second.segment.pose(jnt->second));
@@ -119,7 +119,7 @@ void RobotStatePublisher::publishFixedTransforms(bool use_tf_static)
   geometry_msgs::TransformStamped tf_transform;
 
   // loop over all fixed segments
-  for (map<string, SegmentPair>::const_iterator seg=segments_fixed_.begin(); seg != segments_fixed_.end(); seg++) {
+  for (std::map<std::string, SegmentPair>::const_iterator seg = segments_fixed_.begin(); seg != segments_fixed_.end(); seg++) {
     geometry_msgs::TransformStamped tf_transform = tf2::kdlToTransform(seg->second.segment.pose(0));
     tf_transform.header.stamp = ros::Time::now();
     if (!use_tf_static) {

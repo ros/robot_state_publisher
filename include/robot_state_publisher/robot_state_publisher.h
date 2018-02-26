@@ -37,6 +37,9 @@
 #ifndef ROBOT_STATE_PUBLISHER_H
 #define ROBOT_STATE_PUBLISHER_H
 
+#include <map>
+#include <string>
+
 #include <ros/ros.h>
 #include <urdf/model.h>
 #include <tf2_ros/static_transform_broadcaster.h>
