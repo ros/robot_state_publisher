@@ -48,8 +48,8 @@ target_link_libraries(${PROJECT_NAME}_solver ${catkin_LIBRARIES} ${orocos_kdl_LI
 add_library(joint_state_listener src/joint_state_listener.cpp)
 target_link_libraries(joint_state_listener ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
 
-add_executable(${PROJECT_NAME} src/joint_state_listener.cpp)
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
+add_executable(${PROJECT_NAME} src/robot_state_publisher_node.cpp)
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver joint_state_listener ${orocos_kdl_LIBRARIES})
 
 # Tests
 
