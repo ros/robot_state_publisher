@@ -64,7 +64,6 @@ target_link_libraries(
   joint_state_listener
   ${orocos_kdl_LIBRARIES}
   ${kdl_parser_LIBRARIES}
-  ${tinyxml_LIBRARIES}
   ${urdf_LIBRARIES}
   ${rclcpp_LIBRARIES}
   ${tf2_ros_LIBRARIES}
