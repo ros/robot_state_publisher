@@ -2,6 +2,15 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* added warning when joint is found in joint message but not in the urdf (`#83 <https://github.com/ros/robot_state_publisher/issues/83>`_)
+* added ros_warn if JointStateMessage is older than 30 seconds (`#84 <https://github.com/ros/robot_state_publisher/issues/84>`_)
+* Add tcp_no_delay to joint_states subscriber (`#80 <https://github.com/ros/robot_state_publisher/issues/80>`_)
+* make rostest in CMakeLists optional (`ros/rosdistro#3010 <https://github.com/ros/rosdistro/issues/3010>`_) (`#75 <https://github.com/ros/robot_state_publisher/issues/75>`_)
+* Added c++11 target_compile_options (`#78 <https://github.com/ros/robot_state_publisher/issues/78>`_)
+* Contributors: Lukas Bulwahn, Shane Loretz, Victor Lopez, jgueldenstein
+
 1.13.5 (2017-04-11)
 -------------------
 * Style cleanup throughout the tree.
