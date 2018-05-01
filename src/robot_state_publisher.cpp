@@ -71,13 +71,24 @@ geometry_msgs::msg::TransformStamped kdlToTransform(const KDL::Frame & k)
 RobotStatePublisher::RobotStatePublisher(
   rclcpp::Node::SharedPtr node_handle,
   const KDL::Tree & tree,
-  const urdf::Model & model)
+  const urdf::Model & model,
+  const std::string & model_xml)
 : model_(model),
   tf_broadcaster_(node_handle),
-  static_tf_broadcaster_(node_handle)
+  static_tf_broadcaster_(node_handle),
+  description_published_(false)
 {
   // walk the tree and add segments to segments_
   addChildren(tree.getRootSegment());
+
+  // Creates a latched topic
+  rmw_qos_profile_t qos = rmw_qos_profile_default;
+  qos.depth = 1;
+  qos.durability = RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;
+
+  model_xml_.data = model_xml;
+  description_pub_ = node_handle->create_publisher<std_msgs::msg::String>(
+    "robot_description", qos);
 }
 
 // add children to correct maps
@@ -133,6 +144,12 @@ void RobotStatePublisher::publishTransforms(
     }
   }
   tf_broadcaster_.sendTransform(tf_transforms);
+
+  // Publish the robot description, as necessary
+  if (!description_published_) {
+    description_pub_->publish(model_xml_);
+    description_published_ = true;
+  }
 }
 
 // publish fixed transforms

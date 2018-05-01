@@ -35,9 +35,10 @@
 /* Author: Wim Meeussen */
 
 #include <chrono>
-#include <string>
+#include <fstream>
 #include <map>
 #include <memory>
+#include <string>
 #include <utility>
 
 #include "kdl/tree.hpp"
@@ -56,9 +57,9 @@ namespace robot_state_publisher
 
 JointStateListener::JointStateListener(
   rclcpp::Node::SharedPtr node, const KDL::Tree & tree,
-  const MimicMap & m, const urdf::Model & model)
+  const MimicMap & m, const std::string & urdf_xml, const urdf::Model & model)
 : node_(node),
-  state_publisher_(node, tree, model),
+  state_publisher_(node, tree, model, urdf_xml),
   mimic_(m)
 {
   /*
@@ -162,6 +163,23 @@ void JointStateListener::callbackJointState(const sensor_msgs::msg::JointState::
 }
 }  // namespace robot_state_publisher
 
+bool read_urdf_xml(const std::string & filename, std::string & xml_string)
+{
+  std::fstream xml_file(filename.c_str(), std::fstream::in);
+  if (xml_file.is_open()) {
+    while (xml_file.good()) {
+      std::string line;
+      std::getline(xml_file, line);
+      xml_string += (line + "\n");
+    }
+    xml_file.close();
+    return true;
+  } else {
+    fprintf(stderr, "Could not open file [%s] for parsing.\n", filename.c_str());
+    return false;
+  }
+}
+
 // ----------------------------------
 // ----- MAIN -----------------------
 // ----------------------------------
@@ -200,8 +218,15 @@ int main(int argc, char ** argv)
     fprintf(stderr, "got segment %s\n", segment.first.c_str());
   }
 
+  // Read the URDF XML data (this should always succeed)
+  std::string urdf_xml;
+  if (!read_urdf_xml(argv[1], urdf_xml)) {
+    fprintf(stderr, "failed to read urdf xml '%s'\n", argv[1]);
+    return -1;
+  }
+
   auto node = std::make_shared<rclcpp::Node>("robot_state_publisher");
-  robot_state_publisher::JointStateListener state_publisher(node, tree, mimic, model);
+  robot_state_publisher::JointStateListener state_publisher(node, tree, mimic, urdf_xml, model);
 
   rclcpp::spin(node);
   return 0;

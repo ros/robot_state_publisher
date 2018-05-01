@@ -48,6 +48,8 @@
 #include "tf2_ros/transform_broadcaster.h"
 #include "urdf/model.h"
 
+#include "std_msgs/msg/string.hpp"
+
 #include "rclcpp/rclcpp.hpp"
 
 namespace robot_state_publisher
@@ -71,7 +73,7 @@ public:
    */
   RobotStatePublisher(
     rclcpp::Node::SharedPtr node_handle, const KDL::Tree & tree,
-    const urdf::Model & model);
+    const urdf::Model & model, const std::string & model_xml);
 
   /// Destructor
   virtual ~RobotStatePublisher() {}
@@ -94,6 +96,9 @@ protected:
   const urdf::Model & model_;
   tf2_ros::TransformBroadcaster tf_broadcaster_;
   tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
+  std_msgs::msg::String model_xml_;
+  bool description_published_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_pub_;
 };
 
 }  // namespace robot_state_publisher

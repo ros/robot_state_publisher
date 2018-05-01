@@ -63,7 +63,7 @@ public:
    */
   JointStateListener(
     rclcpp::Node::SharedPtr node, const KDL::Tree & tree, const MimicMap & m,
-    const urdf::Model & model = urdf::Model());
+    const std::string & urdf_xml, const urdf::Model & model = urdf::Model());
 
   /// Destructor
   ~JointStateListener();
