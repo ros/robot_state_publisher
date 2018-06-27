@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* The robot model is now published on the ``robot_description`` topic as a ``std_msgs/String.msg``. (`#9 <https://github.com/ros2/robot_state_publisher/issues/9>`_)
+* Contributors: Brett, Mikael Arguedas
+
 1.13.4 (2017-01-05)
 -------------------
 * Use ``urdf::*ShredPtr`` instead of ``boost::shared_ptr`` (`#60 <https://github.com/ros/robot_state_publisher/issues/60>`_)
