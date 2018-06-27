@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.0 (2018-06-27)
+------------------
 * The robot model is now published on the ``robot_description`` topic as a ``std_msgs/String.msg``. (`#9 <https://github.com/ros2/robot_state_publisher/issues/9>`_)
 * Contributors: Brett, Mikael Arguedas
 
