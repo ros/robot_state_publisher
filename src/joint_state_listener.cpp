@@ -170,9 +170,13 @@ int main(int argc, char** argv)
   ///////////////////////////////////////// end deprecation warning
 
   // gets the location of the robot description on the parameter server
+  // check private then namespace parameter
   urdf::Model model;
-  if (!model.initParam("robot_description"))
-    return -1;
+  if (!model.initParamWithNodeHandle("robot_description", NodeHandle("~")))
+  {
+    if (!model.initParam("robot_description"))
+      return -1;
+  }
 
   KDL::Tree tree;
   if (!kdl_parser::treeFromUrdfModel(model, tree)) {
