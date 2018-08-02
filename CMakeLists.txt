@@ -1,7 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 project(robot_state_publisher)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX11)
+  add_compile_options(-std=c++11)
+  if (NOT WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")  
+  endif()
+endif()
+
 
 find_package(orocos_kdl REQUIRED)
 find_package(catkin REQUIRED
@@ -21,12 +29,12 @@ include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
 include_directories(include ${catkin_INCLUDE_DIRS} ${orocos_kdl_INCLUDE_DIRS} ${urdfdom_headers_INCLUDE_DIRS})
 link_directories(${orocos_kdl_LIBRARY_DIRS})
 
-add_library(${PROJECT_NAME}_solver
+add_library(${PROJECT_NAME}_solver STATIC
   src/robot_state_publisher.cpp
 )
 target_link_libraries(${PROJECT_NAME}_solver ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES})
 
-add_library(joint_state_listener src/joint_state_listener.cpp)
+add_library(joint_state_listener STATIC src/joint_state_listener.cpp)
 target_link_libraries(joint_state_listener ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
 
 add_executable(${PROJECT_NAME} src/joint_state_listener.cpp)
