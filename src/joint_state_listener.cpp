@@ -171,8 +171,12 @@ int main(int argc, char** argv)
 
   // gets the location of the robot description on the parameter server
   urdf::Model model;
-  if (!model.initParam("robot_description"))
+  if (!model.initParam("robot_description")) {
+    if (model.links_.empty()) {
+      return 0;
+    }
     return -1;
+  }
 
   KDL::Tree tree;
   if (!kdl_parser::treeFromUrdfModel(model, tree)) {
