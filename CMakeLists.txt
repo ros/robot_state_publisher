@@ -29,12 +29,12 @@ include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
 include_directories(include ${catkin_INCLUDE_DIRS} ${orocos_kdl_INCLUDE_DIRS} ${urdfdom_headers_INCLUDE_DIRS})
 link_directories(${orocos_kdl_LIBRARY_DIRS})
 
-add_library(${PROJECT_NAME}_solver STATIC
+add_library(${PROJECT_NAME}_solver
   src/robot_state_publisher.cpp
 )
 target_link_libraries(${PROJECT_NAME}_solver ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES})
 
-add_library(joint_state_listener STATIC src/joint_state_listener.cpp)
+add_library(joint_state_listener src/joint_state_listener.cpp)
 target_link_libraries(joint_state_listener ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
 
 add_executable(${PROJECT_NAME} src/joint_state_listener.cpp)
@@ -77,10 +77,11 @@ if (CATKIN_ENABLE_TESTING)
 
 endif()
 
-install(TARGETS ${PROJECT_NAME}_solver joint_state_listener ${PROJECT_NAME} state_publisher
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(TARGETS ${PROJECT_NAME}_solver joint_state_listener
+  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+
+install(TARGETS ${PROJECT_NAME} state_publisher
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
