@@ -22,7 +22,7 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${orocos_kdl_INCLUDE_DIRS} ${
 link_directories(${orocos_kdl_LIBRARY_DIRS})
 
 add_library(${PROJECT_NAME}_solver
-  src/robot_state_publisher.cpp src/treefksolverposfull_recursive.cpp
+  src/robot_state_publisher.cpp
 )
 target_link_libraries(${PROJECT_NAME}_solver ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES})
 
