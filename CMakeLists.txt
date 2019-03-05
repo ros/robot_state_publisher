@@ -61,6 +61,7 @@ if (CATKIN_ENABLE_TESTING)
 
   add_rostest_gtest(test_joint_states_bag ${CMAKE_CURRENT_SOURCE_DIR}/test/test_joint_states_bag.launch test/test_joint_states_bag.cpp)
   target_link_libraries(test_joint_states_bag ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
+  add_dependencies(test_joint_states_bag joint_states_indexed_bag)
 
   add_rostest_gtest(test_subclass ${CMAKE_CURRENT_SOURCE_DIR}/test/test_subclass.launch test/test_subclass.cpp)
   target_link_libraries(test_subclass ${catkin_LIBRARIES} ${PROJECT_NAME}_solver joint_state_listener)
