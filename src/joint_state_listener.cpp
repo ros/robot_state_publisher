@@ -57,7 +57,7 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
   double publish_freq;
   n_tilde.param("publish_frequency", publish_freq, 50.0);
   // set whether to use the /tf_static latched static transform broadcaster
-  n_tilde.param("use_tf_static", use_tf_static_, true);
+  n_tilde.param("use_tf_static", use_tf_static_, false);
   // ignore_timestamp_ == true, joins_states messages are accepted, no matter their timestamp
   n_tilde.param("ignore_timestamp", ignore_timestamp_, false);
   // get the tf_prefix parameter from the closest namespace
