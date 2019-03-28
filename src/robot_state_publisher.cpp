@@ -87,6 +87,7 @@ RobotStatePublisher::RobotStatePublisher(
   qos.durability = RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;
 
   model_xml_.data = model_xml;
+  node_handle->set_parameter_if_not_set("robot_description", model_xml);
   description_pub_ = node_handle->create_publisher<std_msgs::msg::String>(
     "robot_description", qos);
 }
