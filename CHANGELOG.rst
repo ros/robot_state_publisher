@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.2.0 (2019-04-14)
+------------------
+* Set urdf content as parameter. (`#15 <https://github.com/ros2/robot_state_publisher/issues/15>`_)
+* Contributors: Karsten Knese
+
 2.1.0 (2018-06-27)
 ------------------
 * The robot model is now published on the ``robot_description`` topic as a ``std_msgs/String.msg``. (`#9 <https://github.com/ros2/robot_state_publisher/issues/9>`_)
