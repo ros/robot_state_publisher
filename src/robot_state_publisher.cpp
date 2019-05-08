@@ -81,15 +81,12 @@ RobotStatePublisher::RobotStatePublisher(
   // walk the tree and add segments to segments_
   addChildren(tree.getRootSegment());
 
-  // Creates a latched topic
-  rmw_qos_profile_t qos = rmw_qos_profile_default;
-  qos.depth = 1;
-  qos.durability = RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;
-
   model_xml_.data = model_xml;
   node_handle->declare_parameter("robot_description", model_xml);
   description_pub_ = node_handle->create_publisher<std_msgs::msg::String>(
-    "robot_description", qos);
+    "robot_description",
+    // Transient local is similar to latching in ROS 1.
+    rclcpp::QoS(1).transient_local());
 }
 
 // add children to correct maps

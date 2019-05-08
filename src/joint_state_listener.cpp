@@ -87,7 +87,7 @@ JointStateListener::JointStateListener(
 
   // subscribe to joint state
   joint_state_sub_ = node_->create_subscription<sensor_msgs::msg::JointState>(
-    "joint_states", std::bind(
+    "joint_states", 10, std::bind(
       &JointStateListener::callbackJointState, this,
       std::placeholders::_1));
 
