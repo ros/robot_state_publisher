@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.2.2 (2019-05-08)
+------------------
+* changes to avoid deprecated API's (`#19 <https://github.com/ros2/robot_state_publisher/issues/19>`_)
+* Contributors: William Woodall
+
 2.2.1 (2019-04-26)
 ------------------
 * Updated to avoid deprecated API. (`#18 <https://github.com/ros2/robot_state_publisher/issues/18>`_)
