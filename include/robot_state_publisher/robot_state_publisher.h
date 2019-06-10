@@ -99,6 +99,7 @@ protected:
   std_msgs::msg::String model_xml_;
   bool description_published_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_pub_;
+  rclcpp::Clock::SharedPtr clock_;
 };
 
 }  // namespace robot_state_publisher

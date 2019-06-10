@@ -76,7 +76,8 @@ RobotStatePublisher::RobotStatePublisher(
 : model_(model),
   tf_broadcaster_(node_handle),
   static_tf_broadcaster_(node_handle),
-  description_published_(false)
+  description_published_(false),
+  clock_(node_handle->get_clock())
 {
   // walk the tree and add segments to segments_
   addChildren(tree.getRootSegment());
@@ -160,13 +161,11 @@ void RobotStatePublisher::publishFixedTransforms(const std::string & tf_prefix, 
   // loop over all fixed segments
   for (auto seg = segments_fixed_.begin(); seg != segments_fixed_.end(); seg++) {
     geometry_msgs::msg::TransformStamped tf_transform = kdlToTransform(seg->second.segment.pose(0));
-    std::chrono::nanoseconds now = std::chrono::high_resolution_clock::now().time_since_epoch();
+    rclcpp::Time now = clock_->now();
     if (!use_tf_static) {
-      now += std::chrono::milliseconds(500);  // 0.5sec in NS
+      now = now + rclcpp::Duration(std::chrono::milliseconds(500));  // 0.5sec in NS
     }
-    tf_transform.header.stamp.sec =
-      static_cast<builtin_interfaces::msg::Time::_sec_type>(now.count() / 1000000000);
-    tf_transform.header.stamp.nanosec = now.count() % 1000000000;
+    tf_transform.header.stamp = now;
 
     tf_transform.header.frame_id = tf_prefix + "/" + seg->second.root;
     tf_transform.child_frame_id = tf_prefix + "/" + seg->second.tip;
