@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use rclcpp::Time for stamping transforms (`#20 <https://github.com/ros2/robot_state_publisher/issues/20>`_)
+* Contributors: Scott K Logan
+
 2.2.2 (2019-05-08)
 ------------------
 * changes to avoid deprecated API's (`#19 <https://github.com/ros2/robot_state_publisher/issues/19>`_)
