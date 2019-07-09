@@ -88,6 +88,12 @@ RobotStatePublisher::RobotStatePublisher(
     "robot_description",
     // Transient local is similar to latching in ROS 1.
     rclcpp::QoS(1).transient_local());
+
+  // Publish the robot description, as necessary
+  if (!description_published_) {
+    description_pub_->publish(model_xml_);
+    description_published_ = true;
+  }
 }
 
 // add children to correct maps
@@ -143,12 +149,6 @@ void RobotStatePublisher::publishTransforms(
     }
   }
   tf_broadcaster_.sendTransform(tf_transforms);
-
-  // Publish the robot description, as necessary
-  if (!description_published_) {
-    description_pub_->publish(model_xml_);
-    description_published_ = true;
-  }
 }
 
 // publish fixed transforms
