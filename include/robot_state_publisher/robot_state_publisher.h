@@ -97,7 +97,6 @@ protected:
   tf2_ros::TransformBroadcaster tf_broadcaster_;
   tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
   std_msgs::msg::String model_xml_;
-  bool description_published_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_pub_;
   rclcpp::Clock::SharedPtr clock_;
 };
