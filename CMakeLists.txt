@@ -99,6 +99,5 @@ endif()
 
 ament_export_libraries(
   ${PROJECT_NAME}_solver
-  joint_state_listener
-  ${PROJECT_NAME})
+  joint_state_listener)
 ament_package()
