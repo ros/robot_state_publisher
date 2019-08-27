@@ -31,7 +31,7 @@ find_package(Eigen3 REQUIRED)
 find_package(urdfdom_headers REQUIRED)
 
 catkin_package(
-  LIBRARIES ${PROJECT_NAME}_solver
+  LIBRARIES ${PROJECT_NAME}_solver joint_state_listener
   INCLUDE_DIRS include
   DEPENDS roscpp rosconsole rostime tf2_ros tf2_kdl kdl_parser orocos_kdl urdfdom_headers
 )
