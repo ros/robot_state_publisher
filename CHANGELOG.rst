@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.13.7 (2019-08-27)
+-------------------
 * Remove treefksolver completely from the repository. (`#100 <https://github.com/ros/robot_state_publisher/issues/100>`_) (`#101 <https://github.com/ros/robot_state_publisher/issues/101>`_)
 * Add Ian as a maintainer for robot_state_publisher (`#95 <https://github.com/ros/robot_state_publisher/issues/95>`_)
 * Fixed problem when building static library version (`#92 <https://github.com/ros/robot_state_publisher/issues/92>`_)
