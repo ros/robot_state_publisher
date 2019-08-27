@@ -2,6 +2,23 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Revert "Remove dependency on tf and tf_prefix support (`#82 <https://github.com/ros/robot_state_publisher/issues/82>`_)" (`#113 <https://github.com/ros/robot_state_publisher/issues/113>`_)
+* update how compiler flags are added (`#104 <https://github.com/ros/robot_state_publisher/issues/104>`_)
+* update install destination in CMakeLists.txt (`#103 <https://github.com/ros/robot_state_publisher/issues/103>`_)
+* Remove treefksolver completely from the repository. (`#100 <https://github.com/ros/robot_state_publisher/issues/100>`_)
+* changed return code from -1 to 1 since its considered a reserved bash exit code (`#98 <https://github.com/ros/robot_state_publisher/issues/98>`_)
+* Fixed problem when building static library version (`#92 <https://github.com/ros/robot_state_publisher/issues/92>`_) (`#96 <https://github.com/ros/robot_state_publisher/issues/96>`_)
+* Add Ian as a maintainer for robot_state_publisher. (`#94 <https://github.com/ros/robot_state_publisher/issues/94>`_)
+* added warning when joint is found in joint message but not in the urdf (`#83 <https://github.com/ros/robot_state_publisher/issues/83>`_)
+* added ros_warn if JointStateMessage is older than 30 seconds (`#84 <https://github.com/ros/robot_state_publisher/issues/84>`_)
+* Add tcp_no_delay to joint_states subscriber (`#80 <https://github.com/ros/robot_state_publisher/issues/80>`_) (`#85 <https://github.com/ros/robot_state_publisher/issues/85>`_)
+* Remove dependency on tf and tf_prefix support (`#82 <https://github.com/ros/robot_state_publisher/issues/82>`_)
+* make rostest in CMakeLists optional (`ros/rosdistro#3010 <https://github.com/ros/rosdistro/issues/3010>`_) (`#75 <https://github.com/ros/robot_state_publisher/issues/75>`_)
+* Added c++11 target_compile_options (`#78 <https://github.com/ros/robot_state_publisher/issues/78>`_)
+* Contributors: Chris Lalancette, James Xu, Lukas Bulwahn, Shane Loretz, betab0t, jgueldenstein
+
 1.13.5 (2017-04-11)
 -------------------
 * Style cleanup throughout the tree.
