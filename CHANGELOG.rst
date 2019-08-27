@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.14.0 (2019-08-27)
+-------------------
 * Revert "Remove dependency on tf and tf_prefix support (`#82 <https://github.com/ros/robot_state_publisher/issues/82>`_)" (`#113 <https://github.com/ros/robot_state_publisher/issues/113>`_)
 * update how compiler flags are added (`#104 <https://github.com/ros/robot_state_publisher/issues/104>`_)
 * update install destination in CMakeLists.txt (`#103 <https://github.com/ros/robot_state_publisher/issues/103>`_)
