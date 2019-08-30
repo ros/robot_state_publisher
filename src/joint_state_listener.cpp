@@ -48,7 +48,7 @@ using namespace KDL;
 using namespace robot_state_publisher;
 
 JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model)
-  : state_publisher_(tree, model), mimic_(m)
+  : state_publisher_(createRobotStatePublisher(tree, model)), mimic_(m)
 {
   ros::NodeHandle n_tilde("~");
   ros::NodeHandle n;
@@ -84,7 +84,7 @@ JointStateListener::~JointStateListener()
 void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
 {
   (void)e;
-  state_publisher_.publishFixedTransforms(use_tf_static_);
+  state_publisher_->publishFixedTransforms(use_tf_static_);
 }
 
 void JointStateListener::callbackJointState(const JointStateConstPtr& state)
@@ -140,13 +140,20 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
       }
     }
 
-    state_publisher_.publishTransforms(joint_positions, state->header.stamp);
+    state_publisher_->publishTransforms(joint_positions, state->header.stamp);
 
     // store publish time in joint map
     for (unsigned int i = 0; i<state->name.size(); i++) {
       last_publish_time_[state->name[i]] = state->header.stamp;
     }
   }
+}
+
+std::shared_ptr<RobotStatePublisher>
+JointStateListener::createRobotStatePublisher(const KDL::Tree& tree,
+                                              const urdf::Model& model)
+{
+  return std::make_shared<RobotStatePublisher>(tree, model);
 }
 
 // ----------------------------------
