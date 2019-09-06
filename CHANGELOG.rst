@@ -2,6 +2,12 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.2.4 (2019-09-06)
+------------------
+* Remove unused Eigen3 dependency (`#27 <https://github.com/ros2/robot_state_publisher/issues/27>`_) (`#29 <https://github.com/ros2/robot_state_publisher/issues/29>`_)
+* Don't export exe as library (`#25 <https://github.com/ros2/robot_state_publisher/issues/25>`_) (`#28 <https://github.com/ros2/robot_state_publisher/issues/28>`_)
+* Contributors: Shane Loretz
+
 2.2.3 (2019-06-12)
 ------------------
 * Use rclcpp::Time for stamping transforms (`#20 <https://github.com/ros2/robot_state_publisher/issues/20>`_)
