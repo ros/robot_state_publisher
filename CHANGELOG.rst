@@ -2,6 +2,12 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.3.0 (2019-09-26)
+------------------
+* Install include directories (`#31 <https://github.com/ros2/robot_state_publisher/issues/31>`_)
+* Publish URDF string on startup (`#24 <https://github.com/ros2/robot_state_publisher/issues/24>`_)
+* Contributors: Patrick Beeson, Poh Zhi-Ee, Shane Loretz
+
 2.2.4 (2019-09-06)
 ------------------
 * Remove unused Eigen3 dependency (`#27 <https://github.com/ros2/robot_state_publisher/issues/27>`_) (`#29 <https://github.com/ros2/robot_state_publisher/issues/29>`_)
