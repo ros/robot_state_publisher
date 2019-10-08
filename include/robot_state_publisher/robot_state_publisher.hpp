@@ -34,52 +34,76 @@
 
 /* Author: Wim Meeussen */
 
-#ifndef ROBOT_STATE_PUBLISHER__JOINT_STATE_LISTENER_H_
-#define ROBOT_STATE_PUBLISHER__JOINT_STATE_LISTENER_H_
+#ifndef ROBOT_STATE_PUBLISHER__ROBOT_STATE_PUBLISHER_HPP_
+#define ROBOT_STATE_PUBLISHER__ROBOT_STATE_PUBLISHER_HPP_
+
+#include <kdl/tree.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/joint_state.hpp>
+#include <std_msgs/msg/string.hpp>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <urdf/model.h>
 
 #include <chrono>
 #include <map>
 #include <memory>
 #include <string>
 
-#include "kdl/tree.hpp"
-#include "rclcpp/rclcpp.hpp"
-#include "sensor_msgs/msg/joint_state.hpp"
-#include "urdf/model.h"
-
-#include "robot_state_publisher/robot_state_publisher.h"
-
-typedef std::shared_ptr<sensor_msgs::msg::JointState const> JointStateConstPtr;
 typedef std::map<std::string, urdf::JointMimicSharedPtr> MimicMap;
 
 namespace robot_state_publisher
 {
 
-class JointStateListener
+class SegmentPair
+{
+public:
+  SegmentPair(const KDL::Segment & p_segment, const std::string & p_root, const std::string & p_tip)
+  : segment(p_segment), root(p_root), tip(p_tip) {}
+
+  KDL::Segment segment;
+  std::string root;
+  std::string tip;
+};
+
+class RobotStatePublisher : public rclcpp::Node
 {
 public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
-  JointStateListener(
-    rclcpp::Node::SharedPtr node, const KDL::Tree & tree, const MimicMap & m,
-    const std::string & urdf_xml, const urdf::Model & model = urdf::Model());
+  RobotStatePublisher(
+    const KDL::Tree & tree, const MimicMap & m,
+    const std::string & urdf_xml, const urdf::Model & model);
 
   /// Destructor
-  ~JointStateListener();
+  virtual ~RobotStatePublisher();
+
+  /** Publish transforms to tf
+   * \param joint_positions A map of joint names and joint positions.
+   * \param time The time at which the joint positions were recorded
+   */
+  virtual void publishTransforms(
+    const std::map<std::string, double> & joint_positions,
+    const builtin_interfaces::msg::Time & time);
+
+  virtual void publishFixedTransforms();
 
 protected:
+  virtual void addChildren(const KDL::SegmentMap::const_iterator segment);
   virtual void callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state);
-  virtual void callbackFixedJoint();
 
-  rclcpp::Node::SharedPtr node_;
-  std::string tf_prefix_;
-  std::chrono::seconds publish_interval_;
-  robot_state_publisher::RobotStatePublisher state_publisher_;
+  std::map<std::string, SegmentPair> segments_;
+  std::map<std::string, SegmentPair> segments_fixed_;
+  const urdf::Model & model_;
+  tf2_ros::TransformBroadcaster tf_broadcaster_;
+  tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_pub_;
+  std::chrono::milliseconds publish_interval_;
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
   rclcpp::TimerBase::SharedPtr timer_;
-  std::chrono::time_point<std::chrono::system_clock> last_callback_time_;
-  std::map<std::string, std::chrono::time_point<std::chrono::system_clock>> last_publish_time_;
+  rclcpp::Time last_callback_time_;
+  std::map<std::string, builtin_interfaces::msg::Time> last_publish_time_;
   MimicMap mimic_;
   bool use_tf_static_;
   bool ignore_timestamp_;
@@ -87,4 +111,4 @@ protected:
 
 }  // namespace robot_state_publisher
 
-#endif  // ROBOT_STATE_PUBLISHER__JOINT_STATE_LISTENER_H_
+#endif  // ROBOT_STATE_PUBLISHER__ROBOT_STATE_PUBLISHER_HPP_

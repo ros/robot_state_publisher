@@ -12,65 +12,50 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(kdl_parser REQUIRED)
+find_package(orocos_kdl REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(orocos_kdl REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
 find_package(urdf REQUIRED)
 find_package(urdfdom_headers REQUIRED)
-find_package(kdl_parser REQUIRED)
-find_package(tf2_ros REQUIRED)
 
-include_directories(
-  include
-  ${geometry_msgs_INCLUDE_DIRS}
-  ${kdl_parser_INCLUDE_DIRS}
-  ${orocos_kdl_INCLUDE_DIRS}
-  ${urdf_INCLUDE_DIRS}
-  ${urdfdom_headers_INCLUDE_DIRS}
-  ${rclcpp_INCLUDE_DIRS}
-  ${sensor_msgs_INCLUDE_DIRS}
-  ${tf2_ros_INCLUDE_DIRS})
+include_directories(include)
 
 add_library(
-  ${PROJECT_NAME}_solver
+  ${PROJECT_NAME}
   src/robot_state_publisher.cpp)
-link_directories(${orocos_kdl_LIBRARY_DIRS})
-target_link_libraries(
-  ${PROJECT_NAME}_solver
-  ${geometry_msgs_LIBRARIES}
-  ${kdl_parser_LIBRARIES}
-  ${orocos_kdl_LIBRARIES}
-  ${rclcpp_LIBRARIES}
-  ${sensor_msgs_LIBRARIES}
-  ${tf2_ros_LIBRARIES}
-  ${urdf_LIBRARIES}
-  ${urdfdom_LIBRARIES})
-
-add_library(
-  joint_state_listener
-  src/joint_state_listener.cpp)
-target_link_libraries(
-  joint_state_listener
-  ${PROJECT_NAME}_solver
-  ${orocos_kdl_LIBRARIES})
+ament_target_dependencies(${PROJECT_NAME}
+  geometry_msgs
+  kdl_parser
+  orocos_kdl
+  rclcpp
+  sensor_msgs
+  std_msgs
+  tf2_ros
+  urdf
+)
 
 add_executable(
+  ${PROJECT_NAME}_node
+  src/robot_state_publisher_node.cpp)
+ament_target_dependencies(${PROJECT_NAME}_node
+  kdl_parser
+  orocos_kdl
+  rclcpp
+  sensor_msgs
+  std_msgs
+  tf2_ros
+  urdf
+)
+target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
-  src/joint_state_listener.cpp)
-target_link_libraries(
-  ${PROJECT_NAME}
-  joint_state_listener
-  ${orocos_kdl_LIBRARIES}
-  ${kdl_parser_LIBRARIES}
-  ${urdf_LIBRARIES}
-  ${rclcpp_LIBRARIES}
-  ${tf2_ros_LIBRARIES}
-  ${sensor_msgs_LIBRARIES})
+)
 
 install(
   TARGETS
-  ${PROJECT_NAME}_solver
-  joint_state_listener
+  ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -80,7 +65,7 @@ install(DIRECTORY include/
   DESTINATION include)
 
 install(
-  TARGETS ${PROJECT_NAME}
+  TARGETS ${PROJECT_NAME}_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -89,16 +74,12 @@ if(BUILD_TESTING)
   find_package(ament_cmake_cpplint REQUIRED)
   find_package(ament_cmake_lint_cmake REQUIRED)
   find_package(ament_cmake_uncrustify REQUIRED)
-  # This forces cppcheck to consider all files in this project to be C++,
-  # including the headers which end with .h, which cppcheck would normally
-  # consider to be C instead.
-  ament_cppcheck(LANGUAGE "c++")
   ament_cpplint()
   ament_lint_cmake()
   ament_uncrustify()
 endif()
 
-ament_export_libraries(
-  ${PROJECT_NAME}_solver
-  joint_state_listener)
+ament_export_dependencies(orocos_kdl rclcpp sensor_msgs std_msgs tf2_ros urdf)
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
 ament_package()

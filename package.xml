@@ -3,7 +3,15 @@
 <package format="2">
   <name>robot_state_publisher</name>
   <version>2.3.1</version>
-  <description>ROS2 version of the robot_state_publisher package</description>
+  <description>
+    This package allows you to publish the state of a robot to
+    <a href="http://wiki.ros.org/tf2">tf2</a>. Once the state gets published, it is
+    available to all components in the system that also use <tt>tf2</tt>.
+    The package takes the joint angles of the robot as input
+    and publishes the 3D poses of the robot links, using a kinematic
+    tree model of the robot. The package can both be used as a library
+    and as a ROS 2 node.
+  </description>
   <maintainer email="karsten@osrfoundation.org">Karsten Knese</maintainer>
   <license>BSD</license>
 
@@ -14,6 +22,7 @@
   <build_depend>orocos_kdl</build_depend>
   <build_depend>rclcpp</build_depend>
   <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
   <build_depend>tf2_ros</build_depend>
   <build_depend>urdf</build_depend>
   <build_depend>urdfdom_headers</build_depend>
@@ -23,6 +32,7 @@
   <exec_depend>orocos_kdl</exec_depend>
   <exec_depend>rclcpp</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>urdf</exec_depend>
   <exec_depend>urdfdom_headers</exec_depend>
@@ -34,4 +44,3 @@
     <build_type>ament_cmake</build_type>
   </export>
 </package>
-
