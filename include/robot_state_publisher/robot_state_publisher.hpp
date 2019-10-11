@@ -69,12 +69,8 @@ public:
 class RobotStatePublisher : public rclcpp::Node
 {
 public:
-  /** Constructor
-   * \param tree The kinematic model of a robot, represented by a KDL Tree
-   */
-  RobotStatePublisher(
-    const KDL::Tree & tree, const MimicMap & m,
-    const std::string & urdf_xml, const urdf::Model & model);
+  /// Constructor
+  explicit RobotStatePublisher(const rclcpp::NodeOptions & options);
 
   /// Destructor
   virtual ~RobotStatePublisher();
@@ -95,9 +91,9 @@ protected:
 
   std::map<std::string, SegmentPair> segments_;
   std::map<std::string, SegmentPair> segments_fixed_;
-  const urdf::Model & model_;
-  tf2_ros::TransformBroadcaster tf_broadcaster_;
-  tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
+  urdf::Model model_;
+  std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  std::unique_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_pub_;
   std::chrono::milliseconds publish_interval_;
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;

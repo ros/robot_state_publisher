@@ -40,6 +40,7 @@
 #include <kdl/tree.hpp>
 #include <kdl_parser/kdl_parser.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp_components/register_node_macro.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <urdf/model.h>
 
@@ -48,6 +49,7 @@
 #include <fstream>
 #include <map>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
@@ -72,14 +74,15 @@ geometry_msgs::msg::TransformStamped kdlToTransform(const KDL::Frame & k)
 
 }  // namespace
 
-RobotStatePublisher::RobotStatePublisher(
-  const KDL::Tree & tree, const MimicMap & m, const std::string & urdf_xml, const urdf::Model & model)
-: rclcpp::Node("robot_state_publisher"),
-  model_(model),
-  tf_broadcaster_(this),
-  static_tf_broadcaster_(this),
-  mimic_(m)
+RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
+: rclcpp::Node("robot_state_publisher", options)
 {
+  // get the XML
+  std::string urdf_xml = this->declare_parameter("robot_description", std::string(""));
+  if (urdf_xml.empty()) {
+    throw std::runtime_error("robot_description parameter must be provided");
+  }
+
   // set publish frequency
   double publish_freq = this->declare_parameter("publish_frequency", 50.0);
   publish_interval_ =
@@ -90,6 +93,32 @@ RobotStatePublisher::RobotStatePublisher(
 
   // ignore_timestamp_ == true, joins_states messages are accepted, no matter their timestamp
   ignore_timestamp_ = this->declare_parameter("ignore_timestamp", false);
+
+  // Initialize the model
+  if (!model_.initString(urdf_xml)) {
+    throw std::runtime_error("Unable to initialize urdf::model from robot description");
+  }
+
+  // Initialize the KDL tree
+  KDL::Tree tree;
+  if (!kdl_parser::treeFromUrdfModel(model_, tree)) {
+    throw std::runtime_error("Failed to extract kdl tree from robot description");
+  }
+
+  // Initialize the mimic map
+  for (const std::pair<std::string, urdf::JointSharedPtr> & i : model_.joints_) {
+    if (i.second->mimic) {
+      mimic_.insert(std::make_pair(i.first, i.second->mimic));
+    }
+  }
+
+  KDL::SegmentMap segments_map = tree.getSegments();
+  for (const std::pair<std::string, KDL::TreeElement> & segment : segments_map) {
+    RCLCPP_INFO(get_logger(), "got segment %s", segment.first.c_str());
+  }
+
+  tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(this);
+  static_tf_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(this);
 
   // walk the tree and add segments to segments_
   addChildren(tree.getRootSegment());
@@ -171,7 +200,7 @@ void RobotStatePublisher::publishTransforms(
       tf_transforms.push_back(tf_transform);
     }
   }
-  tf_broadcaster_.sendTransform(tf_transforms);
+  tf_broadcaster_->sendTransform(tf_transforms);
 }
 
 // publish fixed transforms
@@ -195,9 +224,9 @@ void RobotStatePublisher::publishFixedTransforms()
     tf_transforms.push_back(tf_transform);
   }
   if (use_tf_static_) {
-    static_tf_broadcaster_.sendTransform(tf_transforms);
+    static_tf_broadcaster_->sendTransform(tf_transforms);
   } else {
-    tf_broadcaster_.sendTransform(tf_transforms);
+    tf_broadcaster_->sendTransform(tf_transforms);
   }
 }
 
@@ -259,3 +288,5 @@ void RobotStatePublisher::callbackJointState(const sensor_msgs::msg::JointState:
   }
 }
 }  // namespace robot_state_publisher
+
+RCLCPP_COMPONENTS_REGISTER_NODE(robot_state_publisher::RobotStatePublisher)
