@@ -91,7 +91,7 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   // set whether to use the /tf_static latched static transform broadcaster
   use_tf_static_ = this->declare_parameter("use_tf_static", true);
 
-  // ignore_timestamp_ == true, joins_states messages are accepted, no matter their timestamp
+  // ignore_timestamp_ == true, joint_state messages are accepted, no matter their timestamp
   ignore_timestamp_ = this->declare_parameter("ignore_timestamp", false);
 
   // Initialize the model
