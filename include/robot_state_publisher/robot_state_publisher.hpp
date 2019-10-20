@@ -55,10 +55,13 @@ typedef std::map<std::string, urdf::JointMimicSharedPtr> MimicMap;
 namespace robot_state_publisher
 {
 
-class SegmentPair
+class SegmentPair final
 {
 public:
-  SegmentPair(const KDL::Segment & p_segment, const std::string & p_root, const std::string & p_tip)
+  explicit SegmentPair(
+    const KDL::Segment & p_segment,
+    const std::string & p_root,
+    const std::string & p_tip)
   : segment(p_segment), root(p_root), tip(p_tip) {}
 
   KDL::Segment segment;
@@ -66,28 +69,28 @@ public:
   std::string tip;
 };
 
-class RobotStatePublisher : public rclcpp::Node
+class RobotStatePublisher final : public rclcpp::Node
 {
 public:
   /// Constructor
   explicit RobotStatePublisher(const rclcpp::NodeOptions & options);
 
   /// Destructor
-  virtual ~RobotStatePublisher();
+  ~RobotStatePublisher();
 
+private:
   /** Publish transforms to tf
    * \param joint_positions A map of joint names and joint positions.
    * \param time The time at which the joint positions were recorded
    */
-  virtual void publishTransforms(
+  void publishTransforms(
     const std::map<std::string, double> & joint_positions,
     const builtin_interfaces::msg::Time & time);
 
-  virtual void publishFixedTransforms();
+  void publishFixedTransforms();
 
-protected:
-  virtual void addChildren(const KDL::SegmentMap::const_iterator segment);
-  virtual void callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state);
+  void addChildren(const KDL::SegmentMap::const_iterator segment);
+  void callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state);
 
   std::map<std::string, SegmentPair> segments_;
   std::map<std::string, SegmentPair> segments_fixed_;
