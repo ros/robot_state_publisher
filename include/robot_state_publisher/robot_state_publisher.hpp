@@ -88,13 +88,13 @@ private:
     const builtin_interfaces::msg::Time & time);
 
   void publishFixedTransforms();
-
   void addChildren(const KDL::SegmentMap::const_iterator segment);
   void callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state);
+  void setupURDF(const std::string & urdf_xml);
 
   std::map<std::string, SegmentPair> segments_;
   std::map<std::string, SegmentPair> segments_fixed_;
-  urdf::Model model_;
+  std::unique_ptr<urdf::Model> model_;
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
   std::unique_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_pub_;

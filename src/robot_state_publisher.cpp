@@ -94,45 +94,15 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   // ignore_timestamp_ == true, joint_state messages are accepted, no matter their timestamp
   ignore_timestamp_ = this->declare_parameter("ignore_timestamp", false);
 
-  // Initialize the model
-  if (!model_.initString(urdf_xml)) {
-    throw std::runtime_error("Unable to initialize urdf::model from robot description");
-  }
-
-  // Initialize the KDL tree
-  KDL::Tree tree;
-  if (!kdl_parser::treeFromUrdfModel(model_, tree)) {
-    throw std::runtime_error("Failed to extract kdl tree from robot description");
-  }
-
-  // Initialize the mimic map
-  for (const std::pair<std::string, urdf::JointSharedPtr> & i : model_.joints_) {
-    if (i.second->mimic) {
-      mimic_.insert(std::make_pair(i.first, i.second->mimic));
-    }
-  }
-
-  KDL::SegmentMap segments_map = tree.getSegments();
-  for (const std::pair<std::string, KDL::TreeElement> & segment : segments_map) {
-    RCLCPP_INFO(get_logger(), "got segment %s", segment.first.c_str());
-  }
-
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(this);
   static_tf_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(this);
-
-  // walk the tree and add segments to segments_
-  addChildren(tree.getRootSegment());
 
   description_pub_ = this->create_publisher<std_msgs::msg::String>(
     "robot_description",
     // Transient local is similar to latching in ROS 1.
     rclcpp::QoS(1).transient_local());
 
-  auto msg = std::make_unique<std_msgs::msg::String>();
-  msg->data = urdf_xml;
-
-  // Publish the robot description
-  description_pub_->publish(std::move(msg));
+  setupURDF(urdf_xml);
 
   // subscribe to joint state
   joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>(
@@ -150,6 +120,46 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
 RobotStatePublisher::~RobotStatePublisher()
 {}
 
+void RobotStatePublisher::setupURDF(const std::string & urdf_xml)
+{
+  model_ = std::make_unique<urdf::Model>();
+
+  // Initialize the model
+  if (!model_->initString(urdf_xml)) {
+    throw std::runtime_error("Unable to initialize urdf::model from robot description");
+  }
+
+  // Initialize the KDL tree
+  KDL::Tree tree;
+  if (!kdl_parser::treeFromUrdfModel(*model_, tree)) {
+    throw std::runtime_error("Failed to extract kdl tree from robot description");
+  }
+
+  // Initialize the mimic map
+  mimic_.clear();
+  for (const std::pair<std::string, urdf::JointSharedPtr> & i : model_->joints_) {
+    if (i.second->mimic) {
+      mimic_.insert(std::make_pair(i.first, i.second->mimic));
+    }
+  }
+
+  KDL::SegmentMap segments_map = tree.getSegments();
+  for (const std::pair<std::string, KDL::TreeElement> & segment : segments_map) {
+    RCLCPP_INFO(get_logger(), "got segment %s", segment.first.c_str());
+  }
+
+  // walk the tree and add segments to segments_
+  segments_.clear();
+  segments_fixed_.clear();
+  addChildren(tree.getRootSegment());
+
+  auto msg = std::make_unique<std_msgs::msg::String>();
+  msg->data = urdf_xml;
+
+  // Publish the robot description
+  description_pub_->publish(std::move(msg));
+}
+
 // add children to correct maps
 void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segment)
 {
@@ -160,8 +170,8 @@ void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segm
     const KDL::Segment & child = GetTreeElementSegment(children[i]->second);
     SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
     if (child.getJoint().getType() == KDL::Joint::None) {
-      if (model_.getJoint(child.getJoint().getName()) &&
-        model_.getJoint(child.getJoint().getName())->type == urdf::Joint::FLOATING)
+      if (model_->getJoint(child.getJoint().getName()) &&
+        model_->getJoint(child.getJoint().getName())->type == urdf::Joint::FLOATING)
       {
         RCLCPP_INFO(get_logger(),
           "Floating joint. Not adding segment from %s to %s.",
