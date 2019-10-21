@@ -46,6 +46,7 @@
 
 #include <chrono>
 #include <fstream>
+#include <functional>
 #include <map>
 #include <memory>
 #include <stdexcept>
@@ -113,10 +114,15 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
       std::placeholders::_1));
 
   // trigger to publish fixed joints
-  // if using static transform broadcaster, this will be a oneshot trigger and only run once
   timer_ =
     this->create_wall_timer(publish_interval_ms_,
       std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+
+  // Now that we have successfully declared the parameters and done all
+  // necessary setup, install the callback for updating parameters.
+  param_cb_ =
+    add_on_set_parameters_callback(std::bind(&RobotStatePublisher::parameterUpdate, this,
+      std::placeholders::_1));
 }
 
 RobotStatePublisher::~RobotStatePublisher()
@@ -298,6 +304,74 @@ void RobotStatePublisher::callbackJointState(const sensor_msgs::msg::JointState:
       last_publish_time_[state->name[i]] = state->header.stamp;
     }
   }
+}
+
+rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
+  const std::vector<rclcpp::Parameter> & parameters)
+{
+  rcl_interfaces::msg::SetParametersResult result;
+  result.successful = true;
+
+  for (const rclcpp::Parameter & parameter : parameters) {
+    if (parameter.get_name() == "robot_description") {
+      // First make sure that it is still a string
+      if (parameter.get_type() != rclcpp::ParameterType::PARAMETER_STRING) {
+        result.successful = false;
+        result.reason = "URDF must be a string";
+        break;
+      }
+
+      // Now get the parameter
+      std::string new_urdf = parameter.as_string();
+      // And ensure that it isn't empty
+      if (new_urdf.empty()) {
+        result.successful = false;
+        result.reason = "Empty URDF is not allowed";
+        break;
+      }
+
+      setupURDF(new_urdf);
+    } else if (parameter.get_name() == "use_tf_static") {
+      if (parameter.get_type() != rclcpp::ParameterType::PARAMETER_BOOL) {
+        result.successful = false;
+        result.reason = "use_tf_static must be a boolean";
+        break;
+      }
+      use_tf_static_ = parameter.as_bool();
+    } else if (parameter.get_name() == "ignore_timestamp") {
+      if (parameter.get_type() != rclcpp::ParameterType::PARAMETER_BOOL) {
+        result.successful = false;
+        result.reason = "ignore_timestamp must be a boolean";
+        break;
+      }
+      ignore_timestamp_ = parameter.as_bool();
+    } else if (parameter.get_name() == "publish_frequency") {
+      if (parameter.get_type() != rclcpp::ParameterType::PARAMETER_DOUBLE) {
+        result.successful = false;
+        result.reason = "publish_frequency must be a double";
+        break;
+      }
+
+      double publish_freq = parameter.as_double();
+      if (publish_freq > 1000.0) {
+        result.successful = false;
+        result.reason = "publish_frequency must be <= 1000.0";
+        break;
+      }
+      std::chrono::milliseconds new_publish_interval =
+        std::chrono::milliseconds(static_cast<uint64_t>(1000.0 / publish_freq));
+
+      if (new_publish_interval != publish_interval_ms_) {
+        publish_interval_ms_ = new_publish_interval;
+        timer_->cancel();
+        timer_ =
+          this->create_wall_timer(publish_interval_ms_,
+            std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+      }
+    }
+  }
+
+  return result;
 }
 }  // namespace robot_state_publisher
 

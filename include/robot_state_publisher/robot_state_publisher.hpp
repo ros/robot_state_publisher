@@ -49,6 +49,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 typedef std::map<std::string, urdf::JointMimicSharedPtr> MimicMap;
 
@@ -91,6 +92,8 @@ private:
   void addChildren(const KDL::SegmentMap::const_iterator segment);
   void callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state);
   void setupURDF(const std::string & urdf_xml);
+  rcl_interfaces::msg::SetParametersResult parameterUpdate(
+    const std::vector<rclcpp::Parameter> & parameters);
 
   std::map<std::string, SegmentPair> segments_;
   std::map<std::string, SegmentPair> segments_fixed_;
@@ -106,6 +109,7 @@ private:
   MimicMap mimic_;
   bool use_tf_static_;
   bool ignore_timestamp_;
+  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_cb_;
 };
 
 }  // namespace robot_state_publisher
