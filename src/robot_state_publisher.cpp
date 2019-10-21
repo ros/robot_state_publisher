@@ -44,7 +44,6 @@
 #include <std_msgs/msg/string.hpp>
 #include <urdf/model.h>
 
-#include <algorithm>
 #include <chrono>
 #include <fstream>
 #include <map>
@@ -84,9 +83,12 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   }
 
   // set publish frequency
-  double publish_freq = this->declare_parameter("publish_frequency", 50.0);
-  publish_interval_ =
-    std::chrono::milliseconds(static_cast<uint64_t>(1.0 / std::max(publish_freq, 1.0)));
+  double publish_freq = this->declare_parameter("publish_frequency", 20.0);
+  if (publish_freq > 1000.0) {
+    throw std::runtime_error("publish_frequency must be <= 1000.0");
+  }
+  publish_interval_ms_ =
+    std::chrono::milliseconds(static_cast<uint64_t>(1000.0 / publish_freq));
 
   // set whether to use the /tf_static latched static transform broadcaster
   use_tf_static_ = this->declare_parameter("use_tf_static", true);
@@ -113,7 +115,7 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   // trigger to publish fixed joints
   // if using static transform broadcaster, this will be a oneshot trigger and only run once
   timer_ =
-    this->create_wall_timer(publish_interval_,
+    this->create_wall_timer(publish_interval_ms_,
       std::bind(&RobotStatePublisher::publishFixedTransforms, this));
 }
 
@@ -273,7 +275,7 @@ void RobotStatePublisher::callbackJointState(const sensor_msgs::msg::JointState:
 
   // check if we need to publish
   rclcpp::Time current_time(state->header.stamp);
-  rclcpp::Time max_publish_time = last_published + rclcpp::Duration(publish_interval_);
+  rclcpp::Time max_publish_time = last_published + rclcpp::Duration(publish_interval_ms_);
   if (ignore_timestamp_ || current_time.nanoseconds() >= max_publish_time.nanoseconds()) {
     // get joint positions from state message
     std::map<std::string, double> joint_positions;

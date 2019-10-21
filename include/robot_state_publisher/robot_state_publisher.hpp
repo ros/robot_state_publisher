@@ -98,7 +98,7 @@ private:
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
   std::unique_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_pub_;
-  std::chrono::milliseconds publish_interval_;
+  std::chrono::milliseconds publish_interval_ms_;
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Time last_callback_time_;
