@@ -24,7 +24,7 @@ endif()
 
 find_package(orocos_kdl REQUIRED)
 find_package(catkin REQUIRED
-  COMPONENTS roscpp rosconsole rostime tf2_ros tf2_kdl kdl_parser
+  COMPONENTS kdl_parser roscpp rosconsole rostime sensor_msgs tf2_ros tf2_kdl
 )
 find_package(Eigen3 REQUIRED)
 
@@ -33,7 +33,7 @@ find_package(urdfdom_headers REQUIRED)
 catkin_package(
   LIBRARIES ${PROJECT_NAME}_solver
   INCLUDE_DIRS include
-  DEPENDS roscpp rosconsole rostime tf2_ros tf2_kdl kdl_parser orocos_kdl urdfdom_headers
+  DEPENDS kdl_parser orocos_kdl roscpp rosconsole rostime sensor_msgs tf2_ros tf2_kdl urdfdom_headers
 )
 
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
