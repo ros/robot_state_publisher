@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.3.1 (2019-10-23)
+------------------
 * Switch the license back to BSD. (`#121 <https://github.com/ros/robot_state_publisher/issues/121>`_)
 * Contributors: Chris Lalancette
 
