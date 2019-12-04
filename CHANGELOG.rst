@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.2.5 (2019-12-04)
+------------------
+* Publish description right away (`#124 <https://github.com/ros/robot_state_publisher/issues/124>`_)
+* Contributors: Shane Loretz
+
 2.2.4 (2019-09-06)
 ------------------
 * Remove unused Eigen3 dependency (`#27 <https://github.com/ros2/robot_state_publisher/issues/27>`_) (`#29 <https://github.com/ros2/robot_state_publisher/issues/29>`_)
