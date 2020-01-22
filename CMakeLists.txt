@@ -41,18 +41,9 @@ ament_target_dependencies(${PROJECT_NAME}
   urdf
 )
 
-rclcpp_components_register_nodes(${PROJECT_NAME}
-  "robot_state_publisher::RobotStatePublisher")
-
-add_executable(
-  ${PROJECT_NAME}_node
-  src/robot_state_publisher_node.cpp)
-ament_target_dependencies(${PROJECT_NAME}_node
-  rclcpp
-)
-target_link_libraries(${PROJECT_NAME}_node
-  ${PROJECT_NAME}
-)
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "robot_state_publisher::RobotStatePublisher"
+  EXECUTABLE robot_state_publisher_node)
 
 install(
   TARGETS

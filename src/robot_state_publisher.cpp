@@ -126,9 +126,6 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
       std::placeholders::_1));
 }
 
-RobotStatePublisher::~RobotStatePublisher()
-{}
-
 void RobotStatePublisher::setupURDF(const std::string & urdf_xml)
 {
   model_ = std::make_unique<urdf::Model>();

@@ -52,7 +52,7 @@
 #include <string>
 #include <vector>
 
-typedef std::map<std::string, urdf::JointMimicSharedPtr> MimicMap;
+using MimicMap = std::map<std::string, urdf::JointMimicSharedPtr>;
 
 namespace robot_state_publisher
 {
@@ -71,14 +71,11 @@ public:
   std::string tip;
 };
 
-class RobotStatePublisher final : public rclcpp::Node
+class RobotStatePublisher : public rclcpp::Node
 {
 public:
   /// Constructor
   explicit RobotStatePublisher(const rclcpp::NodeOptions & options);
-
-  /// Destructor
-  ~RobotStatePublisher();
 
 private:
   /** Publish transforms to tf
