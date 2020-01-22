@@ -36,6 +36,7 @@
 
 #include "robot_state_publisher/robot_state_publisher.hpp"
 
+#include <builtin_interfaces/msg/time.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <kdl/tree.hpp>
 #include <kdl_parser/kdl_parser.hpp>
@@ -368,6 +369,10 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
           this->create_wall_timer(publish_interval_ms_,
             std::bind(&RobotStatePublisher::publishFixedTransforms, this));
       }
+    } else {
+      result.successful = false;
+      result.reason = "Invalid parameter";
+      break;
     }
   }
 

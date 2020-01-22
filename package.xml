@@ -16,6 +16,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <build_depend>builtin_interfaces</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>kdl_parser</build_depend>
   <build_depend>orocos_kdl</build_depend>
@@ -27,6 +28,7 @@
   <build_depend>urdf</build_depend>
   <build_depend>urdfdom_headers</build_depend>
 
+  <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>kdl_parser</exec_depend>
   <exec_depend>orocos_kdl</exec_depend>
