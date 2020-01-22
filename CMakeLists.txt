@@ -68,11 +68,37 @@ install(DIRECTORY launch urdf
 if(BUILD_TESTING)
   find_package(ament_cmake_cppcheck REQUIRED)
   find_package(ament_cmake_cpplint REQUIRED)
+  find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_lint_cmake REQUIRED)
   find_package(ament_cmake_uncrustify REQUIRED)
+  find_package(launch_testing_ament_cmake REQUIRED)
+  ament_find_gtest()
+
+  include_directories(${GTEST_INCLUDE_DIRS})
+
   ament_cpplint()
   ament_lint_cmake()
   ament_uncrustify()
+
+  add_executable(test_two_links_fixed_joint test/test_two_links_fixed_joint.cpp)
+  ament_target_dependencies(test_two_links_fixed_joint
+    rclcpp
+    sensor_msgs
+    tf2_ros
+  )
+  target_link_libraries(test_two_links_fixed_joint ${GTEST_LIBRARIES})
+  add_launch_test(test/two_links_fixed_joint-launch.py
+    ARGS "test_exe:=${CMAKE_CURRENT_BINARY_DIR}/test_two_links_fixed_joint")
+
+  add_executable(test_two_links_moving_joint test/test_two_links_moving_joint.cpp)
+  ament_target_dependencies(test_two_links_moving_joint
+    rclcpp
+    sensor_msgs
+    tf2_ros
+  )
+  target_link_libraries(test_two_links_moving_joint ${GTEST_LIBRARIES})
+  add_launch_test(test/two_links_moving_joint-launch.py
+    ARGS "test_exe:=${CMAKE_CURRENT_BINARY_DIR}/test_two_links_moving_joint")
 endif()
 
 ament_export_dependencies(builtin_interfaces orocos_kdl rclcpp sensor_msgs std_msgs tf2_ros urdf)
