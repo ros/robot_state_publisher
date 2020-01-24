@@ -77,10 +77,11 @@ JointStateListener::JointStateListener(
   n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
   publish_interval_ = ros::Duration(1.0/max(publish_freq, 1.0));
   */
-
+  tf_prefix_="";
+  node->declare_parameter("tf_prefix");
+  node->get_parameter("tf_prefix",tf_prefix_);
   use_tf_static_ = true;
   ignore_timestamp_ = false;
-  tf_prefix_ = "";
   // auto publish_freq = 50.0;
   // publish_interval_ = std::chrono::seconds(1.0/std::max(publish_freq, 1.0));
   publish_interval_ = 1s;
