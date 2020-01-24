@@ -222,7 +222,6 @@ void RobotStatePublisher::publishFixedTransforms()
 {
   RCLCPP_DEBUG(get_logger(), "Publishing transforms for fixed joints");
   std::vector<geometry_msgs::msg::TransformStamped> tf_transforms;
-  geometry_msgs::msg::TransformStamped tf_transform;
 
   // loop over all fixed segments
   for (const std::pair<std::string, SegmentPair> & seg : segments_fixed_) {
