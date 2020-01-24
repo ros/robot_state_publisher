@@ -84,8 +84,8 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
 
   // set publish frequency
   double publish_freq = this->declare_parameter("publish_frequency", 20.0);
-  if (publish_freq > 1000.0) {
-    throw std::runtime_error("publish_frequency must be <= 1000.0");
+  if (publish_freq < 0.0 || publish_freq > 1000.0) {
+    throw std::runtime_error("publish_frequency must be between 0 and 1000");
   }
   publish_interval_ms_ =
     std::chrono::milliseconds(static_cast<uint64_t>(1000.0 / publish_freq));
@@ -349,9 +349,9 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
       }
 
       double publish_freq = parameter.as_double();
-      if (publish_freq > 1000.0) {
+      if (publish_freq < 0.0 || publish_freq > 1000.0) {
         result.successful = false;
-        result.reason = "publish_frequency must be <= 1000.0";
+        result.reason = "publish_frequency must be between 0 and 1000";
         break;
       }
       std::chrono::milliseconds new_publish_interval =
