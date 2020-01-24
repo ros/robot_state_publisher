@@ -37,9 +37,11 @@ import launch
 from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch_testing
+import launch_testing.actions
+import launch_testing.asserts
 
 
-def generate_test_description(ready_fn):
+def generate_test_description():
     test_exe_arg = launch.actions.DeclareLaunchArgument(
         'test_exe',
         description='Path to executable test',
@@ -67,20 +69,24 @@ def generate_test_description(ready_fn):
         test_exe_arg,
         process_under_test,
         launch_testing.util.KeepAliveProc(),
-        launch.actions.OpaqueFunction(function=lambda context: ready_fn()),
+        launch_testing.actions.ReadyToTest(),
     ]), locals()
 
 
 class TestMovingJoint(unittest.TestCase):
 
     def test_termination(self, process_under_test, proc_info):
-        proc_info.assertWaitForShutdown(process=process_under_test, timeout=(10))
+        proc_info.assertWaitForShutdown(process=process_under_test, timeout=10)
 
 
 @launch_testing.post_shutdown_test()
 class MovingJointTestAfterShutdown(unittest.TestCase):
 
-    def test_exit_code(self):
+    def test_exit_code(self, process_under_test, proc_info):
         # Check that all processes in the launch (in this case, there's just one) exit
         # with code 0
-        launch_testing.asserts.assertExitCodes(self.proc_info)
+        launch_testing.asserts.assertExitCodes(
+            proc_info,
+            [launch_testing.asserts.EXIT_OK],
+            process_under_test
+        )
