@@ -41,9 +41,10 @@ from launch_ros.substitutions import FindPackageShare
 
 import xacro
 
-# Launch RSP with a URDF XACRO file, using Xacro Python API
+
 def generate_launch_description():
-    urdf_dir = os.path.join(FindPackageShare('robot_state_publisher').find('robot_state_publisher'), 'urdf')
+    pkg_share = FindPackageShare('robot_state_publisher').find('robot_state_publisher')
+    urdf_dir = os.path.join(pkg_share, 'urdf')
     xacro_file = os.path.join(urdf_dir, 'test-desc.urdf.xacro')
     doc = xacro.process_file(xacro_file)
     robot_desc = doc.toprettyxml(indent='  ')

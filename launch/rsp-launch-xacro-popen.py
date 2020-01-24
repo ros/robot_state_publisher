@@ -42,10 +42,11 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    urdf_dir = os.path.join(FindPackageShare('robot_state_publisher').find('robot_state_publisher'), 'urdf')
+    pkg_share = FindPackageShare('robot_state_publisher').find('robot_state_publisher')
+    urdf_dir = os.path.join(pkg_share, 'urdf')
     xacro_file = os.path.join(urdf_dir, 'test-desc.urdf.xacro')
     p = subprocess.Popen(['xacro', xacro_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    robot_desc,stderr = p.communicate()
+    robot_desc, stderr = p.communicate()
     params = {'robot_description': robot_desc.decode('utf-8')}
     rsp = launch_ros.actions.Node(package='robot_state_publisher',
                                   node_executable='robot_state_publisher_node',

@@ -42,7 +42,8 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    urdf_dir = os.path.join(FindPackageShare('robot_state_publisher').find('robot_state_publisher'), 'urdf')
+    pkg_share = FindPackageShare('robot_state_publisher').find('robot_state_publisher')
+    urdf_dir = os.path.join(pkg_share, 'urdf')
     urdf_file = os.path.join(urdf_dir, 'test-desc.urdf')
     with open(urdf_file, 'r') as infp:
         robot_desc = infp.read()

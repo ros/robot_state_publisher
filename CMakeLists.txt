@@ -56,29 +56,19 @@ install(
 install(DIRECTORY include/
   DESTINATION include)
 
-install(
-  TARGETS ${PROJECT_NAME}_node
-  DESTINATION lib/${PROJECT_NAME}
-)
-
 install(DIRECTORY launch urdf
   DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
-  find_package(ament_cmake_cppcheck REQUIRED)
-  find_package(ament_cmake_cpplint REQUIRED)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+
   find_package(ament_cmake_gtest REQUIRED)
-  find_package(ament_cmake_lint_cmake REQUIRED)
-  find_package(ament_cmake_uncrustify REQUIRED)
   find_package(launch_testing_ament_cmake REQUIRED)
   ament_find_gtest()
 
   include_directories(${GTEST_INCLUDE_DIRS})
-
-  ament_cpplint()
-  ament_lint_cmake()
-  ament_uncrustify()
 
   add_executable(test_two_links_fixed_joint test/test_two_links_fixed_joint.cpp)
   ament_target_dependencies(test_two_links_fixed_joint
