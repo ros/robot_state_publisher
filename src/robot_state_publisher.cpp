@@ -92,6 +92,9 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
 
   // set whether to use the /tf_static latched static transform broadcaster
   use_tf_static_ = this->declare_parameter("use_tf_static", true);
+  if (!use_tf_static_) {
+    RCLCPP_WARN(get_logger(), "use_tf_static is deprecated and will be removed in the future");
+  }
 
   // ignore_timestamp_ == true, joint_state messages are accepted, no matter their timestamp
   ignore_timestamp_ = this->declare_parameter("ignore_timestamp", false);

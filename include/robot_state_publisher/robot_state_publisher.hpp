@@ -75,7 +75,7 @@ public:
   /// Constructor
   explicit RobotStatePublisher(const rclcpp::NodeOptions & options);
 
-private:
+protected:
   /** Publish transforms to tf
    * \param joint_positions A map of joint names and joint positions.
    * \param time The time at which the joint positions were recorded
