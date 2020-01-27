@@ -83,24 +83,32 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
     // If the robot_description is empty, we fall back to looking at the
     // command-line arguments.  Since this is deprecated, we print a warning
     // but continue on.
-    if (options.arguments().size() > 1) {
-      RCLCPP_WARN(
-        get_logger(),
-        "No robot_description parameter, but command-line argument available."
-        "  Assuming argument is name of URDF file."
-        "  This backwards compatibility fallback will be removed in the future.");
-      std::ifstream in(options.arguments()[1], std::ios::in | std::ios::binary);
-      if (in) {
-        in.seekg(0, std::ios::end);
-        urdf_xml.resize(in.tellg());
-        in.seekg(0, std::ios::beg);
-        in.read(&urdf_xml[0], urdf_xml.size());
-        in.close();
+    try {
+      if (options.arguments().size() > 1) {
+        RCLCPP_WARN(
+          get_logger(),
+          "No robot_description parameter, but command-line argument available."
+          "  Assuming argument is name of URDF file."
+          "  This backwards compatibility fallback will be removed in the future.");
+        std::ifstream in(options.arguments()[1], std::ios::in | std::ios::binary);
+        if (in) {
+          in.seekg(0, std::ios::end);
+          urdf_xml.resize(in.tellg());
+          in.seekg(0, std::ios::beg);
+          in.read(&urdf_xml[0], urdf_xml.size());
+          in.close();
+        } else {
+          throw std::system_error(
+            errno,
+            std::system_category(),
+            "Failed to open URDF file: " + std::string(options.arguments()[1]));
+        }
       } else {
-        throw std::runtime_error("Failed to open URDF file: " + std::string(::strerror(errno)));
+        throw std::runtime_error("robot_description parameter must not be empty");
       }
-    } else {
-      throw std::runtime_error("robot_description parameter must not be empty");
+    } catch (const std::runtime_error & err) {
+      RCLCPP_FATAL(get_logger(), "%s", err.what());
+      throw;
     }
   }
 
