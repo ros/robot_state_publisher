@@ -99,9 +99,9 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
           in.close();
         } else {
           throw std::system_error(
-            errno,
-            std::system_category(),
-            "Failed to open URDF file: " + std::string(options.arguments()[1]));
+                  errno,
+                  std::system_category(),
+                  "Failed to open URDF file: " + std::string(options.arguments()[1]));
         }
       } else {
         throw std::runtime_error("robot_description parameter must not be empty");

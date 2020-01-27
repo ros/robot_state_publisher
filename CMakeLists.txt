@@ -76,6 +76,16 @@ if(BUILD_TESTING)
     sensor_msgs
     tf2_ros
   )
+  if(MSVC)
+    # CMake on Windows places executables in ${CMAKE_CURRENT_BINARY_DIR}/${RELEASE_TYPE},
+    # where the made-up RELEASE_TYPE is one of "Debug" or "Release".  I can't
+    # seem to find a CMAKE variable defining that, which we need as our argument
+    # to the launch file.  Instead, move the test executables into the main
+    # CMAKE_CURRENT_BINARY_DIR, which allows launch on Windows to find them.
+    set_target_properties(test_two_links_fixed_joint PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    set_target_properties(test_two_links_fixed_joint PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR})
+    set_target_properties(test_two_links_fixed_joint PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
+  endif()
   target_link_libraries(test_two_links_fixed_joint ${GTEST_LIBRARIES})
   add_launch_test(test/two_links_fixed_joint-launch.py
     ARGS "test_exe:=${CMAKE_CURRENT_BINARY_DIR}/test_two_links_fixed_joint")
@@ -86,6 +96,16 @@ if(BUILD_TESTING)
     sensor_msgs
     tf2_ros
   )
+  if(MSVC)
+    # CMake on Windows places executables in ${CMAKE_CURRENT_BINARY_DIR}/${RELEASE_TYPE},
+    # where the made-up RELEASE_TYPE is one of "Debug" or "Release".  I can't
+    # seem to find a CMAKE variable defining that, which we need as our argument
+    # to the launch file.  Instead, move the test executables into the main
+    # CMAKE_CURRENT_BINARY_DIR, which allows launch on Windows to find them.
+    set_target_properties(test_two_links_moving_joint PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    set_target_properties(test_two_links_moving_joint PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR})
+    set_target_properties(test_two_links_moving_joint PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
+  endif()
   target_link_libraries(test_two_links_moving_joint ${GTEST_LIBRARIES})
   add_launch_test(test/two_links_moving_joint-launch.py
     ARGS "test_exe:=${CMAKE_CURRENT_BINARY_DIR}/test_two_links_moving_joint")
