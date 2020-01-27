@@ -26,9 +26,9 @@ find_package(urdfdom_headers REQUIRED)
 include_directories(include)
 
 add_library(
-  ${PROJECT_NAME} SHARED
+  ${PROJECT_NAME}_node SHARED
   src/robot_state_publisher.cpp)
-ament_target_dependencies(${PROJECT_NAME}
+ament_target_dependencies(${PROJECT_NAME}_node
   builtin_interfaces
   geometry_msgs
   kdl_parser
@@ -41,13 +41,13 @@ ament_target_dependencies(${PROJECT_NAME}
   urdf
 )
 
-rclcpp_components_register_node(${PROJECT_NAME}
+rclcpp_components_register_node(${PROJECT_NAME}_node
   PLUGIN "robot_state_publisher::RobotStatePublisher"
-  EXECUTABLE robot_state_publisher_node)
+  EXECUTABLE robot_state_publisher)
 
 install(
   TARGETS
-  ${PROJECT_NAME}
+  ${PROJECT_NAME}_node
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -93,5 +93,5 @@ endif()
 
 ament_export_dependencies(builtin_interfaces orocos_kdl rclcpp sensor_msgs std_msgs tf2_ros urdf)
 ament_export_include_directories(include)
-ament_export_libraries(${PROJECT_NAME})
+ament_export_libraries(${PROJECT_NAME}_node)
 ament_package()

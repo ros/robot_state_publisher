@@ -53,7 +53,7 @@ def generate_launch_description():
 
     params = {'robot_description': robot_desc}
     rsp = launch_ros.actions.Node(package='robot_state_publisher',
-                                  node_executable='robot_state_publisher_node',
+                                  node_executable='robot_state_publisher',
                                   output='both',
                                   parameters=[params])
 

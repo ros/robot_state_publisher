@@ -44,6 +44,7 @@
 #include <urdf/model.h>
 
 #include <chrono>
+#include <cstring>
 #include <fstream>
 #include <functional>
 #include <map>
@@ -76,10 +77,35 @@ geometry_msgs::msg::TransformStamped kdlToTransform(const KDL::Frame & k)
 RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
 : rclcpp::Node("robot_state_publisher", options)
 {
+  for (const std::string & arg : options.arguments()) {
+    RCLCPP_INFO(get_logger(), "Argument from cmdline: %s", arg.c_str());
+  }
+
   // get the XML
   std::string urdf_xml = this->declare_parameter("robot_description", std::string(""));
   if (urdf_xml.empty()) {
-    throw std::runtime_error("robot_description parameter must not be empty");
+    // If the robot_description is empty, we fall back to looking at the
+    // command-line arguments.  Since this is deprecated, we print a warning
+    // but continue on.
+    if (options.arguments().size() > 1) {
+      RCLCPP_WARN(
+        get_logger(),
+        "No robot_description parameter, but command-line argument available."
+        "  Assuming argument is name of URDF file."
+        "  This backwards compatibility fallback will be removed in the future.");
+      std::ifstream in(options.arguments()[1], std::ios::in | std::ios::binary);
+      if (in) {
+        in.seekg(0, std::ios::end);
+        urdf_xml.resize(in.tellg());
+        in.seekg(0, std::ios::beg);
+        in.read(&urdf_xml[0], urdf_xml.size());
+        in.close();
+      } else {
+        throw std::runtime_error("Failed to open URDF file: " + std::string(::strerror(errno)));
+      }
+    } else {
+      throw std::runtime_error("robot_description parameter must not be empty");
+    }
   }
 
   // set publish frequency

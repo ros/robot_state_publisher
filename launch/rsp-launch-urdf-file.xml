@@ -37,7 +37,7 @@ POSSIBILITY OF SUCH DAMAGE.
     URDF read from a file (found using the find-pkg-share substitution).
 -->
 <launch>
-  <node pkg="robot_state_publisher" exec="robot_state_publisher_node">
+  <node pkg="robot_state_publisher" exec="robot_state_publisher">
     <param name='robot_description' value="$(command 'cat $(find-pkg-share robot_state_publisher)/urdf/test-desc.urdf')"/>
   </node>
 </launch>

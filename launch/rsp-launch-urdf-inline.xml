@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 -->
 
 <launch>
-  <node pkg="robot_state_publisher" exec="robot_state_publisher_node">
+  <node pkg="robot_state_publisher" exec="robot_state_publisher">
     <param name='robot_description' value="
 &lt;?xml version='1.0'?&gt;
 &lt;robot name='test'&gt;
