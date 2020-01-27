@@ -77,10 +77,6 @@ geometry_msgs::msg::TransformStamped kdlToTransform(const KDL::Frame & k)
 RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
 : rclcpp::Node("robot_state_publisher", options)
 {
-  for (const std::string & arg : options.arguments()) {
-    RCLCPP_INFO(get_logger(), "Argument from cmdline: %s", arg.c_str());
-  }
-
   // get the XML
   std::string urdf_xml = this->declare_parameter("robot_description", std::string(""));
   if (urdf_xml.empty()) {
