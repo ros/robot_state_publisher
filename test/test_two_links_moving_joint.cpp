@@ -46,6 +46,7 @@
 
 TEST(test_publisher, test_two_joints)
 {
+  const double pi = 3.14159265358979323846;
   auto node = rclcpp::Node::make_shared("rsp_test_two_links_moving_joint");
 
   rclcpp::Clock::SharedPtr clock = std::make_shared<rclcpp::Clock>(RCL_SYSTEM_TIME);
@@ -56,7 +57,7 @@ TEST(test_publisher, test_two_joints)
     node->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
   sensor_msgs::msg::JointState js_msg;
   js_msg.name.push_back("joint1");
-  js_msg.position.push_back(M_PI);
+  js_msg.position.push_back(pi);
   js_msg.header.stamp = node->now();
 
   for (unsigned int i = 0; i < 100 && !buffer.canTransform("link1", "link2", rclcpp::Time()); i++) {
