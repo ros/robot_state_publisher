@@ -11,66 +11,43 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(builtin_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(sensor_msgs REQUIRED)
+find_package(kdl_parser REQUIRED)
 find_package(orocos_kdl REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
 find_package(urdf REQUIRED)
 find_package(urdfdom_headers REQUIRED)
-find_package(kdl_parser REQUIRED)
-find_package(tf2_ros REQUIRED)
 
-include_directories(
-  include
-  ${geometry_msgs_INCLUDE_DIRS}
-  ${kdl_parser_INCLUDE_DIRS}
-  ${orocos_kdl_INCLUDE_DIRS}
-  ${urdf_INCLUDE_DIRS}
-  ${urdfdom_headers_INCLUDE_DIRS}
-  ${rclcpp_INCLUDE_DIRS}
-  ${sensor_msgs_INCLUDE_DIRS}
-  ${tf2_ros_INCLUDE_DIRS})
+include_directories(include)
 
 add_library(
-  ${PROJECT_NAME}_solver
+  ${PROJECT_NAME}_node SHARED
   src/robot_state_publisher.cpp)
-link_directories(${orocos_kdl_LIBRARY_DIRS})
-target_link_libraries(
-  ${PROJECT_NAME}_solver
-  ${geometry_msgs_LIBRARIES}
-  ${kdl_parser_LIBRARIES}
-  ${orocos_kdl_LIBRARIES}
-  ${rclcpp_LIBRARIES}
-  ${sensor_msgs_LIBRARIES}
-  ${tf2_ros_LIBRARIES}
-  ${urdf_LIBRARIES}
-  ${urdfdom_LIBRARIES})
+ament_target_dependencies(${PROJECT_NAME}_node
+  builtin_interfaces
+  geometry_msgs
+  kdl_parser
+  orocos_kdl
+  rclcpp
+  rclcpp_components
+  sensor_msgs
+  std_msgs
+  tf2_ros
+  urdf
+)
 
-add_library(
-  joint_state_listener
-  src/joint_state_listener.cpp)
-target_link_libraries(
-  joint_state_listener
-  ${PROJECT_NAME}_solver
-  ${orocos_kdl_LIBRARIES})
-
-add_executable(
-  ${PROJECT_NAME}
-  src/joint_state_listener.cpp)
-target_link_libraries(
-  ${PROJECT_NAME}
-  joint_state_listener
-  ${orocos_kdl_LIBRARIES}
-  ${kdl_parser_LIBRARIES}
-  ${urdf_LIBRARIES}
-  ${rclcpp_LIBRARIES}
-  ${tf2_ros_LIBRARIES}
-  ${sensor_msgs_LIBRARIES})
+rclcpp_components_register_node(${PROJECT_NAME}_node
+  PLUGIN "robot_state_publisher::RobotStatePublisher"
+  EXECUTABLE robot_state_publisher)
 
 install(
   TARGETS
-  ${PROJECT_NAME}_solver
-  joint_state_listener
+  ${PROJECT_NAME}_node
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -79,26 +56,42 @@ install(
 install(DIRECTORY include/
   DESTINATION include)
 
-install(
-  TARGETS ${PROJECT_NAME}
-  DESTINATION lib/${PROJECT_NAME}
+install(DIRECTORY launch urdf
+  DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
-  find_package(ament_cmake_cppcheck REQUIRED)
-  find_package(ament_cmake_cpplint REQUIRED)
-  find_package(ament_cmake_lint_cmake REQUIRED)
-  find_package(ament_cmake_uncrustify REQUIRED)
-  # This forces cppcheck to consider all files in this project to be C++,
-  # including the headers which end with .h, which cppcheck would normally
-  # consider to be C instead.
-  ament_cppcheck(LANGUAGE "c++")
-  ament_cpplint()
-  ament_lint_cmake()
-  ament_uncrustify()
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+
+  find_package(ament_cmake_gtest REQUIRED)
+  find_package(launch_testing_ament_cmake REQUIRED)
+  ament_find_gtest()
+
+  include_directories(${GTEST_INCLUDE_DIRS})
+
+  add_executable(test_two_links_fixed_joint test/test_two_links_fixed_joint.cpp)
+  ament_target_dependencies(test_two_links_fixed_joint
+    rclcpp
+    sensor_msgs
+    tf2_ros
+  )
+  target_link_libraries(test_two_links_fixed_joint ${GTEST_LIBRARIES})
+  add_launch_test(test/two_links_fixed_joint-launch.py
+    ARGS "test_exe:=$<TARGET_FILE:test_two_links_fixed_joint>")
+
+  add_executable(test_two_links_moving_joint test/test_two_links_moving_joint.cpp)
+  ament_target_dependencies(test_two_links_moving_joint
+    rclcpp
+    sensor_msgs
+    tf2_ros
+  )
+  target_link_libraries(test_two_links_moving_joint ${GTEST_LIBRARIES})
+  add_launch_test(test/two_links_moving_joint-launch.py
+    ARGS "test_exe:=$<TARGET_FILE:test_two_links_moving_joint>")
 endif()
 
-ament_export_libraries(
-  ${PROJECT_NAME}_solver
-  joint_state_listener)
+ament_export_dependencies(builtin_interfaces orocos_kdl rclcpp sensor_msgs std_msgs tf2_ros urdf)
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME}_node)
 ament_package()
