@@ -67,7 +67,8 @@ geometry_msgs::msg::TransformStamped kdlToTransform(const KDL::Frame & k)
   t.transform.translation.x = k.p.x();
   t.transform.translation.y = k.p.y();
   t.transform.translation.z = k.p.z();
-  k.M.GetQuaternion(t.transform.rotation.x, t.transform.rotation.y, t.transform.rotation.z,
+  k.M.GetQuaternion(
+    t.transform.rotation.x, t.transform.rotation.y, t.transform.rotation.z,
     t.transform.rotation.w);
   return t;
 }
@@ -146,15 +147,13 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
       std::placeholders::_1));
 
   // trigger to publish fixed joints
-  timer_ =
-    this->create_wall_timer(publish_interval_ms_,
-      std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+  timer_ = this->create_wall_timer(
+    publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
 
   // Now that we have successfully declared the parameters and done all
   // necessary setup, install the callback for updating parameters.
-  param_cb_ =
-    add_on_set_parameters_callback(std::bind(&RobotStatePublisher::parameterUpdate, this,
-      std::placeholders::_1));
+  param_cb_ = add_on_set_parameters_callback(
+    std::bind(&RobotStatePublisher::parameterUpdate, this, std::placeholders::_1));
 }
 
 void RobotStatePublisher::setupURDF(const std::string & urdf_xml)
@@ -210,17 +209,19 @@ void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segm
       if (model_->getJoint(child.getJoint().getName()) &&
         model_->getJoint(child.getJoint().getName())->type == urdf::Joint::FLOATING)
       {
-        RCLCPP_INFO(get_logger(),
-          "Floating joint. Not adding segment from %s to %s.",
+        RCLCPP_INFO(
+          get_logger(), "Floating joint. Not adding segment from %s to %s.",
           root.c_str(), child.getName().c_str());
       } else {
         segments_fixed_.insert(make_pair(child.getJoint().getName(), s));
-        RCLCPP_DEBUG(get_logger(), "Adding fixed segment from %s to %s", root.c_str(),
+        RCLCPP_DEBUG(
+          get_logger(), "Adding fixed segment from %s to %s", root.c_str(),
           child.getName().c_str());
       }
     } else {
       segments_.insert(make_pair(child.getJoint().getName(), s));
-      RCLCPP_DEBUG(get_logger(), "Adding moving segment from %s to %s", root.c_str(),
+      RCLCPP_DEBUG(
+        get_logger(), "Adding moving segment from %s to %s", root.c_str(),
         child.getName().c_str());
     }
     addChildren(children[i]);
@@ -280,7 +281,8 @@ void RobotStatePublisher::callbackJointState(const sensor_msgs::msg::JointState:
 {
   if (state->name.size() != state->position.size()) {
     if (state->position.empty()) {
-      RCLCPP_WARN(get_logger(), "Robot state publisher ignored a JointState message about joint(s) "
+      RCLCPP_WARN(
+        get_logger(), "Robot state publisher ignored a JointState message about joint(s) "
         "\"%s\"(,...) whose position member was empty.", state->name[0].c_str());
     } else {
       RCLCPP_ERROR(get_logger(), "Robot state publisher ignored an invalid JointState message");
@@ -292,8 +294,8 @@ void RobotStatePublisher::callbackJointState(const sensor_msgs::msg::JointState:
   rclcpp::Time now = this->now();
   if (last_callback_time_.nanoseconds() > now.nanoseconds()) {
     // force re-publish of joint ransforms
-    RCLCPP_WARN(get_logger(),
-      "Moved backwards in time, re-publishing joint transforms!");
+    RCLCPP_WARN(
+      get_logger(), "Moved backwards in time, re-publishing joint transforms!");
     last_publish_time_.clear();
   }
   last_callback_time_ = now;
@@ -392,9 +394,8 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
       if (new_publish_interval != publish_interval_ms_) {
         publish_interval_ms_ = new_publish_interval;
         timer_->cancel();
-        timer_ =
-          this->create_wall_timer(publish_interval_ms_,
-            std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+        timer_ = this->create_wall_timer(
+          publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
       }
     } else {
       result.successful = false;
