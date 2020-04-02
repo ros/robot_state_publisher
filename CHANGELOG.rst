@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.14.1 (2020-04-02)
+-------------------
 * Bump CMake version to avoid CMP0048 warning (`#132 <https://github.com/ros/robot_state_publisher/issues/132>`_)
 * Make sure to make sensor_msgs a catkin dependency. (`#123 <https://github.com/ros/robot_state_publisher/issues/123>`_)
 * Add joint_state_listener to the catkin package LIBRARIES (`#112 <https://github.com/ros/robot_state_publisher/issues/112>`_)
