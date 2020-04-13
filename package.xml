@@ -28,7 +28,7 @@
 
   <build_depend>eigen</build_depend>
   <build_depend>kdl_parser</build_depend>
-  <build_depend version_gte="1.3.0">orocos_kdl</build_depend>
+  <build_depend>liborocos-kdl-dev</build_depend>
   <build_depend>rosconsole</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>rostime</build_depend>
@@ -39,7 +39,7 @@
   <run_depend>catkin</run_depend>
   <run_depend>eigen</run_depend>
   <run_depend>kdl_parser</run_depend>
-  <run_depend version_gte="1.3.0">orocos_kdl</run_depend>
+  <run_depend>liborocos-kdl-dev</run_depend>
   <run_depend>rosconsole</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rostime</run_depend>
