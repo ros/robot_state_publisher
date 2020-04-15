@@ -62,14 +62,15 @@ public:
    */
   JointStateListener(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model = urdf::Model());
 
+  JointStateListener(const std::shared_ptr<RobotStatePublisher>& rsp, const MimicMap& m);
+
+
   /// Destructor
   ~JointStateListener();
 
 protected:
   virtual void callbackJointState(const JointStateConstPtr& state);
   virtual void callbackFixedJoint(const ros::TimerEvent& e);
-  virtual std::shared_ptr<RobotStatePublisher> createRobotStatePublisher(
-      const KDL::Tree& tree, const urdf::Model& model);
 
   Duration publish_interval_;
   std::shared_ptr<RobotStatePublisher> state_publisher_;
