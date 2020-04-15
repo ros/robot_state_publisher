@@ -40,7 +40,6 @@
 #include <kdl/frames_io.hpp>
 #include <geometry_msgs/TransformStamped.h>
 #include <tf2_kdl/tf2_kdl.h>
-#include <tf/tf.h>
 
 #include "robot_state_publisher/robot_state_publisher.h"
 
