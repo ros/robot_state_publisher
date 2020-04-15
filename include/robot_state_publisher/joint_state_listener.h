@@ -37,6 +37,8 @@
 #ifndef JOINT_STATE_LISTENER_H
 #define JOINT_STATE_LISTENER_H
 
+#include <memory>
+
 #include <urdf/model.h>
 #include <kdl/tree.hpp>
 #include <ros/ros.h>
@@ -60,6 +62,9 @@ public:
    */
   JointStateListener(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model = urdf::Model());
 
+  JointStateListener(const std::shared_ptr<RobotStatePublisher>& rsp, const MimicMap& m);
+
+
   /// Destructor
   ~JointStateListener();
 
@@ -68,7 +73,7 @@ protected:
   virtual void callbackFixedJoint(const ros::TimerEvent& e);
 
   Duration publish_interval_;
-  robot_state_publisher::RobotStatePublisher state_publisher_;
+  std::shared_ptr<RobotStatePublisher> state_publisher_;
   Subscriber joint_state_sub_;
   ros::Timer timer_;
   ros::Time last_callback_time_;
