@@ -47,7 +47,7 @@ class AccessibleJointStateListener : public robot_state_publisher::JointStateLis
 {
 public:
   AccessibleJointStateListener(
-    const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model) :
+    const KDL::Tree& tree, const robot_state_publisher::MimicMap& m, const urdf::Model& model) :
       robot_state_publisher::JointStateListener(tree, m, model)
   {
   }
@@ -82,7 +82,7 @@ TEST(TestRobotStatePubSubclass, robot_state_pub_subclass)
     FAIL();
   }
 
-  MimicMap mimic;
+  robot_state_publisher::MimicMap mimic;
 
   for(std::map< std::string, urdf::JointSharedPtr >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++){
     if(i->second->mimic){

@@ -49,10 +49,10 @@
 
 #include "robot_state_publisher/robot_state_publisher.h"
 
+namespace robot_state_publisher {
+
 typedef boost::shared_ptr<sensor_msgs::JointState const> JointStateConstPtr;
 typedef std::map<std::string, urdf::JointMimicSharedPtr > MimicMap;
-
-namespace robot_state_publisher {
 
 class JointStateListener {
 public:

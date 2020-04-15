@@ -63,7 +63,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  MimicMap mimic;
+  robot_state_publisher::MimicMap mimic;
 
   for(std::map< std::string, urdf::JointSharedPtr >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++) {
     if(i->second->mimic) {
