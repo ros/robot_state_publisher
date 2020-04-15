@@ -1,7 +1,7 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2008, Willow Garage, Inc.
+*  Copyright (c) 2020, Open Source Robotics Foundation, Inc.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,66 +32,50 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-/* Author: Wim Meeussen */
 
-#ifndef ROBOT_STATE_PUBLISHER_H
-#define ROBOT_STATE_PUBLISHER_H
-
-#include <map>
 #include <string>
+#include <utility>
 
+#include <gtest/gtest.h>
 #include <ros/ros.h>
-#include <urdf/model.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-#include <tf2_ros/transform_broadcaster.h>
-#include <kdl/frames.hpp>
-#include <kdl/segment.hpp>
-#include <kdl/tree.hpp>
 
-namespace robot_state_publisher {
+#include "robot_state_publisher/joint_state_listener.h"
 
-class SegmentPair
+
+TEST(RobotStatePublisher, default_constructor)
 {
-public:
-  SegmentPair(const KDL::Segment& p_segment, const std::string& p_root, const std::string& p_tip):
-    segment(p_segment), root(p_root), tip(p_tip){}
-
-  KDL::Segment segment;
-  std::string root, tip;
-};
-
-
-class RobotStatePublisher
-{
-public:
-  /** Default constructor.
-   */
-  RobotStatePublisher();
-
-  /** Constructor
-   * \param tree The kinematic model of a robot, represented by a KDL Tree
-   */
-  RobotStatePublisher(const KDL::Tree& tree, const urdf::Model& model = urdf::Model());
-
-  /// Destructor
-  ~RobotStatePublisher(){};
-
-  /** Publish transforms to tf
-   * \param joint_positions A map of joint names and joint positions.
-   * \param time The time at which the joint positions were recorded
-   */
-  virtual void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time);
-  virtual void publishFixedTransforms(bool use_tf_static = false);
-
-protected:
-  virtual void addChildren(const KDL::SegmentMap::const_iterator segment);
-
-  std::map<std::string, SegmentPair> segments_, segments_fixed_;
-  urdf::Model model_;
-  tf2_ros::TransformBroadcaster tf_broadcaster_;
-  tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
-};
-
+  robot_state_publisher::RobotStatePublisher();
 }
 
-#endif
+TEST(RobotStatePublisher, assignment)
+{
+  robot_state_publisher::RobotStatePublisher rsp;
+
+  urdf::Model model;
+  KDL::Tree tree;
+  rsp = std::move(robot_state_publisher::RobotStatePublisher(tree, model));
+}
+
+TEST(JointStateListener, default_constructor)
+{
+  robot_state_publisher::JointStateListener();
+}
+
+TEST(JointStateListener, assignment)
+{
+  robot_state_publisher::JointStateListener jsl;
+
+  urdf::Model model;
+  KDL::Tree tree;
+
+  jsl = std::move(robot_state_publisher::JointStateListener(
+    tree, robot_state_publisher::MimicMap(), model));
+}
+
+int main(int argc, char ** argv)
+{
+  ros::init(argc, argv, "test_default_constructor");
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
+
