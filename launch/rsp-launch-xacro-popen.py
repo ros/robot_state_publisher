@@ -49,7 +49,7 @@ def generate_launch_description():
     robot_desc, stderr = p.communicate()
     params = {'robot_description': robot_desc.decode('utf-8')}
     rsp = launch_ros.actions.Node(package='robot_state_publisher',
-                                  node_executable='robot_state_publisher',
+                                  executable='robot_state_publisher',
                                   output='both',
                                   parameters=[params])
 
