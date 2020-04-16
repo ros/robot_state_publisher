@@ -34,6 +34,7 @@
 
 /* Author: Wim Meeussen */
 
+#include <algorithm>
 #include <map>
 #include <string>
 
