@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 
   robot_state_publisher::MimicMap mimic;
 
-  for(std::map< std::string, urdf::JointSharedPtr >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++) {
+  for (std::map< std::string, urdf::JointSharedPtr >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++) {
     if (i->second->mimic) {
       mimic.insert(std::make_pair(i->first, i->second->mimic));
     }
