@@ -39,7 +39,9 @@
   <build_depend>liburdfdom-headers-dev</build_depend>
   <build_depend>eigen</build_depend>
 
-  <exec_depend>liborocos-kdl-dev</exec_depend>
+  <build_export_depend>liborocos-kdl-dev</build_export_depend>
+
+  <exec_depend>liborocos-kdl</exec_depend>
 
   <test_depend>rosbag</test_depend>
   <test_depend>rostest</test_depend>
