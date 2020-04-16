@@ -41,12 +41,6 @@
 
 #include "robot_state_publisher/joint_state_listener.h"
 
-
-TEST(RobotStatePublisher, default_constructor)
-{
-  robot_state_publisher::RobotStatePublisher();
-}
-
 TEST(RobotStatePublisher, assignment)
 {
   robot_state_publisher::RobotStatePublisher rsp;
@@ -54,11 +48,6 @@ TEST(RobotStatePublisher, assignment)
   urdf::Model model;
   KDL::Tree tree;
   rsp = std::move(robot_state_publisher::RobotStatePublisher(tree, model));
-}
-
-TEST(JointStateListener, default_constructor)
-{
-  robot_state_publisher::JointStateListener();
 }
 
 TEST(JointStateListener, assignment)
