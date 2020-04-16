@@ -34,6 +34,7 @@
 
 #include <map>
 #include <string>
+#include <utility>
 
 #include <ros/ros.h>
 #include <urdf/model.h>
