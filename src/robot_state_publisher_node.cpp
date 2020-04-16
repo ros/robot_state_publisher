@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 
   for(std::map< std::string, urdf::JointSharedPtr >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++) {
     if(i->second->mimic) {
-      mimic.insert(make_pair(i->first, i->second->mimic));
+      mimic.insert(std::make_pair(i->first, i->second->mimic));
     }
   }
 
