@@ -128,7 +128,7 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
 
   // determine least recently published joint
   ros::Time last_published = now;
-  for (unsigned int i = 0; i < state->name.size(); i++) {
+  for (size_t i = 0; i < state->name.size(); ++i) {
     ros::Time t = last_publish_time_[state->name[i]];
     last_published = (t < last_published) ? t : last_published;
   }
@@ -139,7 +139,7 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
   if (ignore_timestamp_ || state->header.stamp >= last_published + publish_interval_) {
     // get joint positions from state message
     std::map<std::string, double> joint_positions;
-    for (unsigned int i = 0; i < state->name.size(); i++) {
+    for (size_t i = 0; i < state->name.size(); ++i) {
       joint_positions.insert(make_pair(state->name[i], state->position[i]));
     }
 
@@ -153,7 +153,7 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
     state_publisher_->publishTransforms(joint_positions, state->header.stamp);
 
     // store publish time in joint map
-    for (unsigned int i = 0; i<state->name.size(); i++) {
+    for (size_t i = 0; i<state->name.size(); ++i) {
       last_publish_time_[state->name[i]] = state->header.stamp;
     }
   }

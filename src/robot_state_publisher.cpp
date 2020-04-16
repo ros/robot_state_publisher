@@ -62,7 +62,7 @@ void RobotStatePublisher::addChildren(const KDL::SegmentMap::const_iterator segm
   const std::string& root = GetTreeElementSegment(segment->second).getName();
 
   const std::vector<KDL::SegmentMap::const_iterator>& children = GetTreeElementChildren(segment->second);
-  for (unsigned int i = 0; i < children.size(); ++i) {
+  for (size_t i = 0; i < children.size(); ++i) {
     const KDL::Segment& child = GetTreeElementSegment(children[i]->second);
     SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
     if (child.getJoint().getType() == KDL::Joint::None) {
