@@ -37,8 +37,10 @@
 #ifndef ROBOT_STATE_PUBLISHER_H
 #define ROBOT_STATE_PUBLISHER_H
 
+#include <map>
+#include <string>
+
 #include <ros/ros.h>
-#include <boost/scoped_ptr.hpp>
 #include <urdf/model.h>
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <tf2_ros/transform_broadcaster.h>
@@ -62,6 +64,10 @@ public:
 class RobotStatePublisher
 {
 public:
+  /** Default constructor.
+   */
+  RobotStatePublisher();
+
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
@@ -81,7 +87,7 @@ protected:
   virtual void addChildren(const KDL::SegmentMap::const_iterator segment);
 
   std::map<std::string, SegmentPair> segments_, segments_fixed_;
-  const urdf::Model& model_;
+  urdf::Model model_;
   tf2_ros::TransformBroadcaster tf_broadcaster_;
   tf2_ros::StaticTransformBroadcaster static_tf_broadcaster_;
 };

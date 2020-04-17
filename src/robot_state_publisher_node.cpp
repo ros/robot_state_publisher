@@ -32,60 +32,48 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-/* Author: Wim Meeussen */
-
-#ifndef JOINT_STATE_LISTENER_H
-#define JOINT_STATE_LISTENER_H
-
-#include <memory>
 #include <map>
 #include <string>
+#include <utility>
 
-#include <boost/scoped_ptr.hpp>
+#include <ros/ros.h>
 #include <urdf/model.h>
 #include <kdl/tree.hpp>
-#include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
+#include <kdl_parser/kdl_parser.hpp>
 
 #include "robot_state_publisher/robot_state_publisher.h"
+#include "robot_state_publisher/joint_state_listener.h"
 
-namespace robot_state_publisher {
+// ----------------------------------
+// ----- MAIN -----------------------
+// ----------------------------------
+int main(int argc, char** argv)
+{
+  // Initialize ros
+  ros::init(argc, argv, "robot_state_publisher");
+  ros::NodeHandle node;
 
-typedef boost::shared_ptr<sensor_msgs::JointState const> JointStateConstPtr;
-typedef std::map<std::string, urdf::JointMimicSharedPtr > MimicMap;
+  // gets the location of the robot description on the parameter server
+  urdf::Model model;
+  if (!model.initParam("robot_description"))
+    return 1;
 
-class JointStateListener {
-public:
-  /** Default constructor.
-   */
-  JointStateListener();
+  KDL::Tree tree;
+  if (!kdl_parser::treeFromUrdfModel(model, tree)) {
+    ROS_ERROR("Failed to extract kdl tree from xml robot description");
+    return 1;
+  }
 
-  /** Constructor
-   * \param tree The kinematic model of a robot, represented by a KDL Tree
-   */
-  JointStateListener(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model = urdf::Model());
+  robot_state_publisher::MimicMap mimic;
 
-  JointStateListener(const std::shared_ptr<RobotStatePublisher>& rsp, const MimicMap& m);
+  for (std::map< std::string, urdf::JointSharedPtr >::iterator i = model.joints_.begin(); i != model.joints_.end(); i++) {
+    if (i->second->mimic) {
+      mimic.insert(std::make_pair(i->first, i->second->mimic));
+    }
+  }
 
+  robot_state_publisher::JointStateListener state_publisher(tree, mimic, model);
+  ros::spin();
 
-  /// Destructor
-  ~JointStateListener();
-
-protected:
-  virtual void callbackJointState(const JointStateConstPtr& state);
-  virtual void callbackFixedJoint(const ros::TimerEvent& e);
-
-  ros::Duration publish_interval_;
-  std::shared_ptr<RobotStatePublisher> state_publisher_;
-  ros::Subscriber joint_state_sub_;
-  ros::Timer timer_;
-  ros::Time last_callback_time_;
-  std::map<std::string, ros::Time> last_publish_time_;
-  MimicMap mimic_;
-  bool use_tf_static_;
-  bool ignore_timestamp_;
-
-};
+  return 0;
 }
-
-#endif

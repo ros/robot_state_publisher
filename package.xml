@@ -1,10 +1,10 @@
-<package>
+<package format="2">
   <name>robot_state_publisher</name>
   <version>1.13.5</version>
   <description>
     This package allows you to publish the state of a robot to
-    <a href="http://ros.org/wiki/tf2">tf</a>. Once the state gets published, it is
-    available to all components in the system that also use <tt>tf</tt>.
+    <a href="http://ros.org/wiki/tf2">tf2</a>. Once the state gets published, it is
+    available to all components in the system that also use <tt>tf2</tt>.
     The package takes the joint angles of the robot as input
     and publishes the 3D poses of the robot links, using a kinematic
     tree model of the robot. The package can both be used as a library
@@ -26,28 +26,23 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>eigen</build_depend>
-  <build_depend>kdl_parser</build_depend>
+  <depend>kdl_parser</depend>
+  <depend>rosconsole</depend>
+  <depend>roscpp</depend>
+  <depend>rostime</depend>
+  <depend>sensor_msgs</depend>
+  <depend>tf</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_kdl</depend>
+
   <build_depend>liborocos-kdl-dev</build_depend>
-  <build_depend>rosconsole</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>rostime</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>tf2_ros</build_depend>
-  <build_depend>tf2_kdl</build_depend>
   <build_depend>liburdfdom-headers-dev</build_depend>
-  <run_depend>catkin</run_depend>
-  <run_depend>eigen</run_depend>
-  <run_depend>kdl_parser</run_depend>
-  <run_depend>liborocos-kdl-dev</run_depend>
-  <run_depend>rosconsole</run_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>rostime</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>tf2_ros</run_depend>
-  <run_depend>tf2_kdl</run_depend>
+  <build_depend>eigen</build_depend>
+
+  <build_export_depend>liborocos-kdl-dev</build_export_depend>
+
+  <exec_depend>liborocos-kdl</exec_depend>
 
   <test_depend>rosbag</test_depend>
-
   <test_depend>rostest</test_depend>
 </package>

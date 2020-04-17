@@ -1,7 +1,7 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2008, Willow Garage, Inc.
+*  Copyright (c) 2020, Open Source Robotics Foundation, Inc.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,60 +32,39 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-/* Author: Wim Meeussen */
 
-#ifndef JOINT_STATE_LISTENER_H
-#define JOINT_STATE_LISTENER_H
-
-#include <memory>
-#include <map>
 #include <string>
+#include <utility>
 
-#include <boost/scoped_ptr.hpp>
-#include <urdf/model.h>
-#include <kdl/tree.hpp>
+#include <gtest/gtest.h>
 #include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
 
-#include "robot_state_publisher/robot_state_publisher.h"
+#include "robot_state_publisher/joint_state_listener.h"
 
-namespace robot_state_publisher {
+TEST(RobotStatePublisher, assignment)
+{
+  robot_state_publisher::RobotStatePublisher rsp;
 
-typedef boost::shared_ptr<sensor_msgs::JointState const> JointStateConstPtr;
-typedef std::map<std::string, urdf::JointMimicSharedPtr > MimicMap;
-
-class JointStateListener {
-public:
-  /** Default constructor.
-   */
-  JointStateListener();
-
-  /** Constructor
-   * \param tree The kinematic model of a robot, represented by a KDL Tree
-   */
-  JointStateListener(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model = urdf::Model());
-
-  JointStateListener(const std::shared_ptr<RobotStatePublisher>& rsp, const MimicMap& m);
-
-
-  /// Destructor
-  ~JointStateListener();
-
-protected:
-  virtual void callbackJointState(const JointStateConstPtr& state);
-  virtual void callbackFixedJoint(const ros::TimerEvent& e);
-
-  ros::Duration publish_interval_;
-  std::shared_ptr<RobotStatePublisher> state_publisher_;
-  ros::Subscriber joint_state_sub_;
-  ros::Timer timer_;
-  ros::Time last_callback_time_;
-  std::map<std::string, ros::Time> last_publish_time_;
-  MimicMap mimic_;
-  bool use_tf_static_;
-  bool ignore_timestamp_;
-
-};
+  urdf::Model model;
+  KDL::Tree tree;
+  rsp = std::move(robot_state_publisher::RobotStatePublisher(tree, model));
 }
 
-#endif
+TEST(JointStateListener, assignment)
+{
+  robot_state_publisher::JointStateListener jsl;
+
+  urdf::Model model;
+  KDL::Tree tree;
+
+  jsl = std::move(robot_state_publisher::JointStateListener(
+    tree, robot_state_publisher::MimicMap(), model));
+}
+
+int main(int argc, char ** argv)
+{
+  ros::init(argc, argv, "test_default_constructor");
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
+

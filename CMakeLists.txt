@@ -48,18 +48,17 @@ target_link_libraries(${PROJECT_NAME}_solver ${catkin_LIBRARIES} ${orocos_kdl_LI
 add_library(joint_state_listener src/joint_state_listener.cpp)
 target_link_libraries(joint_state_listener ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
 
-add_executable(${PROJECT_NAME} src/joint_state_listener.cpp)
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
-
-# compile the same executable using the old name as well
-add_executable(state_publisher src/joint_state_listener.cpp)
-target_link_libraries(state_publisher ${PROJECT_NAME}_solver ${orocos_kdl_LIBRARIES})
+add_executable(${PROJECT_NAME} src/robot_state_publisher_node.cpp)
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_solver joint_state_listener ${orocos_kdl_LIBRARIES})
 
 # Tests
 
 if (CATKIN_ENABLE_TESTING)
 
   find_package(rostest REQUIRED)
+
+  add_rostest_gtest(test_default_constructor test/test_default_constructor.launch test/test_default_constructor.cpp)
+  target_link_libraries(test_default_constructor joint_state_listener ${PROJECT_NAME}_solver)
 
   add_rostest_gtest(test_one_link ${CMAKE_CURRENT_SOURCE_DIR}/test/test_one_link.launch test/test_one_link.cpp)
   target_link_libraries(test_one_link ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
@@ -95,7 +94,7 @@ install(TARGETS ${PROJECT_NAME}_solver joint_state_listener
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
 # Install executable
-install(TARGETS ${PROJECT_NAME} state_publisher
+install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY include/${PROJECT_NAME}/
