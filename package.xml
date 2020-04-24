@@ -1,6 +1,6 @@
 <package format="2">
   <name>robot_state_publisher</name>
-  <version>1.15.0</version>
+  <version>1.15.1</version>
   <description>
     This package allows you to publish the state of a robot to
     <a href="http://ros.org/wiki/tf2">tf2</a>. Once the state gets published, it is
