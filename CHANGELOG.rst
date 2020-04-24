@@ -2,6 +2,9 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.15.0 (2020-04-17)
 -------------------
 * Remove state_publisher and add in a public default constructor (`#87 <https://github.com/ros/robot_state_publisher/issues/87>`_)
