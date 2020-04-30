@@ -2,6 +2,29 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Replace deprecated launch_ros usage (`#137 <https://github.com/ros/robot_state_publisher/issues/137>`_)
+* code style only: wrap after open parenthesis if not in one line (`#129 <https://github.com/ros/robot_state_publisher/issues/129>`_)
+* Refactor the ROS 2 code to be more modern (`#126 <https://github.com/ros/robot_state_publisher/issues/126>`_)
+* Switch to using TARGET_FILE to find the binary targets on Windows.
+* Fix tests on Windows.
+* Make the error message much nicer on Windows.
+* robot_state_publisher_node -> robot_state_publisher
+* Fix test build on Windows.
+* Get rid of redundant declaration.
+* Guard against negative publish_frequencies.
+* Switch to modern launch_testing ReadyToTest.
+* Add testing to robot_state_publisher.
+* Update some example launch files.
+* Implement the ability to change the parameters on the fly.
+* Fix silly bug while computing the publish interval.
+* Refactor to have a "setup" function during the constructor and later on during the parameter setup.
+* Mark things as explicit and final.
+* Update the documentation.
+* Make robot_state_publisher composable.
+* Contributors: Chris Lalancette, Dirk Thomas, Jacob Perron
+
 2.3.1 (2019-10-23)
 ------------------
 * Switch the license back to BSD. (`#121 <https://github.com/ros/robot_state_publisher/issues/121>`_)
