@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.4.0 (2020-04-30)
+------------------
 * Replace deprecated launch_ros usage (`#137 <https://github.com/ros/robot_state_publisher/issues/137>`_)
 * code style only: wrap after open parenthesis if not in one line (`#129 <https://github.com/ros/robot_state_publisher/issues/129>`_)
 * Refactor the ROS 2 code to be more modern (`#126 <https://github.com/ros/robot_state_publisher/issues/126>`_)
