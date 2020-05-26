@@ -75,6 +75,7 @@ protected:
   virtual void callbackJointState(const JointStateConstPtr& state);
   virtual void callbackFixedJoint(const ros::TimerEvent& e);
 
+  std::string tf_prefix_;
   ros::Duration publish_interval_;
   std::shared_ptr<RobotStatePublisher> state_publisher_;
   ros::Subscriber joint_state_sub_;

@@ -71,6 +71,9 @@ JointStateListener::JointStateListener(const std::shared_ptr<RobotStatePublisher
   // ignore_timestamp_ == true, joins_states messages are accepted, no matter their timestamp
   n_tilde.param("ignore_timestamp", ignore_timestamp_, false);
   // get the tf_prefix parameter from the closest namespace
+  std::string tf_prefix_key;
+  n_tilde.searchParam("tf_prefix", tf_prefix_key);
+  n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
   publish_interval_ = ros::Duration(1.0/std::max(publish_freq, 1.0));
 
   // Setting tcpNoNelay tells the subscriber to ask publishers that connect
@@ -94,7 +97,7 @@ JointStateListener::~JointStateListener()
 void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
 {
   (void)e;
-  state_publisher_->publishFixedTransforms(use_tf_static_);
+  state_publisher_->publishFixedTransforms(tf_prefix_, use_tf_static_);
 }
 
 void JointStateListener::callbackJointState(const JointStateConstPtr& state)
@@ -150,7 +153,7 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
       }
     }
 
-    state_publisher_->publishTransforms(joint_positions, state->header.stamp);
+    state_publisher_->publishTransforms(joint_positions, state->header.stamp, tf_prefix_);
 
     // store publish time in joint map
     for (size_t i = 0; i<state->name.size(); ++i) {
