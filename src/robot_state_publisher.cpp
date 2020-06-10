@@ -98,6 +98,8 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
           in.seekg(0, std::ios::beg);
           in.read(&urdf_xml[0], urdf_xml.size());
           in.close();
+
+          this->set_parameter(rclcpp::Parameter("robot_description", urdf_xml));
         } else {
           throw std::system_error(
                   errno,
@@ -360,7 +362,14 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
         break;
       }
 
-      setupURDF(new_urdf);
+      try {
+        setupURDF(new_urdf);
+      } catch (const std::runtime_error & err) {
+        RCLCPP_WARN(get_logger(), "%s", err.what());
+        result.successful = false;
+        result.reason = err.what();
+        break;
+      }
     } else if (parameter.get_name() == "use_tf_static") {
       if (parameter.get_type() != rclcpp::ParameterType::PARAMETER_BOOL) {
         result.successful = false;
