@@ -47,14 +47,15 @@
 #include <kdl/frames.hpp>
 #include <kdl/segment.hpp>
 #include <kdl/tree.hpp>
+#include <utility>
 
 namespace robot_state_publisher {
 
 class SegmentPair
 {
 public:
-  SegmentPair(const KDL::Segment& p_segment, const std::string& p_root, const std::string& p_tip):
-    segment(p_segment), root(p_root), tip(p_tip){}
+  SegmentPair(const KDL::Segment& p_segment, std::string  p_root, std::string  p_tip):
+    segment(p_segment), root(std::move(p_root)), tip(std::move(p_tip)){}
 
   KDL::Segment segment;
   std::string root, tip;
@@ -71,20 +72,20 @@ public:
   /** Constructor
    * \param tree The kinematic model of a robot, represented by a KDL Tree
    */
-  RobotStatePublisher(const KDL::Tree& tree, const urdf::Model& model = urdf::Model());
+  explicit RobotStatePublisher(const KDL::Tree& tree, urdf::Model  model = urdf::Model());
 
   /// Destructor
-  ~RobotStatePublisher(){};
+  ~RobotStatePublisher() = default;;
 
   /** Publish transforms to tf
    * \param joint_positions A map of joint names and joint positions.
    * \param time The time at which the joint positions were recorded
    */
-  virtual void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time);
-  virtual void publishFixedTransforms(bool use_tf_static = false);
+  void publishFixedTransforms(bool use_tf_static = false);
+  void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time);
 
 protected:
-  virtual void addChildren(const KDL::SegmentMap::const_iterator segment);
+  void addChildren(KDL::SegmentMap::const_iterator segment);
 
   std::map<std::string, SegmentPair> segments_, segments_fixed_;
   urdf::Model model_;
