@@ -42,6 +42,7 @@
 #include <urdf/model.h>
 #include <kdl/tree.hpp>
 #include <kdl_parser/kdl_parser.hpp>
+#include <utility>
 
 #include "robot_state_publisher/robot_state_publisher.h"
 #include "robot_state_publisher/joint_state_listener.h"
@@ -57,8 +58,8 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
 {
 }
 
-JointStateListener::JointStateListener(const std::shared_ptr<RobotStatePublisher>& rsp, const MimicMap& m)
-  : state_publisher_(rsp), mimic_(m)
+JointStateListener::JointStateListener(std::shared_ptr<RobotStatePublisher>  rsp, MimicMap  m)
+  : state_publisher_(std::move(rsp)), mimic_(std::move(m))
 {
   ros::NodeHandle n_tilde("~");
   ros::NodeHandle n;
@@ -87,8 +88,7 @@ JointStateListener::JointStateListener(const std::shared_ptr<RobotStatePublisher
 }
 
 
-JointStateListener::~JointStateListener()
-{}
+JointStateListener::~JointStateListener() = default;
 
 
 void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
@@ -114,22 +114,22 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
   }
 
   // check if we moved backwards in time (e.g. when playing a bag file)
-  ros::Time now = ros::Time::now();
-  if (last_callback_time_ > now) {
+  ros::Time time_now = ros::Time::now();
+  if (last_callback_time_ > time_now) {
     // force re-publish of joint transforms
     ROS_WARN("Moved backwards in time (probably because ROS clock was reset), re-publishing joint transforms!");
     last_publish_time_.clear();
   }
   ros::Duration warning_threshold(30.0);
-  if ((state->header.stamp + warning_threshold) < now) {
-    ROS_WARN_THROTTLE(10, "Received JointState is %f seconds old.", (now - state->header.stamp).toSec());
+  if ((state->header.stamp + warning_threshold) < time_now) {
+    ROS_WARN_THROTTLE(10, "Received JointState is %f seconds old.", (time_now - state->header.stamp).toSec());
   }
-  last_callback_time_ = now;
+  last_callback_time_ = time_now;
 
   // determine least recently published joint
-  ros::Time last_published = now;
-  for (size_t i = 0; i < state->name.size(); ++i) {
-    ros::Time t = last_publish_time_[state->name[i]];
+  ros::Time last_published = time_now;
+  for (const auto & i : state->name) {
+    ros::Time t = last_publish_time_[i];
     last_published = (t < last_published) ? t : last_published;
   }
   // note: if a joint was seen for the first time,
@@ -143,10 +143,10 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
       joint_positions.insert(make_pair(state->name[i], state->position[i]));
     }
 
-    for (MimicMap::iterator i = mimic_.begin(); i != mimic_.end(); i++) {
-      if(joint_positions.find(i->second->joint_name) != joint_positions.end()) {
-        double pos = joint_positions[i->second->joint_name] * i->second->multiplier + i->second->offset;
-        joint_positions.insert(make_pair(i->first, pos));
+    for (auto & i : mimic_) {
+      if(joint_positions.find(i.second->joint_name) != joint_positions.end()) {
+        double pos = joint_positions[i.second->joint_name] * i.second->multiplier + i.second->offset;
+        joint_positions.insert(make_pair(i.first, pos));
       }
     }
 

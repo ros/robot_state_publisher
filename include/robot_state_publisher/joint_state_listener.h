@@ -65,15 +65,15 @@ public:
    */
   JointStateListener(const KDL::Tree& tree, const MimicMap& m, const urdf::Model& model = urdf::Model());
 
-  JointStateListener(const std::shared_ptr<RobotStatePublisher>& rsp, const MimicMap& m);
+  JointStateListener(std::shared_ptr<RobotStatePublisher>  rsp, MimicMap  m);
 
 
   /// Destructor
   ~JointStateListener();
 
 protected:
-  virtual void callbackJointState(const JointStateConstPtr& state);
-  virtual void callbackFixedJoint(const ros::TimerEvent& e);
+  void callbackJointState(const JointStateConstPtr& state);
+  void callbackFixedJoint(const ros::TimerEvent& e);
 
   ros::Duration publish_interval_;
   std::shared_ptr<RobotStatePublisher> state_publisher_;
@@ -82,8 +82,8 @@ protected:
   ros::Time last_callback_time_;
   std::map<std::string, ros::Time> last_publish_time_;
   MimicMap mimic_;
-  bool use_tf_static_;
-  bool ignore_timestamp_;
+  bool use_tf_static_{};
+  bool ignore_timestamp_{};
 
 };
 }
