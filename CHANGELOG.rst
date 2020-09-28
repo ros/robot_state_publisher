@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.4.1 (2020-09-28)
+------------------
 * fix types in range loops to avoid copy due to different type (`#143 <https://github.com/ros/robot_state_publisher/issues/143>`_)
 * Make sure not to crash on an invalid URDF. (`#141 <https://github.com/ros/robot_state_publisher/issues/141>`_)
 * Contributors: Chris Lalancette, Dirk Thomas
