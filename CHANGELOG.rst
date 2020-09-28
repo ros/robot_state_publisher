@@ -2,6 +2,12 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix types in range loops to avoid copy due to different type (`#143 <https://github.com/ros/robot_state_publisher/issues/143>`_)
+* Make sure not to crash on an invalid URDF. (`#141 <https://github.com/ros/robot_state_publisher/issues/141>`_)
+* Contributors: Chris Lalancette, Dirk Thomas
+
 2.4.0 (2020-04-30)
 ------------------
 * Replace deprecated launch_ros usage (`#137 <https://github.com/ros/robot_state_publisher/issues/137>`_)
@@ -39,7 +45,7 @@ Changelog for package robot_state_publisher
 2.2.4 (2019-09-06)
 ------------------
 * Remove unused Eigen3 dependency (`#27 <https://github.com/ros2/robot_state_publisher/issues/27>`_) (`#29 <https://github.com/ros2/robot_state_publisher/issues/29>`_)
-* Don't export exe as library (`#25 <https://github.com/ros2/robot_state_publisher/issues/25>`_) (`#28 <https://github.com/ros2/robot_state_publisher/issues/28>`_)
+* Don't export exe as library (`#25 <https://github.com/ros2/robot_state_publisher/issues/25>`_) (`ros2 #28 <https://github.com/ros2/robot_state_publisher/issues/28>`_)
 * Contributors: Shane Loretz
 
 2.2.3 (2019-06-12)
