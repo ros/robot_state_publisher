@@ -97,9 +97,8 @@ std::string resolve(const std::string &prefix, const std::string &frame)
     return stripSlash(frame);
 
   std::string composite;
-  composite.reserve(prefix.length() + frame.length() + 1);
+  composite.reserve(prefix.length() + frame.length());
   composite.append(stripSlash(prefix));
-  composite.append("/");
   composite.append(stripSlash(frame));
   return composite;
 }
