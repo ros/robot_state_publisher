@@ -72,7 +72,7 @@ JointStateListener::JointStateListener(const std::shared_ptr<RobotStatePublisher
   n_tilde.param("ignore_timestamp", ignore_timestamp_, false);
   // get the tf_prefix parameter from the closest namespace
   std::string tf_prefix_key;
-  n_tilde.searchParam("tf_prefix", tf_prefix_key);
+  n_tilde.searchParam("prefix_tf_with", tf_prefix_key);
   n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
   publish_interval_ = ros::Duration(1.0/std::max(publish_freq, 1.0));
 
