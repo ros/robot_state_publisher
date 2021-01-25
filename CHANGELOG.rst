@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.4.2 (2021-01-25)
+------------------
 * clean up license to be standard bsd 3 clause (`#130 <https://github.com/ros/robot_state_publisher/issues/130>`_)
 * Update the maintainers. (`#151 <https://github.com/ros/robot_state_publisher/issues/151>`_)
 * Contributors: Chris Lalancette, Tully Foote
