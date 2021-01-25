@@ -2,6 +2,12 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* clean up license to be standard bsd 3 clause (`#130 <https://github.com/ros/robot_state_publisher/issues/130>`_)
+* Update the maintainers. (`#151 <https://github.com/ros/robot_state_publisher/issues/151>`_)
+* Contributors: Chris Lalancette, Tully Foote
+
 2.4.1 (2020-09-28)
 ------------------
 * fix types in range loops to avoid copy due to different type (`#143 <https://github.com/ros/robot_state_publisher/issues/143>`_)
