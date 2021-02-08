@@ -95,11 +95,9 @@ protected:
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_pub_;
   std::chrono::milliseconds publish_interval_ms_;
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
-  rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Time last_callback_time_;
   std::map<std::string, builtin_interfaces::msg::Time> last_publish_time_;
   MimicMap mimic_;
-  bool use_tf_static_;
   bool ignore_timestamp_;
   std::string frame_prefix_;
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_cb_;

@@ -120,12 +120,6 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   publish_interval_ms_ =
     std::chrono::milliseconds(static_cast<uint64_t>(1000.0 / publish_freq));
 
-  // set whether to use the /tf_static latched static transform broadcaster
-  use_tf_static_ = this->declare_parameter("use_tf_static", true);
-  if (!use_tf_static_) {
-    RCLCPP_WARN(get_logger(), "use_tf_static is deprecated and will be removed in the future");
-  }
-
   // set frame_prefix
   frame_prefix_ = this->declare_parameter("frame_prefix", "");
 
@@ -148,9 +142,7 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
       &RobotStatePublisher::callbackJointState, this,
       std::placeholders::_1));
 
-  // trigger to publish fixed joints
-  timer_ = this->create_wall_timer(
-    publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+  publishFixedTransforms();
 
   // Now that we have successfully declared the parameters and done all
   // necessary setup, install the callback for updating parameters.
@@ -260,23 +252,16 @@ void RobotStatePublisher::publishFixedTransforms()
   std::vector<geometry_msgs::msg::TransformStamped> tf_transforms;
 
   // loop over all fixed segments
+  rclcpp::Time now = this->now();
   for (const std::pair<const std::string, SegmentPair> & seg : segments_fixed_) {
     geometry_msgs::msg::TransformStamped tf_transform = kdlToTransform(seg.second.segment.pose(0));
-    rclcpp::Time now = this->now();
-    if (!use_tf_static_) {
-      now = now + rclcpp::Duration(std::chrono::milliseconds(500));
-    }
     tf_transform.header.stamp = now;
 
     tf_transform.header.frame_id = frame_prefix_ + seg.second.root;
     tf_transform.child_frame_id = frame_prefix_ + seg.second.tip;
     tf_transforms.push_back(tf_transform);
   }
-  if (use_tf_static_) {
-    static_tf_broadcaster_->sendTransform(tf_transforms);
-  } else {
-    tf_broadcaster_->sendTransform(tf_transforms);
-  }
+  static_tf_broadcaster_->sendTransform(tf_transforms);
 }
 
 void RobotStatePublisher::callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state)
@@ -370,13 +355,6 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
         result.reason = err.what();
         break;
       }
-    } else if (parameter.get_name() == "use_tf_static") {
-      if (parameter.get_type() != rclcpp::ParameterType::PARAMETER_BOOL) {
-        result.successful = false;
-        result.reason = "use_tf_static must be a boolean";
-        break;
-      }
-      use_tf_static_ = parameter.as_bool();
     } else if (parameter.get_name() == "frame_prefix") {
       if (parameter.get_type() != rclcpp::ParameterType::PARAMETER_STRING) {
         result.successful = false;
@@ -401,18 +379,11 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
       double publish_freq = parameter.as_double();
       if (publish_freq < 0.0 || publish_freq > 1000.0) {
         result.successful = false;
-        result.reason = "publish_frequency must be between 0 and 1000";
+        result.reason = "publish_frequency must be between 0.0 and 1000.0";
         break;
       }
-      std::chrono::milliseconds new_publish_interval =
+      publish_interval_ms_ =
         std::chrono::milliseconds(static_cast<uint64_t>(1000.0 / publish_freq));
-
-      if (new_publish_interval != publish_interval_ms_) {
-        publish_interval_ms_ = new_publish_interval;
-        timer_->cancel();
-        timer_ = this->create_wall_timer(
-          publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
-      }
     }
   }
 
