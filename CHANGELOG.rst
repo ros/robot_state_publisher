@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Stop rejecting unknown parameters. (`#161 <https://github.com/ros/robot_state_publisher/issues/161>`_)
+* Contributors: Chris Lalancette
+
 2.4.2 (2021-01-25)
 ------------------
 * clean up license to be standard bsd 3 clause (`#130 <https://github.com/ros/robot_state_publisher/issues/130>`_)
