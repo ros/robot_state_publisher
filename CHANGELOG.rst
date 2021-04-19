@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.4.3 (2021-04-19)
+------------------
 * Stop rejecting unknown parameters. (`#161 <https://github.com/ros/robot_state_publisher/issues/161>`_)
 * Contributors: Chris Lalancette
 
