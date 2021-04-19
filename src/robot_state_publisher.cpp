@@ -402,10 +402,6 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
         timer_ = this->create_wall_timer(
           publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
       }
-    } else {
-      result.successful = false;
-      result.reason = "Invalid parameter";
-      break;
     }
   }
 
