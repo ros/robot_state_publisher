@@ -125,11 +125,8 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
     RCLCPP_WARN(get_logger(), "use_tf_static is deprecated and will be removed in the future");
   }
 
-  // set tf_prefix and add trailing slash if its set
-  tf_prefix_ = this->declare_parameter("tf_prefix", "");
-  if (tf_prefix_.size()) {
-    tf_prefix_ = tf_prefix_ + "/";
-  }
+  // set frame_prefix
+  frame_prefix_ = this->declare_parameter("frame_prefix", "");
 
   // ignore_timestamp_ == true, joint_state messages are accepted, no matter their timestamp
   ignore_timestamp_ = this->declare_parameter("ignore_timestamp", false);
@@ -247,8 +244,8 @@ void RobotStatePublisher::publishTransforms(
       geometry_msgs::msg::TransformStamped tf_transform =
         kdlToTransform(seg->second.segment.pose(jnt.second));
       tf_transform.header.stamp = time;
-      tf_transform.header.frame_id = tf_prefix_ + seg->second.root;
-      tf_transform.child_frame_id = tf_prefix_ + seg->second.tip;
+      tf_transform.header.frame_id = frame_prefix_ + seg->second.root;
+      tf_transform.child_frame_id = frame_prefix_ + seg->second.tip;
       tf_transforms.push_back(tf_transform);
     }
   }
@@ -270,8 +267,8 @@ void RobotStatePublisher::publishFixedTransforms()
     }
     tf_transform.header.stamp = now;
 
-    tf_transform.header.frame_id = tf_prefix_ + seg.second.root;
-    tf_transform.child_frame_id = tf_prefix_ + seg.second.tip;
+    tf_transform.header.frame_id = frame_prefix_ + seg.second.root;
+    tf_transform.child_frame_id = frame_prefix_ + seg.second.tip;
     tf_transforms.push_back(tf_transform);
   }
   if (use_tf_static_) {
@@ -379,16 +376,13 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
         break;
       }
       use_tf_static_ = parameter.as_bool();
-    } else if (parameter.get_name() == "tf_prefix") {
+    } else if (parameter.get_name() == "frame_prefix") {
       if (parameter.get_type() != rclcpp::ParameterType::PARAMETER_STRING) {
         result.successful = false;
-        result.reason = "tf_prefix must be a string";
+        result.reason = "frame_prefix must be a string";
         break;
       }
-      tf_prefix_ = parameter.as_string() + "/";
-      if (tf_prefix_.size()) {
-        tf_prefix_ = tf_prefix_ + "/";
-      }
+      frame_prefix_ = parameter.as_string();
     } else if (parameter.get_name() == "ignore_timestamp") {
       if (parameter.get_type() != rclcpp::ParameterType::PARAMETER_BOOL) {
         result.successful = false;
