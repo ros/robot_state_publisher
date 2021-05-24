@@ -80,6 +80,16 @@ if(BUILD_TESTING)
   add_launch_test(test/two_links_fixed_joint-launch.py
     ARGS "test_exe:=$<TARGET_FILE:test_two_links_fixed_joint>")
 
+  add_executable(test_two_links_fixed_joint_prefix test/test_two_links_fixed_joint_prefix.cpp)
+  ament_target_dependencies(test_two_links_fixed_joint_prefix
+    rclcpp
+    sensor_msgs
+    tf2_ros
+  )
+  target_link_libraries(test_two_links_fixed_joint_prefix ${GTEST_LIBRARIES})
+  add_launch_test(test/two_links_fixed_joint_prefix-launch.py
+    ARGS "test_exe:=$<TARGET_FILE:test_two_links_fixed_joint_prefix>")
+
   add_executable(test_two_links_moving_joint test/test_two_links_moving_joint.cpp)
   ament_target_dependencies(test_two_links_moving_joint
     rclcpp
