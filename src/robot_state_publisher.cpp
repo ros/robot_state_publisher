@@ -36,6 +36,7 @@
 #include <kdl_parser/kdl_parser.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
+#include <sensor_msgs/msg/joint_state.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <urdf/model.h>
 
@@ -124,6 +125,9 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   if (!use_tf_static_) {
     RCLCPP_WARN(get_logger(), "use_tf_static is deprecated and will be removed in the future");
   }
+
+  // set frame_prefix
+  frame_prefix_ = this->declare_parameter("frame_prefix", "");
 
   // ignore_timestamp_ == true, joint_state messages are accepted, no matter their timestamp
   ignore_timestamp_ = this->declare_parameter("ignore_timestamp", false);
@@ -241,8 +245,8 @@ void RobotStatePublisher::publishTransforms(
       geometry_msgs::msg::TransformStamped tf_transform =
         kdlToTransform(seg->second.segment.pose(jnt.second));
       tf_transform.header.stamp = time;
-      tf_transform.header.frame_id = seg->second.root;
-      tf_transform.child_frame_id = seg->second.tip;
+      tf_transform.header.frame_id = frame_prefix_ + seg->second.root;
+      tf_transform.child_frame_id = frame_prefix_ + seg->second.tip;
       tf_transforms.push_back(tf_transform);
     }
   }
@@ -264,8 +268,8 @@ void RobotStatePublisher::publishFixedTransforms()
     }
     tf_transform.header.stamp = now;
 
-    tf_transform.header.frame_id = seg.second.root;
-    tf_transform.child_frame_id = seg.second.tip;
+    tf_transform.header.frame_id = frame_prefix_ + seg.second.root;
+    tf_transform.child_frame_id = frame_prefix_ + seg.second.tip;
     tf_transforms.push_back(tf_transform);
   }
   if (use_tf_static_) {
@@ -373,6 +377,13 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
         break;
       }
       use_tf_static_ = parameter.as_bool();
+    } else if (parameter.get_name() == "frame_prefix") {
+      if (parameter.get_type() != rclcpp::ParameterType::PARAMETER_STRING) {
+        result.successful = false;
+        result.reason = "frame_prefix must be a string";
+        break;
+      }
+      frame_prefix_ = parameter.as_string();
     } else if (parameter.get_name() == "ignore_timestamp") {
       if (parameter.get_type() != rclcpp::ParameterType::PARAMETER_BOOL) {
         result.successful = false;

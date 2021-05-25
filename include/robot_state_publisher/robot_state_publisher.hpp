@@ -101,6 +101,7 @@ protected:
   MimicMap mimic_;
   bool use_tf_static_;
   bool ignore_timestamp_;
+  std::string frame_prefix_;
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_cb_;
 };
 
