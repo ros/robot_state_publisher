@@ -36,6 +36,7 @@
 #include <kdl_parser/kdl_parser.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
+#include <sensor_msgs/msg/joint_state.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <urdf/model.h>
 

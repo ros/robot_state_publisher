@@ -73,7 +73,6 @@ if(BUILD_TESTING)
   add_executable(test_two_links_fixed_joint test/test_two_links_fixed_joint.cpp)
   ament_target_dependencies(test_two_links_fixed_joint
     rclcpp
-    sensor_msgs
     tf2_ros
   )
   target_link_libraries(test_two_links_fixed_joint ${GTEST_LIBRARIES})
@@ -83,7 +82,6 @@ if(BUILD_TESTING)
   add_executable(test_two_links_fixed_joint_prefix test/test_two_links_fixed_joint_prefix.cpp)
   ament_target_dependencies(test_two_links_fixed_joint_prefix
     rclcpp
-    sensor_msgs
     tf2_ros
   )
   target_link_libraries(test_two_links_fixed_joint_prefix ${GTEST_LIBRARIES})

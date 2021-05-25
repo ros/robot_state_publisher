@@ -29,7 +29,6 @@
 #include <gtest/gtest.h>
 
 #include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/joint_state.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
