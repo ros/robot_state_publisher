@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.5.0 (2021-06-11)
+------------------
+* Add tf frame_prefix parameter (`#159 <https://github.com/ros/robot_state_publisher/issues/159>`_)
+* Contributors: Steve Nogar, Chris Lalancette
+
 2.4.3 (2021-04-19)
 ------------------
 * Stop rejecting unknown parameters. (`#161 <https://github.com/ros/robot_state_publisher/issues/161>`_)
