@@ -20,7 +20,7 @@ Subscribed Topics
 Parameters
 ----------
 * `robot_description` (string) - The original description of the robot in URDF form.  This *must* be set at robot_state_publisher startup time, or the node will fail to start.  Updates to this parameter will be reflected in the `robot_description` topic.
-* `publish_frequency` (double) - The frequency at which fixed transforms will be republished to the network.  Defaults to 50.0.
+* `publish_frequency` (double) - The frequency at which fixed transforms will be republished to the network.  Defaults to 20.0 Hz.
 * `use_tf_static` (bool) - Whether to publish fixed joints on the static broadcaster (`/tf_static` topic) or on the dynamic one (`/tf` topic).  Defaults to true, so it publishes on the `/tf_static` topic.
 * `ignore_timestamp` (bool) - Whether to accept all joint states no matter what the timestamp (true), or to only publish joint state updates if they are newer than the last publish_frequency (false).  Defaults to false.
 * `frame_prefix` (string) - An arbitrary prefix to add to the published tf2 frames.  Defaults to the empty string.
