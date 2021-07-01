@@ -70,7 +70,7 @@ if (CATKIN_ENABLE_TESTING)
   target_link_libraries(test_two_links_moving_joint ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
 
   add_rostest_gtest(test_frames_and_slashes ${CMAKE_CURRENT_SOURCE_DIR}/test/test_frames_and_slashes.launch test/test_frames_and_slashes.cpp)
-  target_link_libraries(test_frames_and_slashes ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
+  target_link_libraries(test_frames_and_slashes ${catkin_LIBRARIES})
 
   add_rostest_gtest(test_joint_states_bag ${CMAKE_CURRENT_SOURCE_DIR}/test/test_joint_states_bag.launch test/test_joint_states_bag.cpp)
   target_link_libraries(test_joint_states_bag ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
