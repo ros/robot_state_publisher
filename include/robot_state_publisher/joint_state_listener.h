@@ -71,6 +71,9 @@ public:
   /// Destructor
   ~JointStateListener();
 
+private:
+  std::string getTFPrefix();
+
 protected:
   virtual void callbackJointState(const JointStateConstPtr& state);
   virtual void callbackFixedJoint(const ros::TimerEvent& e);
