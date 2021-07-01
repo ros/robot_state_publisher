@@ -70,6 +70,9 @@ if (CATKIN_ENABLE_TESTING)
   add_rostest_gtest(test_two_links_moving_joint ${CMAKE_CURRENT_SOURCE_DIR}/test/test_two_links_moving_joint.launch test/test_two_links_moving_joint.cpp)
   target_link_libraries(test_two_links_moving_joint ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
 
+  add_rostest_gtest(test_frames_and_slashes ${CMAKE_CURRENT_SOURCE_DIR}/test/test_frames_and_slashes.launch test/test_frames_and_slashes.cpp)
+  target_link_libraries(test_frames_and_slashes ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
+
    # Download needed data file
   catkin_download_test_data(
     joint_states_indexed_bag
@@ -85,6 +88,7 @@ if (CATKIN_ENABLE_TESTING)
   target_link_libraries(test_subclass ${catkin_LIBRARIES} ${PROJECT_NAME}_solver joint_state_listener)
 
   install(FILES test/one_link.urdf test/pr2.urdf test/two_links_fixed_joint.urdf test/two_links_moving_joint.urdf DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/test)
+  install(FILES test/one_link.urdf test/pr2.urdf test/two_links_fixed_joint.urdf test/two_links_moving_joint.urdf test/frames_and_slashes.urdf DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/test)
 
 endif()
 
