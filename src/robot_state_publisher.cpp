@@ -91,8 +91,35 @@ std::string stripSlash(const std::string & in)
   return in;
 }
 
+// Replicate behavior of tf 1 tf_prefix
+std::string prefix_frame(const std::string & tf_prefix, const std::string & frame)
+{
+  // If the frame begins with a slash, remove the first slash and don't add prefix at all
+  if (frame.size() && frame[0] == '/') {
+    return frame.substr(1);
+  }
+
+  std::string prefixed_frame;
+
+  // If the prefix begins with a slash, remove it
+  if (tf_prefix.size() && tf_prefix[0] == '/') {
+    prefixed_frame = tf_prefix.substr(1);
+  } else {
+    prefixed_frame = tf_prefix;
+  }
+
+  // Add a slash after a non-empty prefix
+  if (!tf_prefix.empty()) {
+    prefixed_frame += '/';
+  }
+
+  prefixed_frame += frame;
+
+  return prefixed_frame;
+}
+
 // publish moving transforms
-void RobotStatePublisher::publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time)
+void RobotStatePublisher::publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time, const std::string & tf_prefix)
 {
   ROS_DEBUG("Publishing transforms for moving joints");
   std::vector<geometry_msgs::TransformStamped> tf_transforms;
@@ -103,8 +130,8 @@ void RobotStatePublisher::publishTransforms(const std::map<std::string, double>&
     if (seg != segments_.end()) {
       geometry_msgs::TransformStamped tf_transform = tf2::kdlToTransform(seg->second.segment.pose(jnt->second));
       tf_transform.header.stamp = time;
-      tf_transform.header.frame_id = stripSlash(seg->second.root);
-      tf_transform.child_frame_id = stripSlash(seg->second.tip);
+      tf_transform.header.frame_id = prefix_frame(tf_prefix, seg->second.root);
+      tf_transform.child_frame_id = prefix_frame(tf_prefix, seg->second.tip);
       tf_transforms.push_back(tf_transform);
     }
     else {
@@ -115,7 +142,7 @@ void RobotStatePublisher::publishTransforms(const std::map<std::string, double>&
 }
 
 // publish fixed transforms
-void RobotStatePublisher::publishFixedTransforms(bool use_tf_static)
+void RobotStatePublisher::publishFixedTransforms(const std::string & tf_prefix, bool use_tf_static)
 {
   ROS_DEBUG("Publishing transforms for fixed joints");
   std::vector<geometry_msgs::TransformStamped> tf_transforms;
@@ -128,8 +155,8 @@ void RobotStatePublisher::publishFixedTransforms(bool use_tf_static)
     if (!use_tf_static) {
       tf_transform.header.stamp += ros::Duration(0.5);
     }
-    tf_transform.header.frame_id = stripSlash(seg->second.root);
-    tf_transform.child_frame_id = stripSlash(seg->second.tip);
+    tf_transform.header.frame_id = prefix_frame(tf_prefix, seg->second.root);
+    tf_transform.child_frame_id = prefix_frame(tf_prefix, seg->second.tip);
     tf_transforms.push_back(tf_transform);
   }
   if (use_tf_static) {
@@ -138,6 +165,16 @@ void RobotStatePublisher::publishFixedTransforms(bool use_tf_static)
   else {
     tf_broadcaster_.sendTransform(tf_transforms);
   }
+}
+
+void RobotStatePublisher::publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time)
+{
+  publishTransforms(joint_positions, time, "");
+}
+
+void RobotStatePublisher::publishFixedTransforms(bool use_tf_static)
+{
+  publishFixedTransforms("", use_tf_static);
 }
 
 }
