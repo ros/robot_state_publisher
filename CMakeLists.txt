@@ -21,13 +21,13 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(urdf REQUIRED)
-find_package(urdfdom_headers REQUIRED)
-
-include_directories(include)
 
 add_library(
   ${PROJECT_NAME}_node SHARED
   src/robot_state_publisher.cpp)
+target_include_directories(${PROJECT_NAME}_node PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include>")
 ament_target_dependencies(${PROJECT_NAME}_node
   builtin_interfaces
   geometry_msgs
