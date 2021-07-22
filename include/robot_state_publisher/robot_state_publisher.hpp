@@ -75,7 +75,8 @@ public:
   explicit RobotStatePublisher(const rclcpp::NodeOptions & options);
 
 protected:
-  /** Setup the URDF for use.
+  /// Setup the URDF for use.
+  /**
    * This method first parses the URDF into an internal representation.
    * Based on that representation, it then generates the list of joint segments
    * and mimic pairs that it needs during runtime.  Finally, it publishes
@@ -85,13 +86,15 @@ protected:
    */
   void setupURDF(const std::string & urdf_xml);
 
-  /** Recursive method to add all children to the internal segment list.
+  /// Recursive method to add all children to the internal segment list.
+  /**
    *
    * \param[in] segment An iterator to the SegmentMap to add to the internal segment list.
    */
   void addChildren(const KDL::SegmentMap::const_iterator segment);
 
-  /** Publish transforms to /tf2.
+  /// Publish transforms to /tf2.
+  /**
    * This method is called by callbackJointState() when new transforms are available and need to be published.
    *
    * \param[in] joint_positions A map of joint names to joint positions.
@@ -101,11 +104,11 @@ protected:
     const std::map<std::string, double> & joint_positions,
     const builtin_interfaces::msg::Time & time);
 
-  /** Publish fixed transforms at startup time to /tf2_static.
-   */
+  /// Publish fixed transforms at startup time to /tf2_static.
   void publishFixedTransforms();
 
-  /** The callback that is called when a new JointState message is received.
+  /// The callback that is called when a new JointState message is received.
+  /**
    * This method examines the incoming JointStates and applies a series of checks to
    * see if new transforms should be published.  If so, it calls publishTransforms() to do so.
    *
@@ -113,7 +116,8 @@ protected:
    */
   void callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state);
 
-  /** The callback that is called when parameter on the node are changed.
+  /// The callback that is called when parameters on the node are changed.
+  /**
    * This allows the class to dynamically react to changes in parameters.
    *
    * \param[in] parameters The list of parameters that are going to change.
@@ -121,47 +125,47 @@ protected:
   rcl_interfaces::msg::SetParametersResult parameterUpdate(
     const std::vector<rclcpp::Parameter> & parameters);
 
+  /// A map of dynamic segment names to SegmentPair structures
   std::map<std::string, SegmentPair> segments_;
-  ///< A map of dynamic segment names to SegmentPair structures
 
+  /// A map of fixed segment names to SegmentPair structures
   std::map<std::string, SegmentPair> segments_fixed_;
-  ///< A map of fixed segment names to SegmentPair structures
 
+  /// A pointer to the parsed URDF model
   std::unique_ptr<urdf::Model> model_;
-  ///< A pointer to the parsed URDF model
 
+  /// A pointer to the tf2 TransformBroadcaster
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
-  ///< A pointer to the tf2 TransformBroadcaster
 
+  /// A pointer to the tf2 StaticTransformBroadcaster
   std::unique_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_;
-  ///< A pointer to the tf2 StaticTransformBroadcaster
 
+  /// A pointer to the ROS 2 publisher for the robot_description
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_pub_;
-  ///< A pointer to the ROS 2 publisher for the robot_description
 
+  /// The minimum publish interval between dynamic frame pairs
   std::chrono::milliseconds publish_interval_ms_;
-  ///< The minimum publish interval between dynamic frame pairs
 
+  /// A pointer to the ROS 2 subscription for the joint states
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
-  ///< A pointer to the ROS 2 subscription for the joint states
 
+  /// The last time a joint state message was received
   rclcpp::Time last_callback_time_;
-  ///< The last time a joint state message was received
 
+  /// A map between a joint name and the last time its state was published
   std::map<std::string, builtin_interfaces::msg::Time> last_publish_time_;
-  ///< A map between a joint name and the last time its state was published
 
+  /// A map of the mimic joints that should be published
   MimicMap mimic_;
-  ///< A map of the mimic joints that should be published
 
+  /// Whether to ignore timestamps while publishing
   bool ignore_timestamp_;
-  ///< Whether to ignore timestamps while publishing
 
+  /// An arbitrary prefix to add to tf2 frames before publishing
   std::string frame_prefix_;
-  ///< An arbitrary prefix to add to tf2 frames before publishing
 
+  /// The parameter event callback that will be called when a parameter is changed
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_cb_;
-  ///< The parameter event callback that will be called when a parameter is changed
 };
 
 }  // namespace robot_state_publisher
