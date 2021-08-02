@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.4.4 (2021-08-02)
+------------------
 * Restore tf frame prefix support for ROS 2 (`#159 <https://github.com/ros/robot_state_publisher/issues/159>`_) (`#171 <https://github.com/ros/robot_state_publisher/issues/171>`_)
 * Contributors: Chris Lalancette
 
