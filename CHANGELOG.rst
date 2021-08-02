@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.6.0 (2021-08-02)
+------------------
 * Cleanup the documentation in the RobotStatePublisher class. (`#172 <https://github.com/ros/robot_state_publisher/issues/172>`_)
 * Always publish fixed frames to /tf_static (`#158 <https://github.com/ros/robot_state_publisher/issues/158>`_)
 * corrected publish_frequency default in README (`#166 <https://github.com/ros/robot_state_publisher/issues/166>`_)
