@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Restore tf frame prefix support for ROS 2 (`#159 <https://github.com/ros/robot_state_publisher/issues/159>`_) (`#171 <https://github.com/ros/robot_state_publisher/issues/171>`_)
+* Contributors: Chris Lalancette
+
 2.4.3 (2021-04-19)
 ------------------
 * Stop rejecting unknown parameters. (`#161 <https://github.com/ros/robot_state_publisher/issues/161>`_)
