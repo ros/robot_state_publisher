@@ -23,3 +23,4 @@ Parameters
 * `publish_frequency` (double) - The frequency at which fixed transforms will be republished to the network.  Defaults to 50.0.
 * `use_tf_static` (bool) - Whether to publish fixed joints on the static broadcaster (`/tf_static` topic) or on the dynamic one (`/tf` topic).  Defaults to true, so it publishes on the `/tf_static` topic.
 * `ignore_timestamp` (bool) - Whether to accept all joint states no matter what the timestamp (true), or to only publish joint state updates if they are newer than the last publish_frequency (false).  Defaults to false.
+* `frame_prefix` (string) - An arbitrary prefix to add to the published tf2 frames.  Defaults to the empty string.
