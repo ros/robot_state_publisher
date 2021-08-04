@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Restore tf frame prefix support for ROS 2 (`#159 <https://github.com/ros/robot_state_publisher/issues/159>`_) (`#170 <https://github.com/ros/robot_state_publisher/issues/170>`_)
+* Contributors: Chris Lalancette
+
 2.4.2 (2021-01-25)
 ------------------
 * clean up license to be standard bsd 3 clause (`#130 <https://github.com/ros/robot_state_publisher/issues/130>`_)
