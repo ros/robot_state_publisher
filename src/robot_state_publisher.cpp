@@ -264,7 +264,8 @@ void RobotStatePublisher::publishFixedTransforms()
   static_tf_broadcaster_->sendTransform(tf_transforms);
 }
 
-void RobotStatePublisher::callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state)
+void RobotStatePublisher::callbackJointState(
+  const sensor_msgs::msg::JointState::ConstSharedPtr state)
 {
   if (state->name.size() != state->position.size()) {
     if (state->position.empty()) {

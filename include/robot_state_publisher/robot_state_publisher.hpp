@@ -114,7 +114,7 @@ protected:
    *
    * \param[in] state The JointState message that was delivered.
    */
-  void callbackJointState(const sensor_msgs::msg::JointState::SharedPtr state);
+  void callbackJointState(const sensor_msgs::msg::JointState::ConstSharedPtr state);
 
   /// The callback that is called when parameters on the node are changed.
   /**
