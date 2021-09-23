@@ -148,7 +148,11 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
       &RobotStatePublisher::callbackJointState, this,
       std::placeholders::_1));
 
-  publishFixedTransforms();
+  // trigger to publish fixed joints
+  if (!use_tf_static_) {
+    timer_ = this->create_wall_timer(
+      publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+  }
 
   // Now that we have successfully declared the parameters and done all
   // necessary setup, install the callback for updating parameters.
@@ -399,8 +403,17 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
         result.reason = "publish_frequency must be between 0.0 and 1000.0";
         break;
       }
-      publish_interval_ms_ =
+      std::chrono::milliseconds new_publish_interval =
         std::chrono::milliseconds(static_cast<uint64_t>(1000.0 / publish_freq));
+
+      if (new_publish_interval != publish_interval_ms_) {
+        publish_interval_ms_ = new_publish_interval;
+        if (!use_tf_static_) {
+          timer_->cancel();
+          timer_ = this->create_wall_timer(
+            publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+        }
+      }
     }
   }
 
