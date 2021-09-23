@@ -149,7 +149,9 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
       std::placeholders::_1));
 
   // trigger to publish fixed joints
-  if (!use_tf_static_) {
+  if (use_tf_static_) {
+    publishFixedTransforms();
+  } else {
     timer_ = this->create_wall_timer(
       publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
   }
