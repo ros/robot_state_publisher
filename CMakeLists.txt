@@ -69,14 +69,6 @@ if (CATKIN_ENABLE_TESTING)
   add_rostest_gtest(test_two_links_moving_joint ${CMAKE_CURRENT_SOURCE_DIR}/test/test_two_links_moving_joint.launch test/test_two_links_moving_joint.cpp)
   target_link_libraries(test_two_links_moving_joint ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
 
-   # Download needed data file
-  catkin_download_test_data(
-    joint_states_indexed_bag
-    http://wiki.ros.org/robot_state_publisher/data?action=AttachFile&do=get&target=joint_states_indexed.bag
-    DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_SHARE_DESTINATION}/test
-    FILENAME joint_states_indexed.bag
-    MD5 793e0b566ebe4698265a936b92fa2bba)
-
   add_rostest_gtest(test_joint_states_bag ${CMAKE_CURRENT_SOURCE_DIR}/test/test_joint_states_bag.launch test/test_joint_states_bag.cpp)
   target_link_libraries(test_joint_states_bag ${catkin_LIBRARIES} ${PROJECT_NAME}_solver)
 
