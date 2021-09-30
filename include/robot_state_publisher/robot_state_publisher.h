@@ -83,6 +83,11 @@ public:
   virtual void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time);
   virtual void publishFixedTransforms(bool use_tf_static = false);
 
+  /** Publish transforms with tf_prefix
+   */
+  void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time, const std::string & tf_prefix);
+  void publishFixedTransforms(const std::string & tf_prefix, bool use_tf_static = false);
+
 protected:
   virtual void addChildren(const KDL::SegmentMap::const_iterator segment);
 

@@ -90,11 +90,23 @@ JointStateListener::JointStateListener(const std::shared_ptr<RobotStatePublisher
 JointStateListener::~JointStateListener()
 {}
 
+std::string JointStateListener::getTFPrefix()
+{
+  ros::NodeHandle n_tilde("~");
+  std::string tf_prefix;
+
+  // get the tf_prefix parameter from the closest namespace
+  std::string tf_prefix_key;
+  n_tilde.searchParam("tf_prefix", tf_prefix_key);
+  n_tilde.param(tf_prefix_key, tf_prefix, std::string(""));
+
+  return tf_prefix;
+}
 
 void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
 {
   (void)e;
-  state_publisher_->publishFixedTransforms(use_tf_static_);
+  state_publisher_->publishFixedTransforms(getTFPrefix(), use_tf_static_);
 }
 
 void JointStateListener::callbackJointState(const JointStateConstPtr& state)
@@ -150,7 +162,7 @@ void JointStateListener::callbackJointState(const JointStateConstPtr& state)
       }
     }
 
-    state_publisher_->publishTransforms(joint_positions, state->header.stamp);
+    state_publisher_->publishTransforms(joint_positions, state->header.stamp, getTFPrefix());
 
     // store publish time in joint map
     for (size_t i = 0; i<state->name.size(); ++i) {
