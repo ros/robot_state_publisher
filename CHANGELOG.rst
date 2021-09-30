@@ -2,6 +2,12 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.15.2 (2021-09-30)
+-------------------
+* Reimplement tf_prefix in Noetic exactly as it was in Melodic (`#169 <https://github.com/ros/robot_state_publisher/issues/169>`_)
+* Include joint_states_index.bag in repo (`#176 <https://github.com/ros/robot_state_publisher/issues/176>`_)
+* Contributors: Shane Loretz
+
 1.15.1 (2020-04-24)
 -------------------
 
