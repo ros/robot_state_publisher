@@ -149,8 +149,12 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
       std::placeholders::_1));
 
   // trigger to publish fixed joints
-  timer_ = this->create_wall_timer(
-    publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+  if (use_tf_static_) {
+    publishFixedTransforms();
+  } else {
+    timer_ = this->create_wall_timer(
+      publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+  }
 
   // Now that we have successfully declared the parameters and done all
   // necessary setup, install the callback for updating parameters.
@@ -398,7 +402,7 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
       double publish_freq = parameter.as_double();
       if (publish_freq < 0.0 || publish_freq > 1000.0) {
         result.successful = false;
-        result.reason = "publish_frequency must be between 0 and 1000";
+        result.reason = "publish_frequency must be between 0.0 and 1000.0";
         break;
       }
       std::chrono::milliseconds new_publish_interval =
@@ -406,9 +410,11 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
 
       if (new_publish_interval != publish_interval_ms_) {
         publish_interval_ms_ = new_publish_interval;
-        timer_->cancel();
-        timer_ = this->create_wall_timer(
-          publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+        if (!use_tf_static_) {
+          timer_->cancel();
+          timer_ = this->create_wall_timer(
+            publish_interval_ms_, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+        }
       }
     }
   }
