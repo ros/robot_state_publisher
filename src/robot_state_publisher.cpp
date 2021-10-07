@@ -144,7 +144,7 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
 
   // subscribe to joint state
   joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>(
-    "joint_states", 10, std::bind(
+    "joint_states", rclcpp::SensorDataQoS(), std::bind(
       &RobotStatePublisher::callbackJointState, this,
       std::placeholders::_1));
 
