@@ -136,11 +136,16 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
 
   setupURDF(urdf_xml);
 
+  auto subscriber_options = rclcpp::SubscriptionOptions();
+  subscriber_options.qos_overriding_options =
+    rclcpp::QosOverridingOptions::with_default_policies();
+
   // subscribe to joint state
   joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>(
-    "joint_states", 10, std::bind(
-      &RobotStatePublisher::callbackJointState, this,
-      std::placeholders::_1));
+    "joint_states",
+    rclcpp::SensorDataQoS(),
+    std::bind(&RobotStatePublisher::callbackJointState, this, std::placeholders::_1),
+    subscriber_options);
 
   publishFixedTransforms();
 
