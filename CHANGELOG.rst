@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix deprecated subscriber callbacks (`#173 <https://github.com/ros/robot_state_publisher/issues/173>`_)
+* Contributors: Abrar Rahman Protyasha
+
 2.6.0 (2021-08-02)
 ------------------
 * Cleanup the documentation in the RobotStatePublisher class. (`#172 <https://github.com/ros/robot_state_publisher/issues/172>`_)
