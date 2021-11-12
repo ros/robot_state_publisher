@@ -92,16 +92,19 @@ TEST(test_publisher, test_two_joints)
   ASSERT_EQ(set_parameters_result.size(), 1u);
   ASSERT_TRUE(set_parameters_result[0].successful);
 
-  for (i = 0; i < 100 && !buffer.canTransform("link1", "link2", rclcpp::Time()); ++i) {
+  for (i = 0; i < 100; ++i) {
+    if (buffer.canTransform("link1", "link2", rclcpp::Time())) {
+      t = buffer.lookupTransform("link1", "link2", rclcpp::Time());
+      if (fabs(t.transform.translation.x - 10.0) <= EPS) {
+        ASSERT_NEAR(t.transform.translation.x, 10.0, EPS);
+        ASSERT_NEAR(t.transform.translation.y, 0.0, EPS);
+        ASSERT_NEAR(t.transform.translation.z, 0.0, EPS);
+        break;
+      }
+    }
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
-
-  ASSERT_TRUE(buffer.canTransform("link1", "link2", rclcpp::Time()));
-
-  t = buffer.lookupTransform("link1", "link2", rclcpp::Time());
-  EXPECT_NEAR(t.transform.translation.x, 10.0, EPS);
-  EXPECT_NEAR(t.transform.translation.y, 0.0, EPS);
-  EXPECT_NEAR(t.transform.translation.z, 0.0, EPS);
+  ASSERT_LT(i, 100u);
 }
 
 int main(int argc, char ** argv)

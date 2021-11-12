@@ -15,6 +15,7 @@ find_package(builtin_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(kdl_parser REQUIRED)
 find_package(orocos_kdl REQUIRED)
+find_package(rcl_interfaces REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -33,6 +34,7 @@ ament_target_dependencies(${PROJECT_NAME}_node
   geometry_msgs
   kdl_parser
   orocos_kdl
+  rcl_interfaces
   rclcpp
   rclcpp_components
   sensor_msgs
