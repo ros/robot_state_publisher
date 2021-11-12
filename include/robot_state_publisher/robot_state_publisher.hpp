@@ -33,6 +33,7 @@
 
 #include <builtin_interfaces/msg/time.hpp>
 #include <kdl/tree.hpp>
+#include <rcl_interfaces/msg/set_parameters_result.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <std_msgs/msg/string.hpp>

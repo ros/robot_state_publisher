@@ -16,6 +16,7 @@
   <build_depend>builtin_interfaces</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>kdl_parser</build_depend>
+  <build_depend>rcl_interfaces</build_depend>
   <build_depend>orocos_kdl</build_depend>
   <build_depend>rclcpp</build_depend>
   <build_depend>rclcpp_components</build_depend>
@@ -28,6 +29,7 @@
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>kdl_parser</exec_depend>
   <exec_depend>orocos_kdl</exec_depend>
+  <exec_depend>rcl_interfaces</exec_depend>
   <exec_depend>rclcpp</exec_depend>
   <exec_depend>rclcpp_components</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
