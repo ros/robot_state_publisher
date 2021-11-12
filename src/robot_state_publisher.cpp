@@ -372,6 +372,7 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
 
       try {
         setupURDF(new_urdf);
+        publishFixedTransforms();
       } catch (const std::runtime_error & err) {
         RCLCPP_WARN(get_logger(), "%s", err.what());
         result.successful = false;
