@@ -98,6 +98,16 @@ if(BUILD_TESTING)
   target_link_libraries(test_two_links_moving_joint ${GTEST_LIBRARIES})
   add_launch_test(test/two_links_moving_joint-launch.py
     ARGS "test_exe:=$<TARGET_FILE:test_two_links_moving_joint>")
+
+  add_executable(test_two_links_change_fixed_joint test/test_two_links_change_fixed_joint.cpp)
+  ament_target_dependencies(test_two_links_change_fixed_joint
+    rclcpp
+    tf2_ros
+  )
+  target_include_directories(test_two_links_change_fixed_joint PRIVATE ${GTEST_INCLUDE_DIRS})
+  target_link_libraries(test_two_links_change_fixed_joint ${GTEST_LIBRARIES})
+  add_launch_test(test/two_links_change_fixed_joint-launch.py
+    ARGS "test_exe:=$<TARGET_FILE:test_two_links_change_fixed_joint>")
 endif()
 
 ament_export_dependencies(builtin_interfaces orocos_kdl rclcpp sensor_msgs std_msgs tf2_ros urdf)
