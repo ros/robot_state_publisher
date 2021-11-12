@@ -37,7 +37,7 @@
 #include <memory>
 #include <thread>
 
-#define EPS 0.01
+static constexpr double EPS = 0.01;
 
 TEST(test_publisher, test_two_joints)
 {
@@ -47,7 +47,7 @@ TEST(test_publisher, test_two_joints)
   tf2_ros::Buffer buffer(clock);
   tf2_ros::TransformListener tfl(buffer, node, true);
 
-  for (unsigned int i = 0; i < 100 && !buffer.canTransform("link1", "link2", rclcpp::Time()); i++) {
+  for (unsigned int i = 0; i < 100 && !buffer.canTransform("link1", "link2", rclcpp::Time()); ++i) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 
