@@ -68,13 +68,12 @@ if(BUILD_TESTING)
   find_package(launch_testing_ament_cmake REQUIRED)
   ament_find_gtest()
 
-  include_directories(${GTEST_INCLUDE_DIRS})
-
   add_executable(test_two_links_fixed_joint test/test_two_links_fixed_joint.cpp)
   ament_target_dependencies(test_two_links_fixed_joint
     rclcpp
     tf2_ros
   )
+  target_include_directories(test_two_links_fixed_joint PRIVATE ${GTEST_INCLUDE_DIRS})
   target_link_libraries(test_two_links_fixed_joint ${GTEST_LIBRARIES})
   add_launch_test(test/two_links_fixed_joint-launch.py
     ARGS "test_exe:=$<TARGET_FILE:test_two_links_fixed_joint>")
@@ -84,6 +83,7 @@ if(BUILD_TESTING)
     rclcpp
     tf2_ros
   )
+  target_include_directories(test_two_links_fixed_joint PRIVATE ${GTEST_INCLUDE_DIRS})
   target_link_libraries(test_two_links_fixed_joint_prefix ${GTEST_LIBRARIES})
   add_launch_test(test/two_links_fixed_joint_prefix-launch.py
     ARGS "test_exe:=$<TARGET_FILE:test_two_links_fixed_joint_prefix>")
@@ -94,6 +94,7 @@ if(BUILD_TESTING)
     sensor_msgs
     tf2_ros
   )
+  target_include_directories(test_two_links_fixed_joint PRIVATE ${GTEST_INCLUDE_DIRS})
   target_link_libraries(test_two_links_moving_joint ${GTEST_LIBRARIES})
   add_launch_test(test/two_links_moving_joint-launch.py
     ARGS "test_exe:=$<TARGET_FILE:test_two_links_moving_joint>")
