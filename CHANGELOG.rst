@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.5.2 (2021-11-30)
+------------------
 * Prevent robot_state_publisher from publishing on a timer (`#175 <https://github.com/ros/robot_state_publisher/issues/175>`_)
 * Contributors: Daisuke Nishimatsu
 
