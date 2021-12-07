@@ -28,7 +28,7 @@ add_library(
   src/robot_state_publisher.cpp)
 target_include_directories(${PROJECT_NAME}_node PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include>")
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 ament_target_dependencies(${PROJECT_NAME}_node
   builtin_interfaces
   geometry_msgs
@@ -42,6 +42,7 @@ ament_target_dependencies(${PROJECT_NAME}_node
   tf2_ros
   urdf
 )
+ament_export_targets(export_${PROJECT_NAME}_node)
 
 rclcpp_components_register_node(${PROJECT_NAME}_node
   PLUGIN "robot_state_publisher::RobotStatePublisher"
@@ -50,13 +51,14 @@ rclcpp_components_register_node(${PROJECT_NAME}_node
 install(
   TARGETS
   ${PROJECT_NAME}_node
+  EXPORT export_${PROJECT_NAME}_node
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
 
 install(DIRECTORY include/
-  DESTINATION include)
+  DESTINATION include/${PROJECT_NAME})
 
 install(DIRECTORY launch urdf
   DESTINATION share/${PROJECT_NAME}
@@ -113,6 +115,4 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_dependencies(builtin_interfaces orocos_kdl rclcpp sensor_msgs std_msgs tf2_ros urdf)
-ament_export_include_directories(include)
-ament_export_libraries(${PROJECT_NAME}_node)
 ament_package()
