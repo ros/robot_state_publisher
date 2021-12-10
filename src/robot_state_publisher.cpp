@@ -122,10 +122,10 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   }
 
   // set frame_prefix
-  frame_prefix_ = this->declare_parameter("frame_prefix", "");
+  this->declare_parameter("frame_prefix", "");
 
   // ignore_timestamp_ == true, joint_state messages are accepted, no matter their timestamp
-  ignore_timestamp_ = this->declare_parameter("ignore_timestamp", false);
+  this->declare_parameter("ignore_timestamp", false);
 
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(this);
   static_tf_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(this);
@@ -248,6 +248,9 @@ void RobotStatePublisher::publishTransforms(
   const builtin_interfaces::msg::Time & time)
 {
   RCLCPP_DEBUG(get_logger(), "Publishing transforms for moving joints");
+
+  std::string frame_prefix = get_parameter("frame_prefix").get_value<std::string>();
+
   std::vector<geometry_msgs::msg::TransformStamped> tf_transforms;
 
   // loop over all joints
@@ -257,8 +260,8 @@ void RobotStatePublisher::publishTransforms(
       geometry_msgs::msg::TransformStamped tf_transform =
         kdlToTransform(seg->second.segment.pose(jnt.second));
       tf_transform.header.stamp = time;
-      tf_transform.header.frame_id = frame_prefix_ + seg->second.root;
-      tf_transform.child_frame_id = frame_prefix_ + seg->second.tip;
+      tf_transform.header.frame_id = frame_prefix + seg->second.root;
+      tf_transform.child_frame_id = frame_prefix + seg->second.tip;
       tf_transforms.push_back(tf_transform);
     }
   }
@@ -269,6 +272,9 @@ void RobotStatePublisher::publishTransforms(
 void RobotStatePublisher::publishFixedTransforms()
 {
   RCLCPP_DEBUG(get_logger(), "Publishing transforms for fixed joints");
+
+  std::string frame_prefix = get_parameter("frame_prefix").get_value<std::string>();
+
   std::vector<geometry_msgs::msg::TransformStamped> tf_transforms;
 
   // loop over all fixed segments
@@ -277,8 +283,8 @@ void RobotStatePublisher::publishFixedTransforms()
     geometry_msgs::msg::TransformStamped tf_transform = kdlToTransform(seg.second.segment.pose(0));
     tf_transform.header.stamp = now;
 
-    tf_transform.header.frame_id = frame_prefix_ + seg.second.root;
-    tf_transform.child_frame_id = frame_prefix_ + seg.second.tip;
+    tf_transform.header.frame_id = frame_prefix + seg.second.root;
+    tf_transform.child_frame_id = frame_prefix + seg.second.tip;
     tf_transforms.push_back(tf_transform);
   }
   static_tf_broadcaster_->sendTransform(tf_transforms);
@@ -323,7 +329,9 @@ void RobotStatePublisher::callbackJointState(
   std::chrono::milliseconds publish_interval_ms =
     std::chrono::milliseconds(static_cast<uint64_t>(1000.0 / publish_freq));
   rclcpp::Time max_publish_time = last_published + rclcpp::Duration(publish_interval_ms);
-  if (ignore_timestamp_ || current_time.nanoseconds() >= max_publish_time.nanoseconds()) {
+  if (get_parameter("ignore_timestamp").get_value<bool>() ||
+    current_time.nanoseconds() >= max_publish_time.nanoseconds())
+  {
     // get joint positions from state message
     std::map<std::string, double> joint_positions;
     for (size_t i = 0; i < state->name.size(); i++) {

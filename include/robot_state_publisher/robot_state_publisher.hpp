@@ -168,12 +168,6 @@ protected:
   /// A map of the mimic joints that should be published
   MimicMap mimic_;
 
-  /// Whether to ignore timestamps while publishing
-  bool ignore_timestamp_;
-
-  /// An arbitrary prefix to add to tf2 frames before publishing
-  std::string frame_prefix_;
-
   /// The parameter event callback that will be called when a parameter is changed
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_cb_;
 
