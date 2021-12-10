@@ -162,35 +162,30 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
     std::bind(&RobotStatePublisher::onParameterEvent, this, std::placeholders::_1));
 }
 
-std::pair<std::shared_ptr<urdf::Model>, KDL::Tree> RobotStatePublisher::parseURDF(
-  const std::string & urdf_xml)
+KDL::Tree RobotStatePublisher::parseURDF(const std::string & urdf_xml, urdf::Model & model)
 {
-  auto model = std::make_shared<urdf::Model>();
-
   // Initialize the model
-  if (!model->initString(urdf_xml)) {
+  if (!model.initString(urdf_xml)) {
     throw std::runtime_error("Unable to initialize urdf::model from robot description");
   }
 
   // Initialize the KDL tree
   KDL::Tree tree;
-  if (!kdl_parser::treeFromUrdfModel(*model, tree)) {
+  if (!kdl_parser::treeFromUrdfModel(model, tree)) {
     throw std::runtime_error("Failed to extract kdl tree from robot description");
   }
 
-  return std::make_pair(model, tree);
+  return tree;
 }
 
 void RobotStatePublisher::setupURDF(const std::string & urdf_xml)
 {
-  std::pair<std::shared_ptr<urdf::Model>, KDL::Tree> modeltree = parseURDF(urdf_xml);
-
-  std::shared_ptr<urdf::Model> model = std::get<0>(std::move(modeltree));
-  KDL::Tree tree = std::get<1>(modeltree);
+  urdf::Model model;
+  KDL::Tree tree = parseURDF(urdf_xml, model);
 
   // Initialize the mimic map
   mimic_.clear();
-  for (const std::pair<const std::string, urdf::JointSharedPtr> & i : model->joints_) {
+  for (const std::pair<const std::string, urdf::JointSharedPtr> & i : model.joints_) {
     if (i.second->mimic) {
       mimic_.insert(std::make_pair(i.first, i.second->mimic));
     }
@@ -215,7 +210,7 @@ void RobotStatePublisher::setupURDF(const std::string & urdf_xml)
 
 // add children to correct maps
 void RobotStatePublisher::addChildren(
-  std::shared_ptr<urdf::Model> model,
+  const urdf::Model & model,
   const KDL::SegmentMap::const_iterator segment)
 {
   const std::string & root = GetTreeElementSegment(segment->second).getName();
@@ -225,8 +220,8 @@ void RobotStatePublisher::addChildren(
     const KDL::Segment & child = GetTreeElementSegment(children[i]->second);
     SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
     if (child.getJoint().getType() == KDL::Joint::None) {
-      if (model->getJoint(child.getJoint().getName()) &&
-        model->getJoint(child.getJoint().getName())->type == urdf::Joint::FLOATING)
+      if (model.getJoint(child.getJoint().getName()) &&
+        model.getJoint(child.getJoint().getName())->type == urdf::Joint::FLOATING)
       {
         RCLCPP_INFO(
           get_logger(), "Floating joint. Not adding segment from %s to %s.",
@@ -370,7 +365,8 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
 
       // And that we can successfully parse it
       try {
-        parseURDF(new_urdf);
+        urdf::Model dummy_model;
+        parseURDF(new_urdf, dummy_model);
       } catch (const std::runtime_error & err) {
         RCLCPP_WARN(get_logger(), "%s", err.what());
         result.successful = false;

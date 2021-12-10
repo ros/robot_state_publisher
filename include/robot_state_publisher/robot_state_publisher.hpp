@@ -78,7 +78,7 @@ public:
   explicit RobotStatePublisher(const rclcpp::NodeOptions & options);
 
 protected:
-  std::pair<std::shared_ptr<urdf::Model>, KDL::Tree> parseURDF(const std::string & urdf_xml);
+  KDL::Tree parseURDF(const std::string & urdf_xml, urdf::Model & model);
 
   /// Setup the URDF for use.
   /**
@@ -97,7 +97,7 @@ protected:
    * \param[in] segment An iterator to the SegmentMap to add to the internal segment list.
    */
   void addChildren(
-    std::shared_ptr<urdf::Model> model,
+    const urdf::Model & model,
     const KDL::SegmentMap::const_iterator segment);
 
   /// Publish transforms to /tf2.
