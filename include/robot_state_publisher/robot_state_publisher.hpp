@@ -42,11 +42,9 @@
 #include <tf2_ros/transform_broadcaster.h>
 #include <urdf/model.h>
 
-#include <chrono>
 #include <map>
 #include <memory>
 #include <string>
-#include <utility>
 #include <vector>
 
 using MimicMap = std::map<std::string, urdf::JointMimicSharedPtr>;

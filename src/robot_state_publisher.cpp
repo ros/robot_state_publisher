@@ -44,7 +44,6 @@
 #include <urdf/model.h>
 
 #include <chrono>
-#include <cstring>
 #include <fstream>
 #include <functional>
 #include <map>
