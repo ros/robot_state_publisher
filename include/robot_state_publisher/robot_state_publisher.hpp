@@ -33,6 +33,7 @@
 
 #include <builtin_interfaces/msg/time.hpp>
 #include <kdl/tree.hpp>
+#include <rcl_interfaces/msg/parameter_event.hpp>
 #include <rcl_interfaces/msg/set_parameters_result.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
@@ -41,7 +42,6 @@
 #include <tf2_ros/transform_broadcaster.h>
 #include <urdf/model.h>
 
-#include <chrono>
 #include <map>
 #include <memory>
 #include <string>
@@ -76,6 +76,8 @@ public:
   explicit RobotStatePublisher(const rclcpp::NodeOptions & options);
 
 protected:
+  KDL::Tree parseURDF(const std::string & urdf_xml, urdf::Model & model);
+
   /// Setup the URDF for use.
   /**
    * This method first parses the URDF into an internal representation.
@@ -92,7 +94,9 @@ protected:
    *
    * \param[in] segment An iterator to the SegmentMap to add to the internal segment list.
    */
-  void addChildren(const KDL::SegmentMap::const_iterator segment);
+  void addChildren(
+    const urdf::Model & model,
+    const KDL::SegmentMap::const_iterator segment);
 
   /// Publish transforms to /tf2.
   /**
@@ -117,23 +121,29 @@ protected:
    */
   void callbackJointState(const sensor_msgs::msg::JointState::ConstSharedPtr state);
 
+  /// The callback that is called to check that new parameters are valid.
+  /**
+   * This allows the class to reject parameter updates that are invalid.
+   *
+   * \param[in] parameters The vector of parameters that are going to change.
+   * \return SetParametersResult with successful set to true on success, false otherwise.
+   */
+  rcl_interfaces::msg::SetParametersResult parameterUpdate(
+    const std::vector<rclcpp::Parameter> & parameters);
+
   /// The callback that is called when parameters on the node are changed.
   /**
    * This allows the class to dynamically react to changes in parameters.
    *
-   * \param[in] parameters The list of parameters that are going to change.
+   * \param[in] event The parameter change event that occurred.
    */
-  rcl_interfaces::msg::SetParametersResult parameterUpdate(
-    const std::vector<rclcpp::Parameter> & parameters);
+  void onParameterEvent(std::shared_ptr<const rcl_interfaces::msg::ParameterEvent> event);
 
   /// A map of dynamic segment names to SegmentPair structures
   std::map<std::string, SegmentPair> segments_;
 
   /// A map of fixed segment names to SegmentPair structures
   std::map<std::string, SegmentPair> segments_fixed_;
-
-  /// A pointer to the parsed URDF model
-  std::unique_ptr<urdf::Model> model_;
 
   /// A pointer to the tf2 TransformBroadcaster
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
@@ -143,9 +153,6 @@ protected:
 
   /// A pointer to the ROS 2 publisher for the robot_description
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_pub_;
-
-  /// The minimum publish interval between dynamic frame pairs
-  std::chrono::milliseconds publish_interval_ms_;
 
   /// A pointer to the ROS 2 subscription for the joint states
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
@@ -159,14 +166,12 @@ protected:
   /// A map of the mimic joints that should be published
   MimicMap mimic_;
 
-  /// Whether to ignore timestamps while publishing
-  bool ignore_timestamp_;
-
-  /// An arbitrary prefix to add to tf2 frames before publishing
-  std::string frame_prefix_;
-
   /// The parameter event callback that will be called when a parameter is changed
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_cb_;
+
+  /// The parameter event callback that will be called when a parameter is changed
+  std::shared_ptr<rclcpp::Subscription<rcl_interfaces::msg::ParameterEvent,
+    std::allocator<void>>> parameter_subscription_;
 };
 
 }  // namespace robot_state_publisher
