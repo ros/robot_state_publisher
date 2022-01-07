@@ -30,6 +30,16 @@
 
 #include "robot_state_publisher/robot_state_publisher.hpp"
 
+#include <chrono>
+#include <fstream>
+#include <functional>
+#include <map>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include <builtin_interfaces/msg/time.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <kdl/tree.hpp>
@@ -41,17 +51,7 @@
 #include <rclcpp_components/register_node_macro.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <std_msgs/msg/string.hpp>
-#include <urdf/model.h>
-
-#include <chrono>
-#include <fstream>
-#include <functional>
-#include <map>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <utility>
-#include <vector>
+#include "urdf/model.h"
 
 namespace robot_state_publisher
 {
