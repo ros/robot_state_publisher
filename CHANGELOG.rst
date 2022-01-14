@@ -2,6 +2,20 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.0 (2022-01-14)
+------------------
+* Fix include order for cpplint (`#186 <https://github.com/ros/robot_state_publisher/issues/186>`_)
+* Change how parameter updates are handled (`#180 <https://github.com/ros/robot_state_publisher/issues/180>`_)
+* Install includes to instal/${PROJECT_NAME} (`#184 <https://github.com/ros/robot_state_publisher/issues/184>`_)
+* Make the change_fixed_joint test more robust (`#183 <https://github.com/ros/robot_state_publisher/issues/183>`_)
+* Add in a test to make sure fixed transforms change on update
+* Small C++ nice-isms in the tests
+* Switch to using target_include_directories for tests
+* Publish new fixed transforms when URDF is updated
+* Make joint_states subscription QoS configurable; default to SensorDataQoS (`#179 <https://github.com/ros/robot_state_publisher/issues/179>`_)
+* Remove dependency on urdfdom_headers (`#168 <https://github.com/ros/robot_state_publisher/issues/168>`_)
+* Contributors: Anthony Deschamps, Chris Lalancette, Jacob Perron, Russell Joyce, Shane Loretz
+
 2.7.0 (2021-10-18)
 ------------------
 * Fix deprecated subscriber callbacks (`#173 <https://github.com/ros/robot_state_publisher/issues/173>`_)
