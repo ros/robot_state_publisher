@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.5.3 (2022-02-17)
+------------------
 * Publish new fixed transforms when URDF is updated (`#189 <https://github.com/ros/robot_state_publisher/issues/189>`_)
 * Contributors: Chris Lalancette
 
