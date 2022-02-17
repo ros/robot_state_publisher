@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Publish new fixed transforms when URDF is updated (`#189 <https://github.com/ros/robot_state_publisher/issues/189>`_)
+* Contributors: Chris Lalancette
+
 2.5.2 (2021-11-30)
 ------------------
 * Prevent robot_state_publisher from publishing on a timer (`#175 <https://github.com/ros/robot_state_publisher/issues/175>`_)
