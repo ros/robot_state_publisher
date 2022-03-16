@@ -23,13 +23,7 @@ find_package(std_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(urdf REQUIRED)
 
-add_library(
-  ${PROJECT_NAME}_node SHARED
-  src/robot_state_publisher.cpp)
-target_include_directories(${PROJECT_NAME}_node PUBLIC
-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
-ament_target_dependencies(${PROJECT_NAME}_node
+set(THIS_PACKAGE_INCLUDE_DEPENDS
   builtin_interfaces
   geometry_msgs
   kdl_parser
@@ -40,9 +34,17 @@ ament_target_dependencies(${PROJECT_NAME}_node
   sensor_msgs
   std_msgs
   tf2_ros
-  urdf
-)
+  urdf)
+
+add_library(
+  ${PROJECT_NAME}_node SHARED
+  src/robot_state_publisher.cpp)
+target_include_directories(${PROJECT_NAME}_node PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
+ament_target_dependencies(${PROJECT_NAME}_node ${THIS_PACKAGE_INCLUDE_DEPENDS})
 ament_export_targets(export_${PROJECT_NAME}_node)
+ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 rclcpp_components_register_node(${PROJECT_NAME}_node
   PLUGIN "robot_state_publisher::RobotStatePublisher"
