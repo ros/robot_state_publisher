@@ -44,7 +44,6 @@ target_include_directories(${PROJECT_NAME}_node PUBLIC
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 ament_target_dependencies(${PROJECT_NAME}_node ${THIS_PACKAGE_INCLUDE_DEPENDS})
 ament_export_targets(export_${PROJECT_NAME}_node)
-ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 rclcpp_components_register_node(${PROJECT_NAME}_node
   PLUGIN "robot_state_publisher::RobotStatePublisher"
@@ -116,5 +115,5 @@ if(BUILD_TESTING)
     ARGS "test_exe:=$<TARGET_FILE:test_two_links_change_fixed_joint>")
 endif()
 
-ament_export_dependencies(builtin_interfaces orocos_kdl rclcpp sensor_msgs std_msgs tf2_ros urdf)
+ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 ament_package()
