@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* export dependencies, to use robot_state_publisher as a component (`#193 <https://github.com/ros/robot_state_publisher/issues/193>`_)
+* Contributors: Kenji Brameld
+
 3.0.0 (2022-01-14)
 ------------------
 * Fix include order for cpplint (`#186 <https://github.com/ros/robot_state_publisher/issues/186>`_)
