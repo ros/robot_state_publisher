@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.2 (2022-04-05)
+------------------
+* Depend on orocos_kdl_vendor (`#191 <https://github.com/ros/robot_state_publisher/issues/191>`_)
+* Contributors: Jacob Perron
+
 3.0.1 (2022-03-28)
 ------------------
 * export dependencies, to use robot_state_publisher as a component (`#193 <https://github.com/ros/robot_state_publisher/issues/193>`_)
