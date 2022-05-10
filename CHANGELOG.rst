@@ -2,6 +2,9 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.1.0 (2022-05-10)
+------------------
+
 3.0.2 (2022-04-05)
 ------------------
 * Depend on orocos_kdl_vendor (`#191 <https://github.com/ros/robot_state_publisher/issues/191>`_)
