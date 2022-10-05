@@ -87,7 +87,8 @@ protected:
   MimicMap mimic_;
   bool use_tf_static_;
   bool ignore_timestamp_;
-
+  std::string tf_prefix_;
+  bool tf_prefix_cached_;
 };
 }
 

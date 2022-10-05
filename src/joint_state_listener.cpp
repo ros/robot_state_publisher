@@ -58,7 +58,7 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
 }
 
 JointStateListener::JointStateListener(const std::shared_ptr<RobotStatePublisher>& rsp, const MimicMap& m)
-  : state_publisher_(rsp), mimic_(m)
+  : state_publisher_(rsp), mimic_(m), tf_prefix_cached_(false)
 {
   ros::NodeHandle n_tilde("~");
   ros::NodeHandle n;
@@ -92,15 +92,19 @@ JointStateListener::~JointStateListener()
 
 std::string JointStateListener::getTFPrefix()
 {
+  if (tf_prefix_cached_) {
+    return tf_prefix_;
+  }
+
   ros::NodeHandle n_tilde("~");
-  std::string tf_prefix;
 
   // get the tf_prefix parameter from the closest namespace
   std::string tf_prefix_key;
   n_tilde.searchParam("tf_prefix", tf_prefix_key);
-  n_tilde.param(tf_prefix_key, tf_prefix, std::string(""));
+  n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
+  tf_prefix_cached_ = true;
 
-  return tf_prefix;
+  return tf_prefix_;
 }
 
 void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
