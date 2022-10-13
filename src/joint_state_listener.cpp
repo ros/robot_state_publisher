@@ -36,7 +36,9 @@
 
 #include <algorithm>
 #include <map>
+#include <mutex>
 #include <string>
+#include <unordered_map>
 
 #include <ros/ros.h>
 #include <urdf/model.h>
@@ -48,6 +50,37 @@
 
 using namespace robot_state_publisher;
 
+namespace robot_state_publisher {
+
+template <typename T>
+class ParameterCache {
+public:
+  void set(const void* owner, const T& value)
+  {
+    std::lock_guard<std::mutex> lock(mtx_);
+    store_[owner] = value;
+  }
+  bool get(const void* owner, T& value)
+  {
+    std::lock_guard<std::mutex> lock(mtx_);
+    if (store_.count(owner) > 0) {
+      value = store_.at(owner);
+      return true;
+    }
+    return false;
+  }
+  void clear(const void* owner)
+  {
+    std::lock_guard<std::mutex> lock(mtx_);
+    store_.erase(owner);
+  }
+private:
+  std::mutex mtx_; // shared_mutex is preferable
+  std::unordered_map<const void*, T> store_;
+};
+ParameterCache<std::string> g_tf_prefix_cache;
+}
+
 JointStateListener::JointStateListener() : JointStateListener(KDL::Tree(), MimicMap())
 {
 }
@@ -58,7 +91,7 @@ JointStateListener::JointStateListener(const KDL::Tree& tree, const MimicMap& m,
 }
 
 JointStateListener::JointStateListener(const std::shared_ptr<RobotStatePublisher>& rsp, const MimicMap& m)
-  : state_publisher_(rsp), mimic_(m), tf_prefix_cached_(false)
+  : state_publisher_(rsp), mimic_(m)
 {
   ros::NodeHandle n_tilde("~");
   ros::NodeHandle n;
@@ -88,12 +121,15 @@ JointStateListener::JointStateListener(const std::shared_ptr<RobotStatePublisher
 
 
 JointStateListener::~JointStateListener()
-{}
+{
+  g_tf_prefix_cache.clear(this);
+}
 
 std::string JointStateListener::getTFPrefix()
 {
-  if (tf_prefix_cached_) {
-    return tf_prefix_;
+  std::string tf_prefix;
+  if (g_tf_prefix_cache.get(this, tf_prefix)) {
+    return tf_prefix;
   }
 
   ros::NodeHandle n_tilde("~");
@@ -101,10 +137,10 @@ std::string JointStateListener::getTFPrefix()
   // get the tf_prefix parameter from the closest namespace
   std::string tf_prefix_key;
   n_tilde.searchParam("tf_prefix", tf_prefix_key);
-  n_tilde.param(tf_prefix_key, tf_prefix_, std::string(""));
-  tf_prefix_cached_ = true;
+  n_tilde.param(tf_prefix_key, tf_prefix, std::string(""));
+  g_tf_prefix_cache.set(this, tf_prefix);
 
-  return tf_prefix_;
+  return tf_prefix;
 }
 
 void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
