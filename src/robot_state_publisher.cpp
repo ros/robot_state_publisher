@@ -345,7 +345,12 @@ void RobotStatePublisher::callbackJointState(
       }
     }
 
-    publishTransforms(joint_positions, state->header.stamp);
+    rclcpp::Parameter sim_p = this->get_parameter("use_sim_time");
+    if (sim_p.as_bool()) {
+      publishTransforms(joint_positions, now);
+    } else {
+      publishTransforms(joint_positions, state->header.stamp);
+    }
 
     // store publish time in joint map
     for (size_t i = 0; i < state->name.size(); i++) {
