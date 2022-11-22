@@ -147,8 +147,6 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
     std::bind(&RobotStatePublisher::callbackJointState, this, std::placeholders::_1),
     subscriber_options);
 
-  publishFixedTransforms();
-
   // Now that we have successfully declared the parameters and done all
   // necessary setup, install the callback for updating parameters.
   param_cb_ = add_on_set_parameters_callback(
@@ -205,6 +203,9 @@ void RobotStatePublisher::setupURDF(const std::string & urdf_xml)
 
   // Publish the robot description
   description_pub_->publish(std::move(msg));
+
+  // And publish the fixed transforms
+  publishFixedTransforms();
 }
 
 // add children to correct maps
@@ -215,7 +216,7 @@ void RobotStatePublisher::addChildren(
   const std::string & root = GetTreeElementSegment(segment->second).getName();
 
   std::vector<KDL::SegmentMap::const_iterator> children = GetTreeElementChildren(segment->second);
-  for (unsigned int i = 0; i < children.size(); i++) {
+  for (size_t i = 0; i < children.size(); i++) {
     const KDL::Segment & child = GetTreeElementSegment(children[i]->second);
     SegmentPair s(GetTreeElementSegment(children[i]->second), root, child.getName());
     if (child.getJoint().getType() == KDL::Joint::None) {
@@ -286,6 +287,10 @@ void RobotStatePublisher::publishFixedTransforms()
     tf_transform.child_frame_id = frame_prefix + seg.second.tip;
     tf_transforms.push_back(tf_transform);
   }
+
+  // Clear out any previous transforms; that way, if the new URDF removes some
+  // joints, that will be properly reflected.
+  static_tf_broadcaster_->clearTransforms();
   static_tf_broadcaster_->sendTransform(tf_transforms);
 }
 
@@ -408,7 +413,6 @@ void RobotStatePublisher::onParameterEvent(
     if (it.second->name == "robot_description") {
       try {
         setupURDF(it.second->value.string_value);
-        publishFixedTransforms();
       } catch (const std::runtime_error & err) {
         RCLCPP_WARN(get_logger(), "Failed to parse new URDF: %s", err.what());
       }
