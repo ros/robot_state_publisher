@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [rolling] Update maintainers - 2022-11-07 (`#203 <https://github.com/ros/robot_state_publisher/issues/203>`_)
+* Contributors: Audrow Nash
+
 3.1.1 (2022-09-13)
 ------------------
 * Mirror rolling to ros2
