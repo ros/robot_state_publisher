@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update robot_state_publisher to C++17. (`#204 <https://github.com/ros/robot_state_publisher/issues/204>`_)
+* Contributors: Chris Lalancette
+
 3.1.2 (2023-02-13)
 ------------------
 * [rolling] Update maintainers - 2022-11-07 (`#203 <https://github.com/ros/robot_state_publisher/issues/203>`_)
