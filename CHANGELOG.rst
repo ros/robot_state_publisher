@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.3.1 (2023-06-07)
+------------------
 * Improve log messages (`#206 <https://github.com/ros/robot_state_publisher/issues/206>`_)
 * Contributors: Nick Lamprianidis
 
