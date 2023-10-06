@@ -2,22 +2,23 @@ cmake_minimum_required(VERSION 3.0.2)
 project(robot_state_publisher)
 
 include(CheckCXXCompilerFlag)
-unset(COMPILER_SUPPORTS_CXX11 CACHE)
+unset(COMPILER_SUPPORTS_CXX17 CACHE)
 if(MSVC)
   # https://docs.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version
   # MSVC will fail the following check since it does not have the c++11 switch
   # however, c++11 is always enabled (the newer /std:c++14 is enabled by default)
-  check_cxx_compiler_flag(/std:c++11 COMPILER_SUPPORTS_CXX11)
-  if(COMPILER_SUPPORTS_CXX11)
-    add_compile_options(/std:c++11)
+  # Oct. 06 2023: upgrade to c++17
+  check_cxx_compiler_flag(/std:c++17 COMPILER_SUPPORTS_CXX17)
+  if(COMPILER_SUPPORTS_CXX17)
+    add_compile_options(/std:c++17)
   endif()
 
   # MSVC does not support the Wextra flag
   add_compile_options(/Wall)
 else()
-  check_cxx_compiler_flag(-std=c++11 COMPILER_SUPPORTS_CXX11)
-  if(COMPILER_SUPPORTS_CXX11)
-    add_compile_options(-std=c++11)
+  check_cxx_compiler_flag(-std=c++17 COMPILER_SUPPORTS_CXX17)
+  if(COMPILER_SUPPORTS_CXX17)
+    add_compile_options(-std=c++17)
   endif()
   add_compile_options(-Wall -Wextra)
 endif()
