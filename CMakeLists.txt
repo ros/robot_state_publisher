@@ -2,23 +2,15 @@ cmake_minimum_required(VERSION 3.0.2)
 project(robot_state_publisher)
 
 include(CheckCXXCompilerFlag)
-unset(COMPILER_SUPPORTS_CXX11 CACHE)
-if(MSVC)
-  # https://docs.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version
-  # MSVC will fail the following check since it does not have the c++11 switch
-  # however, c++11 is always enabled (the newer /std:c++14 is enabled by default)
-  check_cxx_compiler_flag(/std:c++11 COMPILER_SUPPORTS_CXX11)
-  if(COMPILER_SUPPORTS_CXX11)
-    add_compile_options(/std:c++11)
-  endif()
+if (NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif ()
 
+if(MSVC)
   # MSVC does not support the Wextra flag
   add_compile_options(/Wall)
 else()
-  check_cxx_compiler_flag(-std=c++11 COMPILER_SUPPORTS_CXX11)
-  if(COMPILER_SUPPORTS_CXX11)
-    add_compile_options(-std=c++11)
-  endif()
   add_compile_options(-Wall -Wextra)
 endif()
 
@@ -43,6 +35,7 @@ link_directories(${orocos_kdl_LIBRARY_DIRS})
 add_library(${PROJECT_NAME}_solver
   src/robot_state_publisher.cpp
 )
+target_compile_features(${PROJECT_NAME}_solver PUBLIC cxx_std_14)
 target_link_libraries(${PROJECT_NAME}_solver ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES})
 
 add_library(joint_state_listener src/joint_state_listener.cpp)
