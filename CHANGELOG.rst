@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.3.2 (2023-11-06)
+------------------
 * Remove ament_target_dependencies. (`#209 <https://github.com/ros/robot_state_publisher/issues/209>`_)
 * Contributors: Chris Lalancette
 
