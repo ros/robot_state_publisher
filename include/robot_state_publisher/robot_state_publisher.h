@@ -74,7 +74,7 @@ public:
   RobotStatePublisher(const KDL::Tree& tree, const urdf::Model& model = urdf::Model());
 
   /// Destructor
-  ~RobotStatePublisher(){};
+  virtual ~RobotStatePublisher() = default;
 
   /** Publish transforms to tf
    * \param joint_positions A map of joint names and joint positions.
