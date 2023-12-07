@@ -69,7 +69,7 @@ public:
 
 
   /// Destructor
-  ~JointStateListener();
+  virtual ~JointStateListener();
 
 private:
   std::string getTFPrefix();
