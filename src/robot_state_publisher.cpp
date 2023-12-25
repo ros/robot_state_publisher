@@ -186,7 +186,7 @@ void RobotStatePublisher::setupURDF(const std::string & urdf_xml)
   mimic_.clear();
   for (const std::pair<const std::string, urdf::JointSharedPtr> & i : model.joints_) {
     if (i.second->mimic) {
-      mimic_.insert(std::make_pair(i.first, i.second->mimic));
+      mimic_.insert(std::make_pair(i.first, std::make_shared<urdf::JointMimic>(*i.second->mimic)));
     }
   }
 
