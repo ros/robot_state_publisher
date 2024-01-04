@@ -186,7 +186,13 @@ void RobotStatePublisher::setupURDF(const std::string & urdf_xml)
   mimic_.clear();
   for (const std::pair<const std::string, urdf::JointSharedPtr> & i : model.joints_) {
     if (i.second->mimic) {
-      mimic_.insert(std::make_pair(i.first, i.second->mimic));
+      // Just taking a reference to the model shared pointers ends up in a crash.
+      // Explicitly make a copy of the JointMimic.
+      auto jm = std::make_shared<urdf::JointMimic>();
+      jm->offset = i.second->mimic->offset;
+      jm->multiplier = i.second->mimic->multiplier;
+      jm->joint_name = i.second->mimic->joint_name;
+      mimic_[i.first] = jm;
     }
   }
 
