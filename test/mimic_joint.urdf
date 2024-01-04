@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<robot name="test">
+  <link name="base_link">
+  </link>
+
+  <link name="second_link">
+  </link>
+
+  <link name="third_link">
+  </link>
+
+  <joint name="base_to_second_joint" type="fixed">
+    <origin rpy="1 0 0" xyz="0 1 0"/>
+    <parent link="base_link"/>
+    <child link="second_link"/>
+  </joint>
+
+  <joint name="base_to_third_joint" type="fixed">
+    <origin rpy="1 0 0" xyz="0 1 0"/>
+    <parent link="base_link"/>
+    <child link="third_link"/>
+    <mimic joint="base_to_second_joint" multiplier="1" offset="0"/>
+  </joint>
+
+</robot>
