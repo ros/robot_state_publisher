@@ -109,10 +109,25 @@ if(BUILD_TESTING)
     rclcpp
     tf2_ros
   )
+  ament_target_dependencies(test_two_links_change_fixed_joint
+    rcl_interfaces
+    rclcpp
+    tf2_ros
+  )
   target_include_directories(test_two_links_change_fixed_joint PRIVATE ${GTEST_INCLUDE_DIRS})
   target_link_libraries(test_two_links_change_fixed_joint ${GTEST_LIBRARIES})
   add_launch_test(test/two_links_change_fixed_joint-launch.py
     ARGS "test_exe:=$<TARGET_FILE:test_two_links_change_fixed_joint>")
+
+  add_executable(test_change_mimic_joint test/test_change_mimic_joint.cpp)
+  ament_target_dependencies(test_change_mimic_joint
+    rclcpp
+    rcl_interfaces
+  )
+  target_include_directories(test_change_mimic_joint PRIVATE ${GTEST_INCLUDE_DIRS})
+  target_link_libraries(test_change_mimic_joint ${GTEST_LIBRARIES})
+  add_launch_test(test/change_mimic_joint-launch.py
+    ARGS "test_exe:=$<TARGET_FILE:test_change_mimic_joint>")
 endif()
 
 ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
