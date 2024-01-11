@@ -28,3 +28,4 @@ Parameters
 * `publish_frequency` (double) - The maximum frequency at which non-static transforms (e.g. joint states) will be published to `/tf`.  Defaults to 20.0 Hz.
 * `ignore_timestamp` (bool) - Whether to accept all joint states no matter what the timestamp (true), or to only publish joint state updates if they are newer than the last publish_frequency (false).  Defaults to false.
 * `frame_prefix` (string) - An arbitrary prefix to add to the published tf2 frames.  Defaults to the empty string.
+* `joint_states_topic` (string) - Joint states topic name. Defaults to `"joint_states"`.

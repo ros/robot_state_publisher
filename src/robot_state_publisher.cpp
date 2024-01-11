@@ -126,6 +126,9 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   // ignore_timestamp_ == true, joint_state messages are accepted, no matter their timestamp
   this->declare_parameter("ignore_timestamp", false);
 
+  // set joint state topic name
+  std::string joint_states_topic = this->declare_parameter("joint_states_topic", "joint_states");
+
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(this);
   static_tf_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(this);
 
@@ -142,7 +145,7 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
 
   // subscribe to joint state
   joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>(
-    "joint_states",
+    joint_states_topic,
     rclcpp::SensorDataQoS(),
     std::bind(&RobotStatePublisher::callbackJointState, this, std::placeholders::_1),
     subscriber_options);
