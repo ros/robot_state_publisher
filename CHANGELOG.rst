@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.3 (2024-01-24)
+------------------
+* Fix reload after a description with a mimic joint (`#212 <https://github.com/ros/robot_state_publisher/issues/212>`_) (`#214 <https://github.com/ros/robot_state_publisher/issues/214>`_)
+* Contributors: mergify[bot]
+
 3.0.2 (2022-04-05)
 ------------------
 * Depend on orocos_kdl_vendor (`#191 <https://github.com/ros/robot_state_publisher/issues/191>`_)
