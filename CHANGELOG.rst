@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix reload after a description with a mimic joint (`#212 <https://github.com/ros/robot_state_publisher/issues/212>`_)
+* Contributors: Guillaume Doisy
+
 3.3.2 (2023-11-06)
 ------------------
 * Remove ament_target_dependencies. (`#209 <https://github.com/ros/robot_state_publisher/issues/209>`_)
