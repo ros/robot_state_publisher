@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix reload after a description with a mimic joint (`#213 <https://github.com/ros/robot_state_publisher/issues/213>`_)
+* Contributors: Guillaume Doisy
+
 3.2.0 (2023-04-11)
 ------------------
 * Update robot_state_publisher to C++17. (`#204 <https://github.com/ros/robot_state_publisher/issues/204>`_)
