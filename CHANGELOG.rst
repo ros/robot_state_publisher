@@ -2,8 +2,8 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.2.1 (2024-02-07)
+------------------
 * Fix reload after a description with a mimic joint (`#213 <https://github.com/ros/robot_state_publisher/issues/213>`_)
 * Contributors: Guillaume Doisy
 
