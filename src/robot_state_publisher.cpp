@@ -129,10 +129,15 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(this);
   static_tf_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(this);
 
+  auto publisher_options = rclcpp::PublisherOptions();
+  // Explicitly disable intra_process_comms for this publisher alone to allow
+  // for this node to run in a component container with intra_process_comms enabled.
+  publisher_options.use_intra_process_comm = rclcpp::IntraProcessSetting::Disable;
   description_pub_ = this->create_publisher<std_msgs::msg::String>(
     "robot_description",
     // Transient local is similar to latching in ROS 1.
-    rclcpp::QoS(1).transient_local());
+    rclcpp::QoS(1).transient_local(),
+    std::move(publisher_options));
 
   setupURDF(urdf_xml);
 
