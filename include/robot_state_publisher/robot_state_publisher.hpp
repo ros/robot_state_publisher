@@ -45,7 +45,7 @@
 #include "std_msgs/msg/string.hpp"
 #include "tf2_ros/static_transform_broadcaster.h"
 #include "tf2_ros/transform_broadcaster.h"
-#include "urdf/model.h"
+#include "urdf/model.hpp"
 
 using MimicMap = std::map<std::string, urdf::JointMimicSharedPtr>;
 
