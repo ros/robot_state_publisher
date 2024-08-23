@@ -1,6 +1,8 @@
 Robot State Publisher
 =====================
 
+Foo.
+
 This package contains the Robot State Publisher, a node and a class to publish the state of a robot to tf2.
 At startup time, Robot State Publisher is supplied with a kinematic tree model (URDF) of the robot.
 It then subscribes to the `joint_states` topic (of type `sensor_msgs/msg/JointState`) to get individual joint states.
