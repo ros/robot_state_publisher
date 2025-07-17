@@ -43,8 +43,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "tf2_ros/static_transform_broadcaster.h"
-#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/static_transform_broadcaster.hpp"
+#include "tf2_ros/transform_broadcaster.hpp"
 #include "urdf/model.hpp"
 
 using MimicMap = std::map<std::string, urdf::JointMimicSharedPtr>;
