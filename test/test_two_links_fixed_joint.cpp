@@ -45,7 +45,7 @@ TEST(test_publisher, test_two_joints)
 
   rclcpp::Clock::SharedPtr clock = std::make_shared<rclcpp::Clock>(RCL_SYSTEM_TIME);
   tf2_ros::Buffer buffer(clock);
-  tf2_ros::TransformListener tfl(buffer, node, true);
+  tf2_ros::TransformListener tfl(buffer, *node, true);
 
   for (unsigned int i = 0; i < 100 && !buffer.canTransform("link1", "link2", rclcpp::Time()); ++i) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));

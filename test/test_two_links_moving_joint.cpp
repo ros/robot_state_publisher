@@ -52,7 +52,7 @@ TEST(test_publisher, test_two_joints)
 
   rclcpp::Clock::SharedPtr clock = std::make_shared<rclcpp::Clock>(RCL_SYSTEM_TIME);
   tf2_ros::Buffer buffer(clock);
-  tf2_ros::TransformListener tfl(buffer, node, true);
+  tf2_ros::TransformListener tfl(buffer, *node, true);
 
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr pub =
     node->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
