@@ -95,7 +95,7 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   // ignore_timestamp_ == true, joint_state messages are accepted, no matter their timestamp
   this->declare_parameter("ignore_timestamp", false);
 
-  tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(this);
+  tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
   static_tf_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(this);
 
   description_pub_ = this->create_publisher<std_msgs::msg::String>(
