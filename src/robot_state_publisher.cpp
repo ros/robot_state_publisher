@@ -96,7 +96,7 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   this->declare_parameter("ignore_timestamp", false);
 
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
-  static_tf_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(this);
+  static_tf_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(*this);
 
   description_pub_ = this->create_publisher<std_msgs::msg::String>(
     "robot_description",
