@@ -77,9 +77,9 @@ geometry_msgs::msg::TransformStamped kdlToTransform(const KDL::Frame & k)
 RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
 : rclcpp::Node("robot_state_publisher", options)
 {
-  description_from_topic_ = this->declare_parameter("use_robot_description_topic", false);
+  use_robot_description_topic_ = this->declare_parameter("use_robot_description_topic", false);
 
-  if (description_from_topic_) {
+  if (use_robot_description_topic_) {
     description_sub_ = this->create_subscription<std_msgs::msg::String>(
         "robot_description", rclcpp::QoS(1).transient_local().reliable(),
       [this](const std_msgs::msg::String::SharedPtr msg) {
@@ -196,7 +196,7 @@ void RobotStatePublisher::setupURDF(const std::string & urdf_xml)
   msg->data = urdf_xml;
 
   // Publish the robot description
-  if (!description_from_topic_) {
+  if (!use_robot_description_topic_) {
     description_pub_->publish(std::move(msg));
   }
 
