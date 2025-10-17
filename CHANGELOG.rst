@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.4.3 (2025-10-17)
+------------------
+* fix cmake deprecation (`#232 <https://github.com/ros/robot_state_publisher/issues/232>`_) (`#240 <https://github.com/ros/robot_state_publisher/issues/240>`_)
+* Contributors: mergify[bot]
+
 3.4.2 (2024-12-20)
 ------------------
 * Use `emplace()` with `std::map`s (`#231 <https://github.com/ros/robot_state_publisher/issues/231>`_)
