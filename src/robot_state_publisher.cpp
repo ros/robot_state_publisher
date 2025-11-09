@@ -82,7 +82,7 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
   if (use_robot_description_topic_) {
     description_sub_ = this->create_subscription<std_msgs::msg::String>(
         "robot_description", rclcpp::QoS(1).transient_local().reliable(),
-      [this](const std_msgs::msg::String::SharedPtr msg) {
+      [this](const std_msgs::msg::String::ConstSharedPtr msg) {
         try {
           this->setupURDF(msg->data);
           this->publishFixedTransforms();
