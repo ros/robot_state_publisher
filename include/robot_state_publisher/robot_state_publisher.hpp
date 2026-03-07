@@ -154,6 +154,13 @@ protected:
   /// A pointer to the ROS 2 publisher for the robot_description
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr description_pub_;
 
+  /// A pointer to the ROS 2 subscription for the robot_description,
+  /// when use_robot_description_topic_ is true
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr description_sub_;
+
+  /// Whether to use the robot_description from a topic instead of a parameter
+  bool use_robot_description_topic_;
+
   /// A pointer to the ROS 2 subscription for the joint states
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
 
