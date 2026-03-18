@@ -59,6 +59,11 @@ namespace robot_state_publisher
 namespace
 {
 
+inline bool check_valid_pub_freq(double val)
+{
+  return val > 0.0 && val <= 1000.0;
+}
+
 inline
 geometry_msgs::msg::TransformStamped kdlToTransform(const KDL::Frame & k)
 {
@@ -118,7 +123,7 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
 
   // set publish frequency
   publish_frequency_ = this->declare_parameter("publish_frequency", 20.0);
-  if (publish_frequency_ <= 0.0 || publish_frequency_ > 1000.0) {
+  if (!check_valid_pub_freq(publish_frequency_)) {
     throw std::runtime_error("publish_frequency must be between 0 (exclusive) and 1000");
   }
 
@@ -375,7 +380,7 @@ rcl_interfaces::msg::SetParametersResult RobotStatePublisher::parameterUpdate(
       }
     } else if (parameter.get_name() == "publish_frequency") {
       double publish_freq = parameter.as_double();
-      if (publish_freq <= 0.0 || publish_freq > 1000.0) {
+      if (!check_valid_pub_freq(publish_freq)) {
         result.successful = false;
         result.reason = "publish_frequency must be between 0.0 (exclusive) and 1000.0";
         break;
