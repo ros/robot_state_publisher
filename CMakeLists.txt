@@ -31,17 +31,17 @@ target_include_directories(${PROJECT_NAME}_node PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 target_link_libraries(${PROJECT_NAME}_node PUBLIC
-  ${builtin_interfaces_TARGETS}
+  builtin_interfaces::builtin_interfaces
   orocos-kdl
-  ${rcl_interfaces_TARGETS}
+  rcl_interfaces::rcl_interfaces
   rclcpp::rclcpp
-  ${sensor_msgs_TARGETS}
-  ${std_msgs_TARGETS}
+  sensor_msgs::sensor_msgs
+  std_msgs::std_msgs
   tf2_ros::tf2_ros
   urdf::urdf
 )
 target_link_libraries(${PROJECT_NAME}_node PRIVATE
-  ${geometry_msgs_TARGETS}
+  geometry_msgs::geometry_msgs
   kdl_parser::kdl_parser
   rclcpp_components::component
 )
@@ -89,7 +89,7 @@ if(BUILD_TESTING)
 
   add_executable(test_two_links_moving_joint test/test_two_links_moving_joint.cpp)
   target_include_directories(test_two_links_fixed_joint PRIVATE ${GTEST_INCLUDE_DIRS})
-  target_link_libraries(test_two_links_moving_joint PRIVATE ${GTEST_LIBRARIES} rclcpp::rclcpp ${sensor_msgs_TARGETS} tf2_ros::tf2_ros)
+  target_link_libraries(test_two_links_moving_joint PRIVATE ${GTEST_LIBRARIES} rclcpp::rclcpp sensor_msgs::sensor_msgs tf2_ros::tf2_ros)
   add_launch_test(test/two_links_moving_joint-launch.py
     ARGS "test_exe:=$<TARGET_FILE:test_two_links_moving_joint>")
 
@@ -97,7 +97,7 @@ if(BUILD_TESTING)
   target_include_directories(test_two_links_change_fixed_joint PRIVATE ${GTEST_INCLUDE_DIRS})
   target_link_libraries(test_two_links_change_fixed_joint PRIVATE
     ${GTEST_LIBRARIES}
-    ${rcl_interfaces_TARGETS}
+    rcl_interfaces::rcl_interfaces
     rclcpp::rclcpp
     tf2_ros::tf2_ros
   )
@@ -106,7 +106,7 @@ if(BUILD_TESTING)
 
   add_executable(test_change_mimic_joint test/test_change_mimic_joint.cpp)
   target_include_directories(test_change_mimic_joint PRIVATE ${GTEST_INCLUDE_DIRS})
-  target_link_libraries(test_change_mimic_joint PRIVATE ${GTEST_LIBRARIES} rclcpp::rclcpp ${rcl_interfaces_TARGETS})
+  target_link_libraries(test_change_mimic_joint PRIVATE ${GTEST_LIBRARIES} rclcpp::rclcpp rcl_interfaces::rcl_interfaces)
   add_launch_test(test/change_mimic_joint-launch.py
     ARGS "test_exe:=$<TARGET_FILE:test_change_mimic_joint>")
 
