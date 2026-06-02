@@ -2,6 +2,13 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Remove CODEOWNERS and mirror-rolling-to-main workflow (`#229 <https://github.com/ros/robot_state_publisher/issues/229>`_) (`#230 <https://github.com/ros/robot_state_publisher/issues/230>`_)
+  (cherry picked from commit 34a7b23c15af2d2e4f863d5041c54922aa9bf675)
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+* Contributors: mergify[bot]
+
 3.3.3 (2024-01-24)
 ------------------
 * Fix reload after a description with a mimic joint (`#212 <https://github.com/ros/robot_state_publisher/issues/212>`_)
