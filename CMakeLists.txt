@@ -1,17 +1,14 @@
 cmake_minimum_required(VERSION 3.20)
 project(robot_state_publisher)
 
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-
+# The C++/C standard comes from ament_ros_defaults (cxx_std_20 / c_std_17),
+# linked PRIVATE below so it applies to this package's own translation units.
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra)
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros_core REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(kdl_parser REQUIRED)
@@ -44,6 +41,10 @@ target_link_libraries(${PROJECT_NAME}_node PRIVATE
   geometry_msgs::geometry_msgs
   kdl_parser::kdl_parser
   rclcpp_components::component
+  # INTERFACE target providing cxx_std_20 / c_std_17. Linked PRIVATE so the
+  # standard applies to our own sources without leaking into the exported
+  # interface (a SHARED library does not propagate PRIVATE link requirements).
+  ament_cmake_ros_core::ament_ros_defaults
 )
 ament_export_targets(export_${PROJECT_NAME}_node)
 
