@@ -250,6 +250,8 @@ void RobotStatePublisher::publishTransforms(
   const std::string & frame_prefix = frame_prefix_;
 
   std::vector<geometry_msgs::msg::TransformStamped> tf_transforms;
+  // Upper bound: at most one transform per incoming joint position.
+  tf_transforms.reserve(joint_positions.size());
 
   // loop over all joints
   for (const std::pair<const std::string, double> & jnt : joint_positions) {
@@ -274,6 +276,8 @@ void RobotStatePublisher::publishFixedTransforms()
   const std::string & frame_prefix = frame_prefix_;
 
   std::vector<geometry_msgs::msg::TransformStamped> tf_transforms;
+  // Exactly one transform per fixed segment.
+  tf_transforms.reserve(segments_fixed_.size());
 
   // loop over all fixed segments
   rclcpp::Time now = this->now();
