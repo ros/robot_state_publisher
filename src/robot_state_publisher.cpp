@@ -119,7 +119,7 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
 
     parameter_subscription_ = rclcpp::AsyncParametersClient::on_parameter_event(
       this->get_node_topics_interface(),
-      [this](std::shared_ptr<const rcl_interfaces::msg::ParameterEvent> event) {
+      [this](rcl_interfaces::msg::ParameterEvent::ConstSharedPtr event) {
         onParameterEvent(event);
       });
   }
