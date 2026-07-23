@@ -35,6 +35,7 @@ from launch_ros.actions import Node
 import launch_testing
 import launch_testing.actions
 import launch_testing.asserts
+from launch_testing_ros.actions import EnableRmwIsolation
 
 
 def generate_test_description():
@@ -64,6 +65,7 @@ def generate_test_description():
     )
 
     return LaunchDescription([
+        EnableRmwIsolation(),
         node_robot_state_publisher,
         test_exe_arg,
         process_under_test,
