@@ -34,6 +34,7 @@ from launch import LaunchDescription
 import launch_ros
 import launch_testing
 import launch_testing.actions
+from launch_testing_ros.actions import EnableRmwIsolation
 import pytest
 import rclpy
 from std_msgs.msg import String
@@ -52,6 +53,7 @@ def generate_test_description():
 
     return LaunchDescription(
         [
+            EnableRmwIsolation(),
             node_robot_state_publisher,
             launch_testing.actions.ReadyToTest(),
         ]
