@@ -27,20 +27,22 @@ add_library(
 target_include_directories(${PROJECT_NAME}_node PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
+# Only rclcpp appears in the installed header; everything else is an
+# implementation detail of the .cpp and stays PRIVATE.
 target_link_libraries(${PROJECT_NAME}_node PUBLIC
+  rclcpp::rclcpp
+)
+target_link_libraries(${PROJECT_NAME}_node PRIVATE
   builtin_interfaces::builtin_interfaces
+  geometry_msgs::geometry_msgs
+  kdl_parser::kdl_parser
   orocos-kdl
   rcl_interfaces::rcl_interfaces
-  rclcpp::rclcpp
+  rclcpp_components::component
   sensor_msgs::sensor_msgs
   std_msgs::std_msgs
   tf2_ros::tf2_ros
   urdf::urdf
-)
-target_link_libraries(${PROJECT_NAME}_node PRIVATE
-  geometry_msgs::geometry_msgs
-  kdl_parser::kdl_parser
-  rclcpp_components::component
   # INTERFACE target providing cxx_std_20 / c_std_17. Linked PRIVATE so the
   # standard applies to our own sources without leaking into the exported
   # interface (a SHARED library does not propagate PRIVATE link requirements).
@@ -114,14 +116,5 @@ if(BUILD_TESTING)
   add_launch_test(test/use_robot_description_topic-launch.py)
 endif()
 
-ament_export_dependencies(
-  builtin_interfaces
-  orocos_kdl
-  rcl_interfaces
-  rclcpp
-  sensor_msgs
-  std_msgs
-  tf2_ros
-  urdf
-)
+ament_export_dependencies(rclcpp)
 ament_package()
