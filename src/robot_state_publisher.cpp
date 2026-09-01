@@ -31,7 +31,9 @@
 #include "robot_state_publisher/robot_state_publisher.hpp"
 
 #include <chrono>
-#include <fstream>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
 #include <map>
 #include <memory>
 #include <stdexcept>
@@ -41,15 +43,32 @@
 
 #include "builtin_interfaces/msg/time.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
+#include "kdl/frames.hpp"
+#include "kdl/joint.hpp"
+#include "kdl/segment.hpp"
 #include "kdl/tree.hpp"
 #include "kdl_parser/kdl_parser.hpp"
 #include "rcl_interfaces/msg/parameter_event.hpp"
 #include "rcl_interfaces/msg/set_parameters_result.hpp"
+#include "rclcpp/duration.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/node_interfaces/node_parameters_interface.hpp"
+#include "rclcpp/node_options.hpp"
+#include "rclcpp/parameter.hpp"
+#include "rclcpp/parameter_client.hpp"
 #include "rclcpp/parameter_events_filter.hpp"
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/qos_overriding_options.hpp"
+#include "rclcpp/subscription.hpp"
+#include "rclcpp/subscription_options.hpp"
+#include "rclcpp/time.hpp"
 #include "rclcpp_components/register_node_macro.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "tf2_ros/static_transform_broadcaster.hpp"
+#include "tf2_ros/transform_broadcaster.hpp"
 #include "urdf/model.hpp"
 
 namespace robot_state_publisher
