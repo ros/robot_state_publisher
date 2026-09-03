@@ -78,19 +78,35 @@ if(BUILD_TESTING)
 
   add_executable(test_two_links_fixed_joint test/test_two_links_fixed_joint.cpp)
   target_include_directories(test_two_links_fixed_joint PRIVATE ${GTEST_INCLUDE_DIRS})
-  target_link_libraries(test_two_links_fixed_joint PRIVATE ${GTEST_LIBRARIES} rclcpp::rclcpp tf2_ros::tf2_ros)
+  target_link_libraries(test_two_links_fixed_joint PRIVATE
+    ${GTEST_LIBRARIES}
+    geometry_msgs::geometry_msgs
+    rclcpp::rclcpp
+    tf2_ros::tf2_ros
+  )
   add_launch_test(test/two_links_fixed_joint-launch.py
     ARGS "test_exe:=$<TARGET_FILE:test_two_links_fixed_joint>")
 
   add_executable(test_two_links_fixed_joint_prefix test/test_two_links_fixed_joint_prefix.cpp)
-  target_include_directories(test_two_links_fixed_joint PRIVATE ${GTEST_INCLUDE_DIRS})
-  target_link_libraries(test_two_links_fixed_joint_prefix PRIVATE ${GTEST_LIBRARIES} rclcpp::rclcpp tf2_ros::tf2_ros)
+  target_include_directories(test_two_links_fixed_joint_prefix PRIVATE ${GTEST_INCLUDE_DIRS})
+  target_link_libraries(test_two_links_fixed_joint_prefix PRIVATE
+    ${GTEST_LIBRARIES}
+    geometry_msgs::geometry_msgs
+    rclcpp::rclcpp
+    tf2_ros::tf2_ros
+  )
   add_launch_test(test/two_links_fixed_joint_prefix-launch.py
     ARGS "test_exe:=$<TARGET_FILE:test_two_links_fixed_joint_prefix>")
 
   add_executable(test_two_links_moving_joint test/test_two_links_moving_joint.cpp)
-  target_include_directories(test_two_links_fixed_joint PRIVATE ${GTEST_INCLUDE_DIRS})
-  target_link_libraries(test_two_links_moving_joint PRIVATE ${GTEST_LIBRARIES} rclcpp::rclcpp sensor_msgs::sensor_msgs tf2_ros::tf2_ros)
+  target_include_directories(test_two_links_moving_joint PRIVATE ${GTEST_INCLUDE_DIRS})
+  target_link_libraries(test_two_links_moving_joint PRIVATE
+    ${GTEST_LIBRARIES}
+    geometry_msgs::geometry_msgs
+    rclcpp::rclcpp
+    sensor_msgs::sensor_msgs
+    tf2_ros::tf2_ros
+  )
   add_launch_test(test/two_links_moving_joint-launch.py
     ARGS "test_exe:=$<TARGET_FILE:test_two_links_moving_joint>")
 
@@ -98,6 +114,7 @@ if(BUILD_TESTING)
   target_include_directories(test_two_links_change_fixed_joint PRIVATE ${GTEST_INCLUDE_DIRS})
   target_link_libraries(test_two_links_change_fixed_joint PRIVATE
     ${GTEST_LIBRARIES}
+    geometry_msgs::geometry_msgs
     rcl_interfaces::rcl_interfaces
     rclcpp::rclcpp
     tf2_ros::tf2_ros
