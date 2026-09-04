@@ -2,6 +2,13 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.4.4 (2026-09-04)
+------------------
+* Merge pull request `#253 <https://github.com/ros/robot_state_publisher/issues/253>`_ from ros/mergify/bp/kilted/pr-251
+* Run tests with RMW isolation
+* Add functionality to read description from a topic instead of a parameter (`#234 <https://github.com/ros/robot_state_publisher/issues/234>`_) (`#244 <https://github.com/ros/robot_state_publisher/issues/244>`_)
+* Contributors: Guillaume Doisy, Yadunund Vijay, yadunund
+
 3.4.3 (2025-10-17)
 ------------------
 * fix cmake deprecation (`#232 <https://github.com/ros/robot_state_publisher/issues/232>`_) (`#240 <https://github.com/ros/robot_state_publisher/issues/240>`_)
