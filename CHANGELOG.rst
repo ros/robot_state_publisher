@@ -2,6 +2,12 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.6.2 (2026-09-04)
+------------------
+* granular rclcpp/rclcpp.hpp and include what you use (`#254 <https://github.com/ros/robot_state_publisher/issues/254>`_)
+* Run tests with RMW isolation
+* Contributors: Alejandro Hernández Cordero, Yadunund Vijay, yadunund
+
 3.6.1 (2026-06-30)
 ------------------
 * CPP 20 (`#247 <https://github.com/ros/robot_state_publisher//issues/247>`_)
