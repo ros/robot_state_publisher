@@ -2,6 +2,12 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.5.6 (2026-09-04)
+------------------
+* Merge pull request `#252 <https://github.com/ros/robot_state_publisher/issues/252>`_ from ros/mergify/bp/lyrical/pr-251
+* Run tests with RMW isolation
+* Contributors: Yadunund Vijay, yadunund
+
 3.5.5 (2026-04-09)
 ------------------
 * Use new ROSIDL aggregate CMake target (`#246 <https://github.com/ros/robot_state_publisher/issues/246>`_)
