@@ -74,6 +74,7 @@ if(BUILD_TESTING)
 
   find_package(ament_cmake_gtest REQUIRED)
   find_package(launch_testing_ament_cmake REQUIRED)
+  find_package(tf2_msgs REQUIRED)
   ament_find_gtest()
 
   add_executable(test_two_links_fixed_joint test/test_two_links_fixed_joint.cpp)
@@ -105,6 +106,7 @@ if(BUILD_TESTING)
     geometry_msgs::geometry_msgs
     rclcpp::rclcpp
     sensor_msgs::sensor_msgs
+    tf2_msgs::tf2_msgs
     tf2_ros::tf2_ros
   )
   add_launch_test(test/two_links_moving_joint-launch.py

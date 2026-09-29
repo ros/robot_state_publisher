@@ -34,18 +34,23 @@
 
 #include <chrono>
 #include <cmath>
+#include <limits>
 #include <memory>
 #include <thread>
 
 #include "gtest/gtest.h"
 
+#include "geometry_msgs/msg/transform.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "rclcpp/clock.hpp"
+#include "rclcpp/executors.hpp"
 #include "rclcpp/node.hpp"
 #include "rclcpp/publisher.hpp"
+#include "rclcpp/subscription.hpp"
 #include "rclcpp/time.hpp"
 #include "rclcpp/utilities.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+#include "tf2_msgs/msg/tf_message.hpp"
 #include "tf2_ros/buffer.hpp"
 #include "tf2_ros/transform_listener.hpp"
 
@@ -78,6 +83,60 @@ TEST(test_publisher, test_two_joints)
   EXPECT_NEAR(t.transform.translation.x, 5.0, EPS);
   EXPECT_NEAR(t.transform.translation.y, 0.0, EPS);
   EXPECT_NEAR(t.transform.translation.z, 0.0, EPS);
+}
+
+TEST(test_publisher, test_nan_joint_is_skipped)
+{
+  auto node = rclcpp::Node::make_shared("rsp_test_nan_joint");
+
+  // Watch /tf directly: tf2 rejects a NaN transform on insertion, so a buffer
+  // query could not tell a skipped joint from a published-and-rejected one.
+  const auto is_finite = [](const geometry_msgs::msg::Transform & t) {
+      return std::isfinite(t.translation.x) && std::isfinite(t.translation.y) &&
+             std::isfinite(t.translation.z) && std::isfinite(t.rotation.x) &&
+             std::isfinite(t.rotation.y) && std::isfinite(t.rotation.z) &&
+             std::isfinite(t.rotation.w);
+    };
+  unsigned int valid_count = 0;
+  unsigned int nan_count = 0;
+  auto sub = node->create_subscription<tf2_msgs::msg::TFMessage>(
+    "tf", 10, [&](const tf2_msgs::msg::TFMessage & msg) {
+      for (const auto & transform : msg.transforms) {
+        if (transform.child_frame_id != "link2") {
+          continue;
+        }
+        if (is_finite(transform.transform)) {
+          ++valid_count;
+        } else {
+          ++nan_count;
+        }
+      }
+    });
+  auto pub = node->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
+
+  sensor_msgs::msg::JointState js_msg;
+  js_msg.name.push_back("joint1");
+  js_msg.position.push_back(M_PI);
+
+  // A valid position first, until its transform arrives, so the NaN check
+  // below cannot pass just because nothing was connected yet.
+  for (unsigned int i = 0; i < 100 && valid_count == 0; ++i) {
+    js_msg.header.stamp = node->now();
+    pub->publish(js_msg);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    rclcpp::spin_some(node);
+  }
+  ASSERT_GT(valid_count, 0u);
+
+  // A NaN position must not be turned into a transform.
+  js_msg.position[0] = std::numeric_limits<double>::quiet_NaN();
+  for (unsigned int i = 0; i < 10; ++i) {
+    js_msg.header.stamp = node->now();
+    pub->publish(js_msg);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    rclcpp::spin_some(node);
+  }
+  EXPECT_EQ(nan_count, 0u);
 }
 
 int main(int argc, char ** argv)
