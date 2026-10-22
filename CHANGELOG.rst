@@ -2,6 +2,11 @@
 Changelog for package robot_state_publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.6.3 (2026-10-22)
+------------------
+* Added missing dependencies (`#255 <https://github.com/ros/robot_state_publisher/issues/255>`_)
+* Contributors: Alejandro Hernández Cordero
+
 3.6.2 (2026-09-04)
 ------------------
 * granular rclcpp/rclcpp.hpp and include what you use (`#254 <https://github.com/ros/robot_state_publisher/issues/254>`_)
