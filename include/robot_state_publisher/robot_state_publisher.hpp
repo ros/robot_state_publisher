@@ -48,6 +48,7 @@
 #include "rclcpp/publisher.hpp"
 #include "rclcpp/subscription.hpp"
 #include "rclcpp/time.hpp"
+#include "robot_state_publisher/visibility_control.h"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "tf2_ros/static_transform_broadcaster.hpp"
@@ -60,7 +61,7 @@ namespace robot_state_publisher
 using MimicMap = std::map<std::string, urdf::JointMimicSharedPtr>;
 
 /// A class that represents a mapping between a KDL segment and its root and tip.
-class SegmentPair final
+class ROBOT_STATE_PUBLISHER_PUBLIC SegmentPair final
 {
 public:
   /// Constructor
@@ -76,7 +77,7 @@ public:
 };
 
 /// The class that contains all of the functionality of the RobotStatePublisher ROS 2 node.
-class RobotStatePublisher : public rclcpp::Node
+class ROBOT_STATE_PUBLISHER_PUBLIC RobotStatePublisher : public rclcpp::Node
 {
 public:
   /// Constructor

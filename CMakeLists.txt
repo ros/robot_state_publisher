@@ -24,6 +24,7 @@ find_package(urdf REQUIRED)
 add_library(
   ${PROJECT_NAME}_node SHARED
   src/robot_state_publisher.cpp)
+target_compile_definitions(${PROJECT_NAME}_node PRIVATE "ROBOT_STATE_PUBLISHER_BUILDING_LIBRARY")
 target_include_directories(${PROJECT_NAME}_node PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
