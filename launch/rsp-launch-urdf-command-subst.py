@@ -26,8 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# This launch file shows how to launch robot_state_publisher with a URDF
-# first processed using the xacro command-line program.
+# This launch file shows how to launch robot_state_publisher with a URDF that
+# is produced by an external command, run through the launch Command
+# substitution when the parameter is evaluated.  Here the command is just cat;
+# any program that prints a URDF to stdout, for example xacro, can be used
+# the same way.
 
 import os
 
@@ -39,9 +42,8 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     pkg_share = FindPackageShare('robot_state_publisher').find('robot_state_publisher')
-    urdf_dir = os.path.join(pkg_share, 'urdf')
-    xacro_file = os.path.join(urdf_dir, 'test-desc.urdf.xacro')
-    robot_desc = launch.substitutions.Command('xacro %s' % xacro_file)
+    urdf_file = os.path.join(pkg_share, 'urdf', 'test-desc.urdf')
+    robot_desc = launch.substitutions.Command('cat %s' % urdf_file)
     params = {'robot_description': robot_desc}
     rsp = launch_ros.actions.Node(package='robot_state_publisher',
                                   executable='robot_state_publisher',

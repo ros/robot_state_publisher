@@ -26,25 +26,26 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# This launch file shows how to launch robot_state_publisher with a URDF
-# first processed using the xacro python API.
+# This launch file shows how to launch robot_state_publisher with a URDF that
+# is produced by an external command, run with subprocess.Popen when the
+# launch description is created.  Here the command is just cat; any program
+# that prints a URDF to stdout, for example xacro, can be used the same way.
 
 import os
+import subprocess
 
 import launch
 import launch_ros.actions
 from launch_ros.substitutions import FindPackageShare
 
-import xacro
-
 
 def generate_launch_description():
     pkg_share = FindPackageShare('robot_state_publisher').find('robot_state_publisher')
-    urdf_dir = os.path.join(pkg_share, 'urdf')
-    xacro_file = os.path.join(urdf_dir, 'test-desc.urdf.xacro')
-    doc = xacro.process_file(xacro_file)
-    robot_desc = doc.toprettyxml(indent='  ')
-    params = {'robot_description': robot_desc}
+    urdf_file = os.path.join(pkg_share, 'urdf', 'test-desc.urdf')
+    p = subprocess.Popen(['cat', urdf_file],
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    robot_desc, stderr = p.communicate()
+    params = {'robot_description': robot_desc.decode('utf-8')}
     rsp = launch_ros.actions.Node(package='robot_state_publisher',
                                   executable='robot_state_publisher',
                                   output='both',

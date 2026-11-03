@@ -26,24 +26,33 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# This launch file shows how to launch robot_state_publisher with a URDF
-# first processed using the xacro command-line program using Popen.
+# This launch file shows how to launch robot_state_publisher with a URDF that
+# is generated in Python when the launch description is created.  Here a
+# simple string.Template is filled in; the same approach works with anything
+# that produces a URDF string, for example the xacro Python API.
 
-import os
-import subprocess
+import string
 
 import launch
 import launch_ros.actions
-from launch_ros.substitutions import FindPackageShare
+
+URDF_TEMPLATE = string.Template("""<?xml version="1.0"?>
+<robot name="test">
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder length="${length}" radius="${radius}"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+  </link>
+</robot>
+""")
 
 
 def generate_launch_description():
-    pkg_share = FindPackageShare('robot_state_publisher').find('robot_state_publisher')
-    urdf_dir = os.path.join(pkg_share, 'urdf')
-    xacro_file = os.path.join(urdf_dir, 'test-desc.urdf.xacro')
-    p = subprocess.Popen(['xacro', xacro_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    robot_desc, stderr = p.communicate()
-    params = {'robot_description': robot_desc.decode('utf-8')}
+    robot_desc = URDF_TEMPLATE.substitute(length='0.6', radius='0.2')
+    params = {'robot_description': robot_desc}
     rsp = launch_ros.actions.Node(package='robot_state_publisher',
                                   executable='robot_state_publisher',
                                   output='both',
