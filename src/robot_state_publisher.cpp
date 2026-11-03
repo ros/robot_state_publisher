@@ -31,6 +31,7 @@
 #include "robot_state_publisher/robot_state_publisher.hpp"
 
 #include <chrono>
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <exception>
@@ -361,6 +362,12 @@ void RobotStatePublisher::callbackJointState(
     // get joint positions from state message
     std::map<std::string, double> joint_positions;
     for (size_t i = 0; i < state->name.size(); i++) {
+      if (!std::isfinite(state->position[i])) {
+        RCLCPP_DEBUG(
+          get_logger(), "Skipping joint %s with NaN or infinite position.",
+          state->name[i].c_str());
+        continue;
+      }
       joint_positions.emplace(state->name[i], state->position[i]);
     }
 
